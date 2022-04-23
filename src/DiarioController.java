@@ -9,10 +9,10 @@ import javafx.scene.input.MouseEvent;
 
 import java.io.*;
 import java.net.URL;
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 public class DiarioController implements Initializable {
     @FXML
@@ -27,6 +27,9 @@ public class DiarioController implements Initializable {
 
     @FXML
     private TextArea txaFicheiro;
+
+    @FXML
+    private DatePicker datePick;
 
     private String pathFile = "";
     private boolean savedFile = true;
@@ -88,6 +91,7 @@ public class DiarioController implements Initializable {
     private void keyPressedChange(KeyEvent e) {
         savedFile = false;
     }
+
     //  POSSIBLY IMPLEMENT AUTOSAVE TOGGLE ON MENU BAR
     //Auto save on
     @FXML
@@ -136,26 +140,51 @@ public class DiarioController implements Initializable {
         dialog.setHeaderText("Por favor, insira o nome do ficheiro:");
 //        dialog.setContentText("Please enter your name:");
         Optional<String> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            fileName = result.get();
-        }
-        // adicionar .txt se não existir
-        if (!fileName.contains(".txt")) {
-            fileName = fileName + ".txt";
-        }
+        System.out.println(result);
+        fileName = result.get();
+        System.out.println(fileName);
+        if (!fileName.equals("")) {
 
-        File f = new File("src/files/" + fileName);
-        if (f.exists()) {
+            if (!fileName.contains(".txt")) {
+                fileName = fileName + ".txt";
+            }
+            File f = new File("src/files/" + fileName);
+            if (f.exists()) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erro!");
+                alert.setHeaderText("O ficheiro já existe!");
+                alert.setContentText("");
+
+                alert.showAndWait().get();
+            } else {
+                f.createNewFile();
+                //adicionar data à primeira linha
+                BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+                bw.write(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
+                bw.close();
+
+                txaFicheiro.clear();
+
+                // abrir ficheiro na textarea
+                lstFiles.getItems().add(fileName);
+                lstFiles.getSelectionModel().select(fileName);
+                lstFiles.scrollTo(fileName);
+                File f2 = new File("src/files/" + fileName);
+                BufferedReader br = new BufferedReader(new FileReader(f2));
+                String line = br.readLine();
+                while (line != null) {
+                    txaFicheiro.appendText(line + "\n");
+                    line = br.readLine();
+                }
+                br.close();
+            }
+        } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erro!");
-            alert.setHeaderText("O ficheiro já existe!");
+            alert.setTitle("Erro");
+            alert.setHeaderText("Nome do ficheiro inválido");
             alert.setContentText("");
 
-            ButtonType b = alert.showAndWait().get();
-        } else {
-            f.createNewFile();
-            lstFiles.getItems().add(fileName);
-            lstFiles.getSelectionModel().select(fileName);
+            alert.showAndWait();
         }
     }
 
@@ -177,6 +206,14 @@ public class DiarioController implements Initializable {
                 lstFiles.getSelectionModel().select(0);
             }
         }
+    }
+
+    // obter data
+    @FXML
+    private void pickDate(ActionEvent e) {
+        LocalDate localDate = datePick.getValue();
+        String dataFinal = localDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+//        System.out.println(dataFinal);
     }
 
 
