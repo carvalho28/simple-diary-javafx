@@ -78,6 +78,7 @@ public class DiarioController implements Initializable {
         }
     }
 
+    //Auto save off
     @FXML
     private void keyPressedChange(KeyEvent e){savedFile = false;}
 
