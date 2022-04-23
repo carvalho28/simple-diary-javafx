@@ -9,22 +9,24 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#keyPressedChange" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="DiarioController">
    <left>
-      <SplitPane dividerPositions="0.3768844221105528" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
+      <SplitPane dividerPositions="0.16331658291457288" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="128.0" prefWidth="158.0">
                <children>
-                  <Button fx:id="btnFicheiros" layoutX="45.0" layoutY="61.0" mnemonicParsing="false" onAction="#btnClick" text="Grava" />
+                  <Button fx:id="btnFicheiros" layoutX="93.0" layoutY="7.0" mnemonicParsing="false" onAction="#btnClick" prefHeight="20.0" prefWidth="57.0" text="Grava" />
+                  <Button fx:id="btnNovo" layoutX="7.0" layoutY="7.0" mnemonicParsing="false" onAction="#btnNew" prefHeight="20.0" prefWidth="57.0" text="Novo" />
+                  <Button fx:id="btnApagar" layoutX="51.0" layoutY="36.0" mnemonicParsing="false" onAction="#btnDelete" prefHeight="25.0" prefWidth="64.0" text="Apagar" />
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                <children>
-                  <ListView fx:id="lstFiles" onMouseClicked="#btnOpen" prefHeight="247.0" prefWidth="158.0" />
+                  <ListView fx:id="lstFiles" onMouseClicked="#btnOpen" prefHeight="331.0" prefWidth="158.0" />
                </children>
             </AnchorPane>
         </items>
       </SplitPane>
    </left>
    <center>
-      <TextArea fx:id="txaFicheiro" onKeyTyped="#keyPressedChange" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+      <TextArea fx:id="txaFicheiro" onKeyTyped="#keyPressedAutoSave" prefHeight="373.0" prefWidth="412.0" stylesheets="@styles/diario.css" BorderPane.alignment="CENTER" />
    </center>
 </BorderPane>

@@ -11,11 +11,16 @@ import java.io.*;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class DiarioController implements Initializable {
     @FXML
     Button btnFicheiros;
+    @FXML
+    Button btnNovo;
+    @FXML
+    Button btnApagar;
 
     @FXML
     private ListView<String> lstFiles;
@@ -51,12 +56,12 @@ public class DiarioController implements Initializable {
 
             ButtonType b = alert.showAndWait().get();
 
-            if(b == ButtonType.OK){
+            if (b == ButtonType.OK) {
                 System.out.println("File Saved!");
                 btnFicheiros.fire();
             }
-            if (b == ButtonType.CANCEL){
-                System.out.println("Cancel");
+            if (b == ButtonType.CANCEL) {
+                System.out.println("File not Saved!");
                 lstFiles.getSelectionModel().selectPrevious();
             }
         }
@@ -80,7 +85,100 @@ public class DiarioController implements Initializable {
 
     //Auto save off
     @FXML
-    private void keyPressedChange(KeyEvent e){savedFile = false;}
+    private void keyPressedChange(KeyEvent e) {
+        savedFile = false;
+    }
+    //  POSSIBLY IMPLEMENT AUTOSAVE TOGGLE ON MENU BAR
+    //Auto save on
+    @FXML
+    private void keyPressedAutoSave(KeyEvent e) throws IOException {
+        String fileName = lstFiles.getSelectionModel().getSelectedItem();
+        File f = new File("src/files/" + fileName);
+        if (f.exists()) {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+            bw.write(txaFicheiro.getText());
+            bw.close();
+        }
+
+    }
+
+    //procura palavra selecionada e coloca numa lista
+    @FXML
+    private void btnSearch(ActionEvent e) throws IOException {
+        String word = txaFicheiro.getSelectedText();
+        String[] files = new File("src/files").list();
+        ObservableList<String> list = FXCollections.observableArrayList();
+        for (String file : files) {
+            String path = "src/files/" + file;
+            File f = new File(path);
+            if (f.isFile()) {
+                BufferedReader bf = new BufferedReader(new FileReader(f));
+                String line = bf.readLine();
+                while (line != null) {
+                    if (line.contains(word)) {
+                        list.add(file);
+                        break;
+                    }
+                    line = bf.readLine();
+                }
+                bf.close();
+            }
+        }
+//        lstFiles.setItems(list);
+    }
+
+    @FXML
+    // criar ficheiro na diretoria src/files
+    private void btnNew(ActionEvent e) throws IOException {
+        String fileName = "";
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Novo ficheiro");
+        dialog.setHeaderText("Por favor, insira o nome do ficheiro:");
+//        dialog.setContentText("Please enter your name:");
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            fileName = result.get();
+        }
+        // adicionar .txt se não existir
+        if (!fileName.contains(".txt")) {
+            fileName = fileName + ".txt";
+        }
+
+        File f = new File("src/files/" + fileName);
+        if (f.exists()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erro!");
+            alert.setHeaderText("O ficheiro já existe!");
+            alert.setContentText("");
+
+            ButtonType b = alert.showAndWait().get();
+        } else {
+            f.createNewFile();
+            lstFiles.getItems().add(fileName);
+            lstFiles.getSelectionModel().select(fileName);
+        }
+    }
+
+    //function to delete file
+    @FXML
+    private void btnDelete(ActionEvent e) throws IOException {
+        String fileName = lstFiles.getSelectionModel().getSelectedItem();
+        File f = new File("src/files/" + fileName);
+        if (f.exists()) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Apagar ficheiro");
+            alert.setHeaderText("Tem a certeza que quer apagar o ficheiro?");
+            alert.setContentText("");
+
+            ButtonType b = alert.showAndWait().get();
+            if (b == ButtonType.OK) {
+                f.delete();
+                lstFiles.getItems().remove(fileName);
+                lstFiles.getSelectionModel().select(0);
+            }
+        }
+    }
+
 
     /**
      * Initializes the controller class.
