@@ -1,5 +1,7 @@
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -21,6 +23,9 @@ public class DiarioController implements Initializable {
     Button btnNovo;
     @FXML
     Button btnApagar;
+
+    @FXML
+    private TextField txfProcura;
 
     @FXML
     private ListView<String> lstFiles;
@@ -204,6 +209,7 @@ public class DiarioController implements Initializable {
                 f.delete();
                 lstFiles.getItems().remove(fileName);
                 lstFiles.getSelectionModel().select(0);
+                txaFicheiro.clear();
             }
         }
     }
@@ -215,6 +221,24 @@ public class DiarioController implements Initializable {
         String dataFinal = localDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 //        System.out.println(dataFinal);
     }
+
+    //procura conteudo dos ficheiros atraves do textfield
+//    @FXML
+//    private void search(ActionEvent e) throws IOException {
+//        String fileName = lstFiles.getSelectionModel().getSelectedItem();
+//        File f = new File("src/files/" + fileName);
+//        if (f.exists()) {
+//            BufferedReader br = new BufferedReader(new FileReader(f));
+//            String line = br.readLine();
+//            while (line != null) {
+//                if (line.contains(txfProcura.getText())) {
+//                    txaFicheiro.appendText(line + "\n");
+//                }
+//                line = br.readLine();
+//            }
+//            br.close();
+//        }
+//    }
 
 
     /**
@@ -232,5 +256,21 @@ public class DiarioController implements Initializable {
         }
 
         lstFiles.setItems(items);
+
+        // procura por nome do ficheiro
+        FilteredList<String> filteredData = new FilteredList<>(items, p -> true);
+        lstFiles.setItems(filteredData);
+        txfProcura.textProperty().addListener(((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(data -> {
+                if (newValue == null || newValue.isEmpty()){
+                    return true;
+                }
+                String lowerCaseSearch=newValue.toLowerCase();
+                return Boolean.parseBoolean(String.valueOf(data.contains(lowerCaseSearch)));
+            });
+        }));
+
+
     }
 }
+
