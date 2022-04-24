@@ -4,8 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 
 import java.io.*;
 import java.net.URL;
@@ -13,8 +12,6 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.function.IntFunction;
-import java.util.stream.Collectors;
 
 public class DiarioController implements Initializable {
 //    @FXML
@@ -45,26 +42,20 @@ public class DiarioController implements Initializable {
 
     @FXML
     Tab firstTab;
-
+    ArrayList<String> tituloTabs = new ArrayList<>();
     @FXML
     private TextField txfProcura;
-
     @FXML
     private ListView<String> lstFiles;
-
     @FXML
     private TextArea txaFicheiro;
-
     @FXML
     private DatePicker datePick;
-
     private String pathFile = "";
     private boolean savedFile = true;
     private boolean autoSaveToggle = false;
 
-   ArrayList<String> tituloTabs = new ArrayList<>();
-
-   // remover string tab tituloTabs on close
+    // remover string tab tituloTabs on close
     @FXML
     public void closeTab(ActionEvent event) {
         int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
@@ -90,25 +81,44 @@ public class DiarioController implements Initializable {
     // zoom in
     @FXML
     private void zoomIn(ActionEvent e) {
-        txaFicheiro.setStyle("-fx-font-size: " + (txaFicheiro.getFont().getSize() + 1) + "px;");
+        TextArea textArea = (TextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+        textArea.setStyle("-fx-font-size: " + (textArea.getFont().getSize() + 1) + "px;");
     }
 
     @FXML
     // zoom out
     private void zoomOut(ActionEvent e) {
-        txaFicheiro.setStyle("-fx-font-size: " + (txaFicheiro.getFont().getSize() - 1) + "px;");
+        TextArea textArea = (TextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+        textArea.setStyle("-fx-font-size: " + (textArea.getFont().getSize() - 1) + "px;");
     }
 
     //toggle autoSave
     @FXML
     private void autoSave(ActionEvent e) {
-        if (!autoSaveToggle){
+        if (!autoSaveToggle) {
             autoSaveToggle = true;
             autoSave.setText("AutoSave  ✔");
-        }
-        else {
+        } else {
             autoSaveToggle = false;
             autoSave.setText("AutoSave");
+        }
+    }
+
+    /* SHORTCUTS */
+    private KeyCombination saveCombo = new KeyCodeCombination(KeyCode.S, KeyCodeCombination.META_DOWN); //command Mac e Ctrl Windows
+    private KeyCombination zoomInCombo = new KeyCodeCombination(KeyCode.EQUALS, KeyCodeCombination.META_DOWN);
+    private KeyCombination zoomOutCombo = new KeyCodeCombination(KeyCode.MINUS, KeyCodeCombination.META_DOWN);
+    //shortcut to save
+    @FXML
+    private void textAreaShortcuts(KeyEvent e) throws IOException {
+        if (saveCombo.match(e)) {
+            saveFuntion();
+        }
+        if (zoomInCombo.match(e)){
+            zoomIn.fire();
+        }
+        if (zoomOutCombo.match(e)){
+            zoomOut.fire();
         }
     }
 
@@ -120,14 +130,19 @@ public class DiarioController implements Initializable {
         if (tituloTabs.contains(t1.getText())) {
             int index = tituloTabs.indexOf(t1.getText());
             tabPane.getSelectionModel().select(index);
-            System.out.println("Contem");
-        }
-        else {
+        } else {
             TextArea textArea1 = new TextArea();
             t1.setContent(textArea1);
             textArea1.setOnKeyTyped(event -> {
                 try {
                     keyPressedAutoSave(event);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+            textArea1.setOnKeyPressed(event -> {
+                try {
+                    textAreaShortcuts(event);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -162,7 +177,6 @@ public class DiarioController implements Initializable {
 
             alert.showAndWait();
         }
-//        ObservableList<CharSequence> paragraph = txaFicheiro.getParagraphs();
         //obter da tab aberta txarea
         TextArea textArea = (TextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
         ObservableList<CharSequence> paragraph = textArea.getParagraphs();
@@ -176,6 +190,7 @@ public class DiarioController implements Initializable {
         bf.flush();
         bf.close();
     }
+
 
     //Saves file
     @FXML
@@ -253,20 +268,14 @@ public class DiarioController implements Initializable {
             bw.write("----------\n");
             bw.close();
 
-            txaFicheiro.clear();
-
+            openFileFunction(fileName);
             // abrir ficheiro na textarea
             lstFiles.getItems().add(fileName);
             lstFiles.getSelectionModel().select(fileName);
             lstFiles.scrollTo(fileName);
-            File f2 = new File("src/files/" + fileName);
-            BufferedReader br = new BufferedReader(new FileReader(f2));
-            String line = br.readLine();
-            while (line != null) {
-                txaFicheiro.appendText(line + "\n");
-                line = br.readLine();
-            }
-            br.close();
+
+            TextArea textArea =  (TextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+            textArea.requestFocus();
         }
     }
 
@@ -296,23 +305,15 @@ public class DiarioController implements Initializable {
     private void pickDate(ActionEvent e) throws IOException {
         LocalDate localDate = datePick.getValue();
         String dataFinal = localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        System.out.println(dataFinal);
         String fileName = "src/files/" + dataFinal + ".txt";
-        System.out.println(fileName);
         File f = new File(fileName);
         // open file to textarea
         if (f.exists()) {
             // abrir ficheiro na textarea
             lstFiles.getSelectionModel().select(fileName);
             lstFiles.scrollTo(fileName);
-            File f2 = new File(fileName);
-            BufferedReader br = new BufferedReader(new FileReader(f2));
-            String line = br.readLine();
-            while (line != null) {
-                txaFicheiro.appendText(line + "\n");
-                line = br.readLine();
-            }
-            br.close();
+            pathFile = "src/files/" + dataFinal + ".txt";
+            openFileFunction(dataFinal + ".txt");
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Erro!");
@@ -320,7 +321,8 @@ public class DiarioController implements Initializable {
             alert.setContentText("");
             alert.showAndWait().get();
         }
-
+//        datePick.getEditor().clear();
+//        datePick.setValue(null);
     }
 
 
