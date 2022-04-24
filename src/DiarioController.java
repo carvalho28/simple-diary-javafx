@@ -139,6 +139,7 @@ public class DiarioController implements Initializable {
         } else {
             TextArea textArea1 = new TextArea();
             t1.setContent(textArea1);
+            // formatter na textArea
             textArea1.setOnKeyTyped(event -> {
                 try {
                     keyPressedAutoSave(event);
@@ -173,6 +174,16 @@ public class DiarioController implements Initializable {
             } catch (Exception err) {
                 System.err.println(err.getMessage());
             }
+
+            textArea1.setTextFormatter(new TextFormatter<String>((TextFormatter.Change c) -> {
+                String proposed = c.getControlNewText();
+                if (proposed.startsWith(textArea1.getText(0,23))){
+                    return c;
+                }
+                else{
+                    return null;
+                }
+            }));
         }
     }
 
@@ -273,16 +284,16 @@ public class DiarioController implements Initializable {
             BufferedWriter bw = new BufferedWriter(new FileWriter(f));
             bw.write(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
             bw.newLine();
-            bw.write("----------\n");
+            bw.write("------------\n");
             bw.close();
-
+            System.out.println("HERE");
             openFileFunction(fileName);
             // abrir ficheiro na textarea
             lstFiles.getItems().add(fileName);
             lstFiles.getSelectionModel().select(fileName);
             lstFiles.scrollTo(fileName);
 
-            TextArea textArea =  (TextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+            TextArea textArea = (TextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
             textArea.requestFocus();
         }
     }
