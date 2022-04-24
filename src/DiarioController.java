@@ -112,10 +112,8 @@ public class DiarioController implements Initializable {
         }
     }
 
-    private void openFileFunction() {
-        //txaFicheiro.clear();
-        String filePath = lstFiles.getSelectionModel().getSelectedItem();
-        pathFile = "src/files/" + filePath;
+    private void openFileFunction(String filePath) {
+//        System.out.println("Opening file: " + filePath);
         // set firstTab Text
         Tab t1 = new Tab(filePath.substring(0, filePath.length() - 4));
         // verificar se o texto da tab ja esta aberto
@@ -204,7 +202,9 @@ public class DiarioController implements Initializable {
                 lstFiles.getSelectionModel().selectPrevious();
             }
         }
-        openFileFunction();
+        String filePath = lstFiles.getSelectionModel().getSelectedItem();
+        pathFile = "src/files/" + filePath;
+        openFileFunction(filePath);
     }
 
     //Auto save off
