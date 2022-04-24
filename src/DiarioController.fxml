@@ -6,6 +6,8 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -19,15 +21,22 @@
                <children>
                   <DatePicker fx:id="datePick" layoutX="33.0" layoutY="84.0" onAction="#pickDate" prefHeight="25.0" prefWidth="93.0" />
                   <TextField fx:id="txfProcura" layoutX="14.0" layoutY="129.0" prefHeight="25.0" prefWidth="129.0" />
-                  <MenuBar layoutY="8.0" prefHeight="27.0" prefWidth="159.0">
+                  <MenuBar layoutX="-1.0" layoutY="1.0" prefHeight="27.0" prefWidth="159.0">
                     <menus>
                       <Menu mnemonicParsing="false" text="File">
                         <items>
                               <MenuItem fx:id="menuGuardar" mnemonicParsing="false" onAction="#btnClick" text="Save" />
                               <MenuItem fx:id="menuNovo" mnemonicParsing="false" onAction="#btnNew" text="New" />
                               <MenuItem fx:id="menuApagar" mnemonicParsing="false" onAction="#btnDelete" text="Delete" />
+                              <MenuItem fx:id="autoSave" mnemonicParsing="false" onAction="#autoSave" text="AutoSave " />
                         </items>
                       </Menu>
+                        <Menu mnemonicParsing="false" text="View">
+                          <items>
+                            <MenuItem fx:id="zoomIn" mnemonicParsing="false" onAction="#zoomIn" text="Zoom In" />
+                              <MenuItem fx:id="zoomOut" mnemonicParsing="false" onAction="#zoomOut" text="Zoom Out" />
+                          </items>
+                        </Menu>
                       <Menu mnemonicParsing="false" text="Help">
                         <items>
                           <MenuItem fx:id="menuSobre" mnemonicParsing="false" onAction="#aboutProgram" text="About" />
@@ -46,6 +55,18 @@
       </SplitPane>
    </left>
    <center>
-      <TextArea fx:id="txaFicheiro" onKeyTyped="#keyPressedAutoSave" prefHeight="373.0" prefWidth="412.0" stylesheets="@styles/diario.css" BorderPane.alignment="CENTER" />
+      <TabPane fx:id="tabPane" onKeyTyped="#keyPressedAutoSave" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <tabs>
+          <Tab fx:id="firstTab" text="Tab">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="380.0" prefWidth="440.0">
+                     <children>
+                        <TextArea fx:id="txaFicheiro" onKeyTyped="#keyPressedAutoSave" prefHeight="373.0" prefWidth="440.0" stylesheets="@styles/diario.css" />
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
    </center>
 </BorderPane>

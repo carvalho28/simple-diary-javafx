@@ -6,15 +6,15 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+
 import java.io.*;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.function.IntFunction;
+import java.util.stream.Collectors;
 
 public class DiarioController implements Initializable {
 //    @FXML
@@ -32,6 +32,19 @@ public class DiarioController implements Initializable {
     MenuItem menuGuardar;
     @FXML
     MenuItem menuSobre;
+    @FXML
+    MenuItem zoomIn;
+    @FXML
+    MenuItem zoomOut;
+    @FXML
+    MenuItem autoSave;
+
+
+    @FXML
+    TabPane tabPane;
+
+    @FXML
+    Tab firstTab;
 
     @FXML
     private TextField txfProcura;
@@ -51,6 +64,15 @@ public class DiarioController implements Initializable {
 
    ArrayList<String> tituloTabs = new ArrayList<>();
 
+   // remover string tab tituloTabs on close
+    @FXML
+    public void closeTab(ActionEvent event) {
+        int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
+        if (selectedIndex != -1) {
+            tabPane.getTabs().remove(selectedIndex);
+            tituloTabs.remove(selectedIndex);
+        }
+    }
 
     // about program
     @FXML
@@ -63,6 +85,98 @@ public class DiarioController implements Initializable {
                 "João Marques, 45779\n" +
                 "para a Unidade Curricular de Interação Humana com o Computador\n");
         alert.showAndWait();
+    }
+
+    // zoom in
+    @FXML
+    private void zoomIn(ActionEvent e) {
+        txaFicheiro.setStyle("-fx-font-size: " + (txaFicheiro.getFont().getSize() + 1) + "px;");
+    }
+
+    @FXML
+    // zoom out
+    private void zoomOut(ActionEvent e) {
+        txaFicheiro.setStyle("-fx-font-size: " + (txaFicheiro.getFont().getSize() - 1) + "px;");
+    }
+
+    //toggle autoSave
+    @FXML
+    private void autoSave(ActionEvent e) {
+        if (!autoSaveToggle){
+            autoSaveToggle = true;
+            autoSave.setText("AutoSave  ✔");
+        }
+        else {
+            autoSaveToggle = false;
+            autoSave.setText("AutoSave");
+        }
+    }
+
+    private void openFileFunction() {
+        //txaFicheiro.clear();
+        String filePath = lstFiles.getSelectionModel().getSelectedItem();
+        pathFile = "src/files/" + filePath;
+        // set firstTab Text
+        Tab t1 = new Tab(filePath.substring(0, filePath.length() - 4));
+        // verificar se o texto da tab ja esta aberto
+        if (tituloTabs.contains(t1.getText())) {
+            int index = tituloTabs.indexOf(t1.getText());
+            tabPane.getSelectionModel().select(index);
+            System.out.println("Contem");
+        }
+        else {
+            TextArea textArea1 = new TextArea();
+            t1.setContent(textArea1);
+            textArea1.setOnKeyTyped(event -> {
+                try {
+                    keyPressedAutoSave(event);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+            tabPane.getTabs().add(t1);
+            tabPane.getSelectionModel().select(t1);
+            tituloTabs.add(t1.getText());
+            t1.setOnClosed(event -> {
+                tituloTabs.remove(t1.getText());
+            });
+            try {
+                InputStream inputstream = new FileInputStream(pathFile);
+                int data = inputstream.read();
+
+                while (data != -1) {
+                    char aChar = (char) data;
+                    textArea1.appendText(String.valueOf(aChar));
+                    data = inputstream.read();
+                }
+                inputstream.close();
+            } catch (Exception err) {
+                System.err.println(err.getMessage());
+            }
+        }
+    }
+
+    private void saveFuntion() throws IOException {
+        if (lstFiles.getSelectionModel().getSelectedItem() == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erro");
+            alert.setHeaderText("Não existe nenhum ficheiro selecionado");
+
+            alert.showAndWait();
+        }
+//        ObservableList<CharSequence> paragraph = txaFicheiro.getParagraphs();
+        //obter da tab aberta txarea
+        TextArea textArea = (TextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+        ObservableList<CharSequence> paragraph = textArea.getParagraphs();
+        Iterator<CharSequence> iter = paragraph.iterator();
+        BufferedWriter bf = new BufferedWriter(new FileWriter((pathFile)));
+        while (iter.hasNext()) {
+            CharSequence seq = iter.next();
+            bf.append(seq);
+            bf.newLine();
+        }
+        bf.flush();
+        bf.close();
     }
 
     //Saves file
@@ -90,22 +204,7 @@ public class DiarioController implements Initializable {
                 lstFiles.getSelectionModel().selectPrevious();
             }
         }
-        txaFicheiro.clear();
-        String filePath = lstFiles.getSelectionModel().getSelectedItem();
-        pathFile = "src/files/" + filePath;
-        try {
-            InputStream inputstream = new FileInputStream(pathFile);
-            int data = inputstream.read();
-
-            while (data != -1) {
-                char aChar = (char) data;
-                txaFicheiro.appendText(String.valueOf(aChar));
-                data = inputstream.read();
-            }
-            inputstream.close();
-        } catch (Exception err) {
-            System.err.println(err.getMessage());
-        }
+        openFileFunction();
     }
 
     //Auto save off
@@ -118,14 +217,17 @@ public class DiarioController implements Initializable {
     //Auto save on
     @FXML
     private void keyPressedAutoSave(KeyEvent e) throws IOException {
-        String fileName = lstFiles.getSelectionModel().getSelectedItem();
-        File f = new File("src/files/" + fileName);
-        if (f.exists()) {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-            bw.write(txaFicheiro.getText());
-            bw.close();
-        }
+        if (autoSaveToggle) {
+            String fileName = lstFiles.getSelectionModel().getSelectedItem();
+            File f = new File("src/files/" + fileName);
+            if (f.exists()) {
+                BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+                TextArea textArea = (TextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+                bw.write(textArea.getText());
+                bw.close();
+            }
 
+        }
     }
 
     @FXML
@@ -147,6 +249,8 @@ public class DiarioController implements Initializable {
             //adicionar data à primeira linha
             BufferedWriter bw = new BufferedWriter(new FileWriter(f));
             bw.write(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
+            bw.newLine();
+            bw.write("----------\n");
             bw.close();
 
             txaFicheiro.clear();
@@ -182,7 +286,7 @@ public class DiarioController implements Initializable {
                 f.delete();
                 lstFiles.getItems().remove(fileName);
                 lstFiles.getSelectionModel().select(0);
-                txaFicheiro.clear();
+                tabPane.getTabs().remove(tabPane.getSelectionModel().getSelectedIndex());
             }
         }
     }
@@ -209,8 +313,7 @@ public class DiarioController implements Initializable {
                 line = br.readLine();
             }
             br.close();
-        }
-        else{
+        } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Erro!");
             alert.setHeaderText("O ficheiro da data selecionada não existe!");
@@ -219,7 +322,6 @@ public class DiarioController implements Initializable {
         }
 
     }
-
 
 
     /**
@@ -237,6 +339,8 @@ public class DiarioController implements Initializable {
         }
 
         lstFiles.setItems(items);
+        tituloTabs.add(firstTab.getText());
+//        firstTab.setText("");
 
         // procura por nome do ficheiro
 //        FilteredList<String> filteredData = new FilteredList<>(items, p -> true);
@@ -257,7 +361,6 @@ public class DiarioController implements Initializable {
 
 //        SortedList<String> sortedData = new SortedList<>(filteredData);
 //        lstFiles.setItems(sortedData);
-
 
 
     }
