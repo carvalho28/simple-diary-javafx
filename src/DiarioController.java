@@ -1,14 +1,11 @@
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-
 import java.io.*;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -20,12 +17,21 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class DiarioController implements Initializable {
+//    @FXML
+//    Button btnFicheiros;
+//    @FXML
+//    Button btnNovo;
+//    @FXML
+//    Button btnApagar;
+
     @FXML
-    Button btnFicheiros;
+    MenuItem menuNovo;
     @FXML
-    Button btnNovo;
+    MenuItem menuApagar;
     @FXML
-    Button btnApagar;
+    MenuItem menuGuardar;
+    @FXML
+    MenuItem menuSobre;
 
     @FXML
     private TextField txfProcura;
@@ -41,6 +47,20 @@ public class DiarioController implements Initializable {
 
     private String pathFile = "";
     private boolean savedFile = true;
+
+
+    // about program
+    @FXML
+    private void aboutProgram(ActionEvent e) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("About");
+        alert.setHeaderText("Sobre o programa");
+        alert.setContentText("Este programa foi desenvolvido por:\n" +
+                "Diogo Carvalho, 45716\n" +
+                "João Marques, 45779\n" +
+                "para a Unidade Curricular de Interação Humana com o Computador\n");
+        alert.showAndWait();
+    }
 
     //Saves file
     @FXML
@@ -69,7 +89,7 @@ public class DiarioController implements Initializable {
 
             if (b == ButtonType.OK) {
                 System.out.println("File Saved!");
-                btnFicheiros.fire();
+                menuGuardar.fire();
             }
             if (b == ButtonType.CANCEL) {
                 System.out.println("File not Saved!");
@@ -117,7 +137,7 @@ public class DiarioController implements Initializable {
     @FXML
     // criar ficheiro na diretoria src/files
     private void btnNew(ActionEvent e) throws IOException {
-        String fileName = "";
+        String fileName;
         LocalDate localDate = LocalDate.now();
         fileName = localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         fileName = fileName + ".txt";
@@ -154,7 +174,7 @@ public class DiarioController implements Initializable {
 
     //function to delete file
     @FXML
-    private void btnDelete(ActionEvent e) throws IOException {
+    private void btnDelete(ActionEvent e) {
         String fileName = lstFiles.getSelectionModel().getSelectedItem();
         File f = new File("src/files/" + fileName);
         if (f.exists()) {
@@ -175,11 +195,37 @@ public class DiarioController implements Initializable {
 
     // obter data
     @FXML
-    private void pickDate(ActionEvent e) {
+    private void pickDate(ActionEvent e) throws IOException {
         LocalDate localDate = datePick.getValue();
-        String dataFinal = localDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-//        System.out.println(dataFinal);
+        String dataFinal = localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        System.out.println(dataFinal);
+        String fileName = "src/files/" + dataFinal + ".txt";
+        System.out.println(fileName);
+        File f = new File(fileName);
+        // open file to textarea
+        if (f.exists()) {
+            // abrir ficheiro na textarea
+            lstFiles.getSelectionModel().select(fileName);
+            lstFiles.scrollTo(fileName);
+            File f2 = new File(fileName);
+            BufferedReader br = new BufferedReader(new FileReader(f2));
+            String line = br.readLine();
+            while (line != null) {
+                txaFicheiro.appendText(line + "\n");
+                line = br.readLine();
+            }
+            br.close();
+        }
+        else{
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erro!");
+            alert.setHeaderText("O ficheiro da data selecionada não existe!");
+            alert.setContentText("");
+            alert.showAndWait().get();
+        }
+
     }
+
 
 
     /**
