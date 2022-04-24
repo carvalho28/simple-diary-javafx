@@ -8,6 +8,8 @@ import javafx.scene.input.*;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -155,12 +157,13 @@ public class DiarioController implements Initializable {
             });
             try {
                 InputStream inputstream = new FileInputStream(pathFile);
-                int data = inputstream.read();
+                InputStreamReader inputStreamReader = new InputStreamReader(inputstream, StandardCharsets.UTF_8);
+                int data = inputStreamReader.read();
 
                 while (data != -1) {
                     char aChar = (char) data;
                     textArea1.appendText(String.valueOf(aChar));
-                    data = inputstream.read();
+                    data = inputStreamReader.read();
                 }
                 inputstream.close();
             } catch (Exception err) {
@@ -181,7 +184,7 @@ public class DiarioController implements Initializable {
         TextArea textArea = (TextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
         ObservableList<CharSequence> paragraph = textArea.getParagraphs();
         Iterator<CharSequence> iter = paragraph.iterator();
-        BufferedWriter bf = new BufferedWriter(new FileWriter((pathFile)));
+        BufferedWriter bf = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pathFile), StandardCharsets.UTF_8));
         while (iter.hasNext()) {
             CharSequence seq = iter.next();
             bf.append(seq);
