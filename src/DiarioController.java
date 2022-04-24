@@ -75,7 +75,7 @@ public class DiarioController implements Initializable {
         alert.setHeaderText("Sobre o programa");
         alert.setContentText("Este programa foi desenvolvido por:\n" +
                 "Diogo Carvalho, 45716\n" +
-                "João Marques, 45779\n" +
+                "João Marques, 45722\n" +
                 "para a Unidade Curricular de Interação Humana com o Computador\n");
         alert.showAndWait();
     }
@@ -110,6 +110,7 @@ public class DiarioController implements Initializable {
     private KeyCombination saveCombo = new KeyCodeCombination(KeyCode.S, KeyCodeCombination.META_DOWN); //command Mac e Ctrl Windows
     private KeyCombination zoomInCombo = new KeyCodeCombination(KeyCode.EQUALS, KeyCodeCombination.META_DOWN);
     private KeyCombination zoomOutCombo = new KeyCodeCombination(KeyCode.MINUS, KeyCodeCombination.META_DOWN);
+    private KeyCombination refreshCombo = new KeyCodeCombination(KeyCode.R, KeyCodeCombination.META_DOWN);
     //shortcut to save
     @FXML
     private void textAreaShortcuts(KeyEvent e) throws IOException {
@@ -121,6 +122,9 @@ public class DiarioController implements Initializable {
         }
         if (zoomOutCombo.match(e)){
             zoomOut.fire();
+        }
+        if (refreshCombo.match(e)){
+            openFileFunction(pathFile);
         }
     }
 
@@ -255,6 +259,7 @@ public class DiarioController implements Initializable {
         LocalDate localDate = LocalDate.now();
         fileName = localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         fileName = fileName + ".txt";
+        pathFile = "src/files/" + fileName;
         File f = new File("src/files/" + fileName);
         if (f.exists()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
