@@ -47,6 +47,9 @@ public class DiarioController implements Initializable {
 
     private String pathFile = "";
     private boolean savedFile = true;
+    private boolean autoSaveToggle = false;
+
+   ArrayList<String> tituloTabs = new ArrayList<>();
 
 
     // about program
@@ -65,20 +68,11 @@ public class DiarioController implements Initializable {
     //Saves file
     @FXML
     private void btnClick(ActionEvent e) throws IOException {
-        ObservableList<CharSequence> paragraph = txaFicheiro.getParagraphs();
-        Iterator<CharSequence> iter = paragraph.iterator();
-        BufferedWriter bf = new BufferedWriter(new FileWriter((pathFile)));
-        while (iter.hasNext()) {
-            CharSequence seq = iter.next();
-            bf.append(seq);
-            bf.newLine();
-        }
-        bf.flush();
-        bf.close();
+        saveFuntion();
     }
 
     @FXML
-    private void btnOpen(MouseEvent e) {
+    private void btnOpen(MouseEvent e) throws IOException {
         if (!savedFile && !pathFile.equals("")) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Aviso!");
@@ -88,8 +82,8 @@ public class DiarioController implements Initializable {
             ButtonType b = alert.showAndWait().get();
 
             if (b == ButtonType.OK) {
+                saveFuntion();
                 System.out.println("File Saved!");
-                menuGuardar.fire();
             }
             if (b == ButtonType.CANCEL) {
                 System.out.println("File not Saved!");
