@@ -14,7 +14,10 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.ResourceBundle;
 
 public class DiarioController implements Initializable {
     @FXML
@@ -94,7 +97,7 @@ public class DiarioController implements Initializable {
     //Auto save off
     @FXML
     private void keyPressedChange(KeyEvent e) {
-        savedFile = false;
+//        savedFile = false;
     }
 
     //  POSSIBLY IMPLEMENT AUTOSAVE TOGGLE ON MENU BAR
@@ -111,85 +114,41 @@ public class DiarioController implements Initializable {
 
     }
 
-    //procura palavra selecionada e coloca numa lista
-    @FXML
-    private void btnSearch(ActionEvent e) throws IOException {
-        String word = txaFicheiro.getSelectedText();
-        String[] files = new File("src/files").list();
-        ObservableList<String> list = FXCollections.observableArrayList();
-        for (String file : files) {
-            String path = "src/files/" + file;
-            File f = new File(path);
-            if (f.isFile()) {
-                BufferedReader bf = new BufferedReader(new FileReader(f));
-                String line = bf.readLine();
-                while (line != null) {
-                    if (line.contains(word)) {
-                        list.add(file);
-                        break;
-                    }
-                    line = bf.readLine();
-                }
-                bf.close();
-            }
-        }
-//        lstFiles.setItems(list);
-    }
-
     @FXML
     // criar ficheiro na diretoria src/files
     private void btnNew(ActionEvent e) throws IOException {
         String fileName = "";
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Novo ficheiro");
-        dialog.setHeaderText("Por favor, insira o nome do ficheiro:");
-//        dialog.setContentText("Please enter your name:");
-        Optional<String> result = dialog.showAndWait();
-        System.out.println(result);
-        fileName = result.get();
-        System.out.println(fileName);
-        if (!fileName.equals("")) {
-
-            if (!fileName.contains(".txt")) {
-                fileName = fileName + ".txt";
-            }
-            File f = new File("src/files/" + fileName);
-            if (f.exists()) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Erro!");
-                alert.setHeaderText("O ficheiro já existe!");
-                alert.setContentText("");
-
-                alert.showAndWait().get();
-            } else {
-                f.createNewFile();
-                //adicionar data à primeira linha
-                BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-                bw.write(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
-                bw.close();
-
-                txaFicheiro.clear();
-
-                // abrir ficheiro na textarea
-                lstFiles.getItems().add(fileName);
-                lstFiles.getSelectionModel().select(fileName);
-                lstFiles.scrollTo(fileName);
-                File f2 = new File("src/files/" + fileName);
-                BufferedReader br = new BufferedReader(new FileReader(f2));
-                String line = br.readLine();
-                while (line != null) {
-                    txaFicheiro.appendText(line + "\n");
-                    line = br.readLine();
-                }
-                br.close();
-            }
-        } else {
+        LocalDate localDate = LocalDate.now();
+        fileName = localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        fileName = fileName + ".txt";
+        File f = new File("src/files/" + fileName);
+        if (f.exists()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erro");
-            alert.setHeaderText("Nome do ficheiro inválido");
+            alert.setTitle("Erro!");
+            alert.setHeaderText("O ficheiro já existe!");
             alert.setContentText("");
+            alert.showAndWait().get();
+        } else {
+            f.createNewFile();
+            //adicionar data à primeira linha
+            BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+            bw.write(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
+            bw.close();
 
-            alert.showAndWait();
+            txaFicheiro.clear();
+
+            // abrir ficheiro na textarea
+            lstFiles.getItems().add(fileName);
+            lstFiles.getSelectionModel().select(fileName);
+            lstFiles.scrollTo(fileName);
+            File f2 = new File("src/files/" + fileName);
+            BufferedReader br = new BufferedReader(new FileReader(f2));
+            String line = br.readLine();
+            while (line != null) {
+                txaFicheiro.appendText(line + "\n");
+                line = br.readLine();
+            }
+            br.close();
         }
     }
 
@@ -222,24 +181,6 @@ public class DiarioController implements Initializable {
 //        System.out.println(dataFinal);
     }
 
-    //procura conteudo dos ficheiros atraves do textfield
-//    @FXML
-//    private void search(ActionEvent e) throws IOException {
-//        String fileName = lstFiles.getSelectionModel().getSelectedItem();
-//        File f = new File("src/files/" + fileName);
-//        if (f.exists()) {
-//            BufferedReader br = new BufferedReader(new FileReader(f));
-//            String line = br.readLine();
-//            while (line != null) {
-//                if (line.contains(txfProcura.getText())) {
-//                    txaFicheiro.appendText(line + "\n");
-//                }
-//                line = br.readLine();
-//            }
-//            br.close();
-//        }
-//    }
-
 
     /**
      * Initializes the controller class.
@@ -258,17 +199,25 @@ public class DiarioController implements Initializable {
         lstFiles.setItems(items);
 
         // procura por nome do ficheiro
-        FilteredList<String> filteredData = new FilteredList<>(items, p -> true);
-        lstFiles.setItems(filteredData);
-        txfProcura.textProperty().addListener(((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(data -> {
-                if (newValue == null || newValue.isEmpty()){
-                    return true;
-                }
-                String lowerCaseSearch=newValue.toLowerCase();
-                return Boolean.parseBoolean(String.valueOf(data.contains(lowerCaseSearch)));
-            });
-        }));
+//        FilteredList<String> filteredData = new FilteredList<>(items, p -> true);
+//        txfProcura.textProperty().addListener((observable, oldValue, newValue) -> {
+//            lstFiles.refresh();
+//            filteredData.setPredicate(item -> {
+//                if (newValue == null || newValue.isEmpty()) {
+//                    return true;
+//                }
+//                String lowerCaseFilter = newValue.toLowerCase();
+//                if (item.toLowerCase().contains(lowerCaseFilter)) {
+//                    return true;
+//                }
+//                return false;
+//
+//            });
+//        });
+
+//        SortedList<String> sortedData = new SortedList<>(filteredData);
+//        lstFiles.setItems(sortedData);
+
 
 
     }
