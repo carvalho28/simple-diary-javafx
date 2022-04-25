@@ -34,8 +34,11 @@ public class AuthController implements Initializable {
     @FXML
     Label loginMessageLB;
 
+    public static String keyUser = "";
+
     @FXML
     private void login(ActionEvent e) throws IOException {
+        keyUser = "";
         if (!usernameTF.getText().isBlank() && !passwordTF.getText().isBlank()){
             validateLogin();
             if (loginMessageLB.getText().equals("Login successful")){
@@ -79,6 +82,13 @@ public class AuthController implements Initializable {
             while (resultSet.next()) {
                 if(resultSet.getInt(1) == 1) {
                     loginMessageLB.setText("Login successful");
+                    //get key from sdatabase and store in keyUser
+                    String getKey = "SELECT keyUser FROM userAccounts WHERE username = '" + usernameTF.getText() + "'";
+                    Statement statement1 = connection.createStatement();
+                    ResultSet resultSet1 = statement1.executeQuery(getKey);
+                    while (resultSet1.next()) {
+                        keyUser = resultSet1.getString(1);
+                    }
                 } else {
                     loginMessageLB.setText("Login failed");
                     usernameTF.clear();

@@ -10,10 +10,14 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.bouncycastle.crypto.CryptoException;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -26,6 +30,42 @@ public class DiarioController implements Initializable {
 //    Button btnNovo;
 //    @FXML
 //    Button btnApagar;
+
+    /* ENCRYTPION/ DECRYPTION */
+    private static final String ALGORITHM = "AES";
+    private static final String TRANSFORMATION = "AES";
+    private static void doCrypto(String key, File inputFile, File outputFile) throws CryptoException {
+        try {
+            Key secretKey = new SecretKeySpec(key.getBytes(), ALGORITHM);
+            Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+
+            FileInputStream inputStream = new FileInputStream(inputFile);
+            byte[] inputBytes = new byte[(int) inputFile.length()];
+            inputStream.read(inputBytes);
+
+            byte[] outputBytes = cipher.doFinal(inputBytes);
+
+            FileOutputStream outputStream = new FileOutputStream(outputFile);
+            outputStream.write(outputBytes);
+
+            inputStream.close();
+            outputStream.close();
+
+        } catch (Exception e) {
+            throw new CryptoException("Error encrypting/decrypting file", e);
+        }
+    }
+
+    public static void encrypt(String key, File inputFile, File outputFile) throws CryptoException {
+        doCrypto(key, inputFile, outputFile);
+    }
+
+    public static void decrypt(String key, File inputFile, File outputFile) throws CryptoException {
+        doCrypto(key, inputFile, outputFile);
+    }
+
+
 
     @FXML
     MenuItem menuNovo;
@@ -43,11 +83,8 @@ public class DiarioController implements Initializable {
     MenuItem autoSave;
     @FXML
     MenuItem toPDF;
-
-
     @FXML
     TabPane tabPane;
-
     @FXML
     Tab firstTab;
     ArrayList<String> tituloTabs = new ArrayList<>();
@@ -142,9 +179,13 @@ public class DiarioController implements Initializable {
         if (tituloTabs.contains(t1.getText())) {
             int index = tituloTabs.indexOf(t1.getText());
             tabPane.getSelectionModel().select(index);
+            System.out.println("AQUI");
         } else {
             TextArea textArea1 = new TextArea();
             t1.setContent(textArea1);
+            tabPane.getTabs().add(t1);
+            tabPane.getSelectionModel().select(t1);
+            tituloTabs.add(t1.getText());
             // formatter na textArea
             textArea1.setOnKeyTyped(event -> {
                 try {
@@ -160,9 +201,6 @@ public class DiarioController implements Initializable {
                     e.printStackTrace();
                 }
             });
-            tabPane.getTabs().add(t1);
-            tabPane.getSelectionModel().select(t1);
-            tituloTabs.add(t1.getText());
             t1.setOnClosed(event -> {
                 tituloTabs.remove(t1.getText());
             });
@@ -189,6 +227,8 @@ public class DiarioController implements Initializable {
                     return null;
                 }
             }));
+
+//            textArea1.requestFocus();
         }
     }
 
@@ -270,7 +310,7 @@ public class DiarioController implements Initializable {
 
     @FXML
     // criar ficheiro na diretoria src/files
-    private void btnNew(ActionEvent e) throws IOException {
+    private void btnNew(ActionEvent e) throws IOException, CryptoException {
         String fileName;
         LocalDate localDate = LocalDate.now();
         fileName = localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -285,21 +325,21 @@ public class DiarioController implements Initializable {
             alert.showAndWait().get();
         } else {
             f.createNewFile();
+//            encrypt(AuthController.keyUser,f,f);
             //adicionar data à primeira linha
             BufferedWriter bw = new BufferedWriter(new FileWriter(f));
             bw.write(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
             bw.newLine();
             bw.write("------------\n");
             bw.close();
-            System.out.println("HERE");
             openFileFunction(fileName);
             // abrir ficheiro na textarea
             lstFiles.getItems().add(fileName);
             lstFiles.getSelectionModel().select(fileName);
             lstFiles.scrollTo(fileName);
 
-            TextArea textArea = (TextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
-            textArea.requestFocus();
+//            TextArea textArea = (TextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+//            textArea.requestFocus();
         }
     }
 
@@ -317,6 +357,7 @@ public class DiarioController implements Initializable {
             ButtonType b = alert.showAndWait().get();
             if (b == ButtonType.OK) {
                 f.delete();
+                tituloTabs.remove(tabPane.getSelectionModel().getSelectedIndex());
                 lstFiles.getItems().remove(fileName);
                 lstFiles.getSelectionModel().select(0);
                 tabPane.getTabs().remove(tabPane.getSelectionModel().getSelectedIndex());

@@ -10,7 +10,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Auth.fxml")));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("DiarioController.fxml")));
 
         Scene scene = new Scene(root);
 
