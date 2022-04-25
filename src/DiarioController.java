@@ -37,6 +37,8 @@ public class DiarioController implements Initializable {
     MenuItem zoomOut;
     @FXML
     MenuItem autoSave;
+    @FXML
+    MenuItem toPDF;
 
 
     @FXML
@@ -344,6 +346,29 @@ public class DiarioController implements Initializable {
 //        datePick.setValue(null);
     }
 
+//    @FXML
+//    private void toPDF() {
+//        TextArea textArea = (TextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+//        String diaryEntry = textArea.getText();
+//        PDFont font = PDType1Font.HELVETICA_BOLD;
+//        PDDocument doc = new PDDocument();
+//        PDPage page = new PDPage();
+//        PDPageContentStream content;
+//        try {
+//            content = new PDPageContentStream(doc, page);
+//            content.beginText();
+////            content.moveTextPositionByAmount(300, 400);
+////            content.setFont(font, 40);
+//            content.drawString(textArea.getText());
+//
+//            content.endText();
+//            content.close();
+//            doc.addPage(page);
+//            doc.save("example.pdf");
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//        }
+//    }
 
     /**
      * Initializes the controller class.
