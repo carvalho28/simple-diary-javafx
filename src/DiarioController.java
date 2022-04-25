@@ -8,8 +8,8 @@ import javafx.scene.input.*;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.*;
+import org.apache.pdfbox.pdmodel.font.encoding.WinAnsiEncoding;
 import org.bouncycastle.crypto.CryptoException;
 
 import javax.crypto.Cipher;
@@ -34,39 +34,7 @@ public class DiarioController implements Initializable {
     /* ENCRYTPION/ DECRYPTION */
     private static final String ALGORITHM = "AES";
     private static final String TRANSFORMATION = "AES";
-    private static void doCrypto(String key, File inputFile, File outputFile) throws CryptoException {
-        try {
-            Key secretKey = new SecretKeySpec(key.getBytes(), ALGORITHM);
-            Cipher cipher = Cipher.getInstance(TRANSFORMATION);
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-
-            FileInputStream inputStream = new FileInputStream(inputFile);
-            byte[] inputBytes = new byte[(int) inputFile.length()];
-            inputStream.read(inputBytes);
-
-            byte[] outputBytes = cipher.doFinal(inputBytes);
-
-            FileOutputStream outputStream = new FileOutputStream(outputFile);
-            outputStream.write(outputBytes);
-
-            inputStream.close();
-            outputStream.close();
-
-        } catch (Exception e) {
-            throw new CryptoException("Error encrypting/decrypting file", e);
-        }
-    }
-
-    public static void encrypt(String key, File inputFile, File outputFile) throws CryptoException {
-        doCrypto(key, inputFile, outputFile);
-    }
-
-    public static void decrypt(String key, File inputFile, File outputFile) throws CryptoException {
-        doCrypto(key, inputFile, outputFile);
-    }
-
-
-
+    String chave = AuthController.keyUser;
     @FXML
     MenuItem menuNovo;
     @FXML
@@ -104,6 +72,37 @@ public class DiarioController implements Initializable {
     private KeyCombination zoomInCombo = new KeyCodeCombination(KeyCode.EQUALS, KeyCodeCombination.META_DOWN);
     private KeyCombination zoomOutCombo = new KeyCodeCombination(KeyCode.MINUS, KeyCodeCombination.META_DOWN);
     private KeyCombination refreshCombo = new KeyCodeCombination(KeyCode.R, KeyCodeCombination.META_DOWN);
+
+    private static void doCrypto(int cipherMode, String key, File inputFile, File outputFile) throws CryptoException {
+        try {
+            Key secretKey = new SecretKeySpec(key.getBytes(), ALGORITHM);
+            Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+            cipher.init(cipherMode, secretKey);
+
+            FileInputStream inputStream = new FileInputStream(inputFile);
+            byte[] inputBytes = new byte[(int) inputFile.length()];
+            inputStream.read(inputBytes);
+
+            byte[] outputBytes = cipher.doFinal(inputBytes);
+
+            FileOutputStream outputStream = new FileOutputStream(outputFile);
+            outputStream.write(outputBytes);
+
+            inputStream.close();
+            outputStream.close();
+
+        } catch (Exception e) {
+            throw new CryptoException("Error encrypting/decrypting file", e);
+        }
+    }
+
+    public static void encrypt(String key, File inputFile, File outputFile) throws CryptoException {
+        doCrypto(Cipher.ENCRYPT_MODE, key, inputFile, outputFile);
+    }
+
+    public static void decrypt(String key, File inputFile, File outputFile) throws CryptoException {
+        doCrypto(Cipher.DECRYPT_MODE, key, inputFile, outputFile);
+    }
 
     // remover string tab tituloTabs on close
     @FXML
@@ -156,7 +155,7 @@ public class DiarioController implements Initializable {
 
     //shortcut to save
     @FXML
-    private void textAreaShortcuts(KeyEvent e) throws IOException {
+    private void textAreaShortcuts(KeyEvent e) throws IOException, CryptoException {
         if (saveCombo.match(e)) {
             saveFuntion();
         }
@@ -179,7 +178,6 @@ public class DiarioController implements Initializable {
         if (tituloTabs.contains(t1.getText())) {
             int index = tituloTabs.indexOf(t1.getText());
             tabPane.getSelectionModel().select(index);
-            System.out.println("AQUI");
         } else {
             TextArea textArea1 = new TextArea();
             t1.setContent(textArea1);
@@ -197,7 +195,7 @@ public class DiarioController implements Initializable {
             textArea1.setOnKeyPressed(event -> {
                 try {
                     textAreaShortcuts(event);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
@@ -205,6 +203,8 @@ public class DiarioController implements Initializable {
                 tituloTabs.remove(t1.getText());
             });
             try {
+                File f = new File("src/files/" + filePath);
+                decrypt(chave, f, f);
                 InputStream inputstream = new FileInputStream(pathFile);
                 InputStreamReader inputStreamReader = new InputStreamReader(inputstream, StandardCharsets.UTF_8);
                 int data = inputStreamReader.read();
@@ -215,8 +215,19 @@ public class DiarioController implements Initializable {
                     data = inputStreamReader.read();
                 }
                 inputstream.close();
-            } catch (Exception err) {
-                System.err.println(err.getMessage());
+
+                encrypt(chave, f, f);
+
+            } catch (CryptoException e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erro");
+                alert.setHeaderText("Este ficheiro não lhe pertence!");
+
+                alert.showAndWait();
+                t1.getTabPane().getTabs().remove(t1);
+                tituloTabs.remove(t1.getText());
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
             textArea1.setTextFormatter(new TextFormatter<String>((TextFormatter.Change c) -> {
@@ -232,7 +243,7 @@ public class DiarioController implements Initializable {
         }
     }
 
-    private void saveFuntion() throws IOException {
+    private void saveFuntion() throws IOException, CryptoException {
         if (lstFiles.getSelectionModel().getSelectedItem() == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Erro");
@@ -252,17 +263,19 @@ public class DiarioController implements Initializable {
         }
         bf.flush();
         bf.close();
+        File f = new File(pathFile);
+        encrypt(chave, f, f);
     }
 
 
     //Saves file
     @FXML
-    private void btnClick(ActionEvent e) throws IOException {
+    private void btnClick(ActionEvent e) throws IOException, CryptoException {
         saveFuntion();
     }
 
     @FXML
-    private void btnOpen(MouseEvent e) throws IOException {
+    private void btnOpen(MouseEvent e) throws IOException, CryptoException {
         if (!savedFile && !pathFile.equals("")) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Aviso!");
@@ -325,13 +338,13 @@ public class DiarioController implements Initializable {
             alert.showAndWait().get();
         } else {
             f.createNewFile();
-//            encrypt(AuthController.keyUser,f,f);
             //adicionar data à primeira linha
             BufferedWriter bw = new BufferedWriter(new FileWriter(f));
             bw.write(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
             bw.newLine();
             bw.write("------------\n");
             bw.close();
+            encrypt(chave, f, f);
             openFileFunction(fileName);
             // abrir ficheiro na textarea
             lstFiles.getItems().add(fileName);
@@ -444,15 +457,13 @@ public class DiarioController implements Initializable {
         File folder = new File("src/files");
         File[] listOfFiles = folder.listFiles();
         for (int i = 0; i < Objects.requireNonNull(listOfFiles).length; i++) {
-            if (listOfFiles[i].isFile()) {
+            if (listOfFiles[i].isFile() && listOfFiles[i].getName().endsWith(".txt")) {
                 items.add(listOfFiles[i].getName());
             }
         }
 
         lstFiles.setItems(items);
         tituloTabs.add(firstTab.getText());
-//        firstTab.setText("");
-
 
     }
 }
