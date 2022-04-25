@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.effect.Glow?>
+<?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="520.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="AuthController">
+   <left>
+      <AnchorPane prefHeight="407.0" prefWidth="228.0" style="-fx-background-color: #6096ba;" BorderPane.alignment="CENTER">
+         <children>
+            <Label alignment="CENTER" layoutX="2.0" layoutY="175.0" prefHeight="17.0" prefWidth="227.0" text="O meu Diário" textFill="WHITE">
+               <font>
+                  <Font name="Verdana Bold" size="24.0" />
+               </font>
+               <effect>
+                  <DropShadow />
+               </effect>
+            </Label>
+            <Label alignment="CENTER" layoutX="6.0" layoutY="223.0" prefHeight="70.0" prefWidth="227.0" text="Uma coisa bela nunca é perfeita" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+               <font>
+                  <Font name="Apple Braille Outline 6 Dot" size="18.0" />
+               </font>
+               <effect>
+                  <DropShadow />
+               </effect>
+            </Label>
+            <Line endX="100.0" layoutX="116.0" layoutY="223.0" startX="-100.0" stroke="WHITE" />
+            <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="41.0" layoutY="14.0" opacity="0.4" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/book2.png" />
+               </image>
+               <effect>
+                  <Glow />
+               </effect>
+            </ImageView>
+         </children>
+      </AnchorPane>
+   </left>
+   <right>
+      <AnchorPane prefHeight="400.0" prefWidth="332.0" style="-fx-background-color: #b4d2e7;" BorderPane.alignment="CENTER">
+         <children>
+            <Label alignment="CENTER" layoutX="4.0" layoutY="40.0" prefHeight="39.0" prefWidth="279.0" text="Login" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+               <font>
+                  <Font name="Apple Braille Outline 6 Dot" size="22.0" />
+               </font>
+               <effect>
+                  <InnerShadow />
+               </effect>
+            </Label>
+            <Label layoutX="24.0" layoutY="141.0" text="Username">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="26.0" layoutY="196.0" text="Password">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <TextField fx:id="usernameTF" layoutX="106.0" layoutY="128.0" />
+            <PasswordField fx:id="passwordTF" layoutX="106.0" layoutY="187.0" />
+            <Button fx:id="loginBTN" layoutX="24.0" layoutY="269.0" mnemonicParsing="false" onAction="#login" prefHeight="30.0" prefWidth="240.0" styleClass="btn" stylesheets="@styles/auth.css" text="Login" />
+            <Button fx:id="cancelBTN" layoutX="24.0" layoutY="331.0" mnemonicParsing="false" onAction="#cancel" prefHeight="30.0" prefWidth="240.0" styleClass="btn" stylesheets="@styles/auth.css" text="Cancel" />
+            <Label fx:id="loginMessageLB" alignment="CENTER" layoutX="12.0" layoutY="97.0" prefHeight="18.0" prefWidth="263.0" textFill="RED" />
+         </children>
+      </AnchorPane>
+   </right>
+</BorderPane>
