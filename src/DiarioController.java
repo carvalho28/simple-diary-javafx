@@ -362,12 +362,12 @@ public class DiarioController implements Initializable {
 //            content.beginText();
 ////            content.moveTextPositionByAmount(300, 400);
 ////            content.setFont(font, 40);
-//            content.drawString(textArea.getText());
+//            content.addComment(diaryEntry);
 //
 //            content.endText();
 //            content.close();
 //            doc.addPage(page);
-//            doc.save("example.pdf");
+//            doc.save(lstFiles.getSelectionModel().getSelectedItem() + ".pdf");
 //        } catch (Exception ex) {
 //            ex.printStackTrace();
 //        }
