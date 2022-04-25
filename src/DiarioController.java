@@ -377,7 +377,7 @@ public class DiarioController implements Initializable {
             // abrir ficheiro na textarea
             lstFiles.getSelectionModel().select(fileName);
             lstFiles.scrollTo(fileName);
-            pathFile = "src/files/" + dataFinal + ".txt";
+            pathFile = "src/files/" + dataFinal /*+ ".txt"*/;
             openFileFunction(dataFinal + ".txt");
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -390,29 +390,50 @@ public class DiarioController implements Initializable {
 //        datePick.setValue(null);
     }
 
-//    @FXML
-//    private void toPDF() {
-//        TextArea textArea = (TextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
-//        String diaryEntry = textArea.getText();
-//        PDFont font = PDType1Font.HELVETICA_BOLD;
-//        PDDocument doc = new PDDocument();
-//        PDPage page = new PDPage();
-//        PDPageContentStream content;
-//        try {
-//            content = new PDPageContentStream(doc, page);
-//            content.beginText();
-////            content.moveTextPositionByAmount(300, 400);
-////            content.setFont(font, 40);
-//            content.addComment(diaryEntry);
-//
-//            content.endText();
-//            content.close();
-//            doc.addPage(page);
-//            doc.save(lstFiles.getSelectionModel().getSelectedItem() + ".pdf");
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//        }
-//    }
+    @FXML
+    private void toPDF(ActionEvent e) {
+        try {
+            TextArea textArea = (TextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+            String diaryEntry = textArea.getText();
+            System.out.println(diaryEntry);
+            String fileName = lstFiles.getSelectionModel().getSelectedItem();
+            PDDocument doc = new PDDocument();
+            PDPage page = new PDPage();
+            PDPageContentStream content = new PDPageContentStream(doc, page);
+            content.beginText();
+            content.newLineAtOffset(25,750);
+            content.setFont(PDType1Font.HELVETICA_BOLD, 12);
+//            String aux = "";
+//            for (int i = 0; i < diaryEntry.length(); i++){
+//                if (diaryEntry.indexOf(i) == '\n'){
+//                    System.out.println(aux);
+//                    content.showText(aux);
+//                    content.newLine();
+//                    aux = "";
+//                }
+//                aux += diaryEntry.charAt(i);
+//            }
+            StringBuilder b = new StringBuilder();
+            content.setLeading(14.5f);
+            for (int i = 0; i < diaryEntry.length(); i++) {
+                if (WinAnsiEncoding.INSTANCE.contains(diaryEntry.charAt(i))) {
+                    b.append(diaryEntry.charAt(i));
+                } else {
+                    content.showText(b.toString());
+                    b = new StringBuilder();
+                    content.newLine();
+                }
+            }
+            System.out.println(b);
+            content.endText();
+            content.close();
+            doc.addPage(page);
+            doc.save("src/files/" + fileName + ".pdf");
+            doc.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
     /**
      * Initializes the controller class.
