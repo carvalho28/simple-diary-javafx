@@ -30,6 +30,8 @@ public class AuthController implements Initializable {
     @FXML
     Button cancelBTN;
     @FXML
+    Button registoBTN;
+    @FXML
     Label loginMessageLB;
 
     @FXML
@@ -53,6 +55,15 @@ public class AuthController implements Initializable {
     private void cancel(ActionEvent e){
         Stage stage = (Stage) cancelBTN.getScene().getWindow();
         stage.close();
+    }
+
+    @FXML
+    private void registo(ActionEvent e) throws IOException {
+        Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Register.fxml")));
+        Scene scene = new Scene(parent);
+        Stage appStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+        appStage.setScene(scene);
+        appStage.show();
     }
 
     public void validateLogin() {

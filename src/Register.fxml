@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="520.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="RegisterController">
+   <center>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #b4d2e7;" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="registoBTN" layoutX="140.0" layoutY="308.0" mnemonicParsing="false" onAction="#registo" prefHeight="30.0" prefWidth="240.0" styleClass="btn" stylesheets="@styles/auth.css" text="Registo" />
+            <Label layoutX="140.0" layoutY="140.0" text="Username">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="141.0" layoutY="222.0" text="Password">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <TextField fx:id="usernameTF" layoutX="228.0" layoutY="136.0" />
+            <PasswordField fx:id="passwordTF" layoutX="228.0" layoutY="214.0" />
+            <Label layoutX="84.0" layoutY="37.0" text="Registo de novo utilizador">
+               <font>
+                  <Font name="Verdana Bold" size="24.0" />
+               </font>
+               <effect>
+                  <InnerShadow />
+               </effect>
+            </Label>
+            <Label fx:id="registerMessageLB" alignment="CENTER" layoutX="129.0" layoutY="88.0" prefHeight="18.0" prefWidth="263.0" textFill="RED" />
+         </children>
+      </AnchorPane>
+   </center>
+</BorderPane>

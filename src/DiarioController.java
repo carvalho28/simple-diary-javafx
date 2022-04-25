@@ -5,10 +5,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -58,6 +62,11 @@ public class DiarioController implements Initializable {
     private String pathFile = "";
     private boolean savedFile = true;
     private boolean autoSaveToggle = false;
+    /* SHORTCUTS */
+    private KeyCombination saveCombo = new KeyCodeCombination(KeyCode.S, KeyCodeCombination.META_DOWN); //command Mac e Ctrl Windows
+    private KeyCombination zoomInCombo = new KeyCodeCombination(KeyCode.EQUALS, KeyCodeCombination.META_DOWN);
+    private KeyCombination zoomOutCombo = new KeyCodeCombination(KeyCode.MINUS, KeyCodeCombination.META_DOWN);
+    private KeyCombination refreshCombo = new KeyCodeCombination(KeyCode.R, KeyCodeCombination.META_DOWN);
 
     // remover string tab tituloTabs on close
     @FXML
@@ -108,24 +117,19 @@ public class DiarioController implements Initializable {
         }
     }
 
-    /* SHORTCUTS */
-    private KeyCombination saveCombo = new KeyCodeCombination(KeyCode.S, KeyCodeCombination.META_DOWN); //command Mac e Ctrl Windows
-    private KeyCombination zoomInCombo = new KeyCodeCombination(KeyCode.EQUALS, KeyCodeCombination.META_DOWN);
-    private KeyCombination zoomOutCombo = new KeyCodeCombination(KeyCode.MINUS, KeyCodeCombination.META_DOWN);
-    private KeyCombination refreshCombo = new KeyCodeCombination(KeyCode.R, KeyCodeCombination.META_DOWN);
     //shortcut to save
     @FXML
     private void textAreaShortcuts(KeyEvent e) throws IOException {
         if (saveCombo.match(e)) {
             saveFuntion();
         }
-        if (zoomInCombo.match(e)){
+        if (zoomInCombo.match(e)) {
             zoomIn.fire();
         }
-        if (zoomOutCombo.match(e)){
+        if (zoomOutCombo.match(e)) {
             zoomOut.fire();
         }
-        if (refreshCombo.match(e)){
+        if (refreshCombo.match(e)) {
             openFileFunction(pathFile);
         }
     }
@@ -179,10 +183,9 @@ public class DiarioController implements Initializable {
 
             textArea1.setTextFormatter(new TextFormatter<String>((TextFormatter.Change c) -> {
                 String proposed = c.getControlNewText();
-                if (proposed.startsWith(textArea1.getText(0,23))){
+                if (proposed.startsWith(textArea1.getText(0, 23))) {
                     return c;
-                }
-                else{
+                } else {
                     return null;
                 }
             }));
@@ -387,26 +390,6 @@ public class DiarioController implements Initializable {
         lstFiles.setItems(items);
         tituloTabs.add(firstTab.getText());
 //        firstTab.setText("");
-
-        // procura por nome do ficheiro
-//        FilteredList<String> filteredData = new FilteredList<>(items, p -> true);
-//        txfProcura.textProperty().addListener((observable, oldValue, newValue) -> {
-//            lstFiles.refresh();
-//            filteredData.setPredicate(item -> {
-//                if (newValue == null || newValue.isEmpty()) {
-//                    return true;
-//                }
-//                String lowerCaseFilter = newValue.toLowerCase();
-//                if (item.toLowerCase().contains(lowerCaseFilter)) {
-//                    return true;
-//                }
-//                return false;
-//
-//            });
-//        });
-
-//        SortedList<String> sortedData = new SortedList<>(filteredData);
-//        lstFiles.setItems(sortedData);
 
 
     }

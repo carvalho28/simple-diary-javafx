@@ -69,9 +69,10 @@
             </Label>
             <TextField fx:id="usernameTF" layoutX="106.0" layoutY="128.0" />
             <PasswordField fx:id="passwordTF" layoutX="106.0" layoutY="187.0" />
-            <Button fx:id="loginBTN" layoutX="24.0" layoutY="269.0" mnemonicParsing="false" onAction="#login" prefHeight="30.0" prefWidth="240.0" styleClass="btn" stylesheets="@styles/auth.css" text="Login" />
-            <Button fx:id="cancelBTN" layoutX="24.0" layoutY="331.0" mnemonicParsing="false" onAction="#cancel" prefHeight="30.0" prefWidth="240.0" styleClass="btn" stylesheets="@styles/auth.css" text="Cancel" />
+            <Button fx:id="loginBTN" layoutX="24.0" layoutY="248.0" mnemonicParsing="false" onAction="#login" prefHeight="30.0" prefWidth="240.0" styleClass="btn" stylesheets="@styles/auth.css" text="Login" />
+            <Button fx:id="cancelBTN" layoutX="24.0" layoutY="294.0" mnemonicParsing="false" onAction="#cancel" prefHeight="30.0" prefWidth="240.0" styleClass="btn" stylesheets="@styles/auth.css" text="Cancel" />
             <Label fx:id="loginMessageLB" alignment="CENTER" layoutX="12.0" layoutY="97.0" prefHeight="18.0" prefWidth="263.0" textFill="RED" />
+            <Button fx:id="registoBTN" layoutX="205.0" layoutY="356.0" mnemonicParsing="false" onAction="#registo" styleClass="btn" stylesheets="@styles/auth.css" text="Registo" />
          </children>
       </AnchorPane>
    </right>
