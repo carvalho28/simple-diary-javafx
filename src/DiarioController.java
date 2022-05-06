@@ -458,9 +458,7 @@ public class DiarioController implements Initializable {
     @FXML
     private void verificarOrtografia(ActionEvent e) throws IOException {
         TextArea textArea = (TextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
-        //get text from the third line in textarea
         String texto = textArea.getText().substring(textArea.getText().indexOf("\n") + 1).substring(textArea.getText().indexOf("\n") + 2).trim();
-        System.out.println(texto);
         JLanguageTool langTool = new JLanguageTool(new PortugalPortuguese());
         List<RuleMatch> matches = langTool.check(texto);
         ArrayList<String> errosInicio = new ArrayList<>();
@@ -473,16 +471,15 @@ public class DiarioController implements Initializable {
 //                    match.getSuggestedReplacements());
             errosInicio.add(String.valueOf(match.getFromPos()));
             errosFim.add(String.valueOf(match.getToPos()));
-
         }
+
         ArrayList<String> palavras = new ArrayList<>();
         if (errosInicio.size() > 0) {
             for (int i = 0; i < errosInicio.size(); i++) {
                 palavras.add(texto.substring(Integer.parseInt(errosInicio.get(i)), Integer.parseInt(errosFim.get(i))));
             }
         }
-        // underline words inside palavras in textarea
-
+        // underline as palavras erradas
     }
 
     /**
