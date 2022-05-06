@@ -11,6 +11,9 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.*;
 import org.apache.pdfbox.pdmodel.font.encoding.WinAnsiEncoding;
 import org.bouncycastle.crypto.CryptoException;
+import org.languagetool.JLanguageTool;
+import org.languagetool.language.PortugalPortuguese;
+import org.languagetool.rules.RuleMatch;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -52,6 +55,8 @@ public class DiarioController implements Initializable {
     @FXML
     MenuItem toPDF;
     @FXML
+    MenuItem ortografi;
+    @FXML
     TabPane tabPane;
     @FXML
     Tab firstTab;
@@ -67,6 +72,7 @@ public class DiarioController implements Initializable {
     private String pathFile = "";
     private boolean savedFile = true;
     private boolean autoSaveToggle = false;
+
     /* SHORTCUTS */
     private KeyCombination saveCombo = new KeyCodeCombination(KeyCode.S, KeyCodeCombination.META_DOWN); //command Mac e Ctrl Windows
     private KeyCombination zoomInCombo = new KeyCodeCombination(KeyCode.EQUALS, KeyCodeCombination.META_DOWN);
@@ -341,7 +347,7 @@ public class DiarioController implements Initializable {
             //adicionar data à primeira linha
             BufferedWriter bw = new BufferedWriter(new FileWriter(f));
             bw.write(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
-            bw.newLine();
+            bw.write("\n");
             bw.write("------------\n");
             bw.close();
             encrypt(chave, f, f);
@@ -446,6 +452,37 @@ public class DiarioController implements Initializable {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    /* ORTOGRAFIA */
+    @FXML
+    private void verificarOrtografia(ActionEvent e) throws IOException {
+        TextArea textArea = (TextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+        //get text from the third line in textarea
+        String texto = textArea.getText().substring(textArea.getText().indexOf("\n") + 1).substring(textArea.getText().indexOf("\n") + 2).trim();
+        System.out.println(texto);
+        JLanguageTool langTool = new JLanguageTool(new PortugalPortuguese());
+        List<RuleMatch> matches = langTool.check(texto);
+        ArrayList<String> errosInicio = new ArrayList<>();
+        ArrayList<String> errosFim = new ArrayList<>();
+        for (RuleMatch match : matches) {
+//            System.out.println("Potential error at characters " +
+//                    match.getFromPos() + "-" + match.getToPos() + ": " +
+//                    match.getMessage());
+//            System.out.println("Suggested correction(s): " +
+//                    match.getSuggestedReplacements());
+            errosInicio.add(String.valueOf(match.getFromPos()));
+            errosFim.add(String.valueOf(match.getToPos()));
+
+        }
+        ArrayList<String> palavras = new ArrayList<>();
+        if (errosInicio.size() > 0) {
+            for (int i = 0; i < errosInicio.size(); i++) {
+                palavras.add(texto.substring(Integer.parseInt(errosInicio.get(i)), Integer.parseInt(errosFim.get(i))));
+            }
+        }
+        // underline words inside palavras in textarea
+
     }
 
     /**
