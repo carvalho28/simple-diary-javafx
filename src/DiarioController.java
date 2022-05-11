@@ -75,6 +75,12 @@ public class DiarioController implements Initializable {
     private StyleClassedTextArea txaFicheiro;
     @FXML
     private DatePicker datePick;
+    //Ainda n existe datePick2 nem spinner  no scenebuilder
+    @FXML
+    private DatePicker datePick2;
+    @FXML
+    private ChoiceBox<String> dateSelectionType;
+    private String[] dateSelectionOptions = {"Dia", "Intervalo de Datas", "Todas as Datas"};
     private String pathFile = "";
     private boolean savedFile = true;
     private boolean autoSaveToggle = false;
@@ -556,6 +562,26 @@ public class DiarioController implements Initializable {
         lstFiles.setItems(items);
         tituloTabs.add(firstTab.getText());
 
+        //dateSelectionType.getItems().addAll(dateSelectionOptions);
+
+//        txfProcura.textProperty().addListener((observable, oldValue, newValue) -> {
+//            if (newValue.isEmpty()) {
+//                lstFiles.setItems(items);
+//            }
+//            else {
+//                String texto = txfProcura.getText();
+//
+//                File folder1 = new File("src/files");
+//                ArrayList<String> files = new ArrayList<>();
+//                try {
+//                    files = searchFiles(folder1, texto, files);
+//                } catch (FileNotFoundException ex) {
+//                    ex.printStackTrace();
+//                }
+//                lstFiles.setItems(FXCollections.observableArrayList(files));
+//            }
+//        }
+//        );
     }
 }
 
