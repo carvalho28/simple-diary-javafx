@@ -1,12 +1,17 @@
-.text-area{
+.styled-text-area{
     -fx-font-family: Monaco;
     -fx-font-size: 15px;
     -fx-display-caret:true;
     -fx-text-fill: #000000;
 }
 
-.text-area .content {
+.styled-text-area .content {
     -fx-background-color: #ffffff;
     -fx-border-width: 1px;
     -fx-border-radius: 1em;
+}
+
+.wrong-words {
+    -fx-fill: red;
+    -fx-underline: true;
 }

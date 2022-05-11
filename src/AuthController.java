@@ -44,6 +44,7 @@ public class AuthController implements Initializable {
             if (loginMessageLB.getText().equals("Login successful")){
                 Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("DiarioController.fxml")));
                 Scene scene = new Scene(parent);
+                scene.getStylesheets().add("/styles/diario.css");
                 Stage appStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
                 appStage.setScene(scene);
                 appStage.show();

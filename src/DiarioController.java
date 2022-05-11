@@ -1,3 +1,5 @@
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -8,12 +10,15 @@ import javafx.scene.input.*;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.*;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.encoding.WinAnsiEncoding;
 import org.bouncycastle.crypto.CryptoException;
+import org.fxmisc.richtext.StyleClassedTextArea;
+import org.fxmisc.richtext.model.Paragraph;
 import org.languagetool.JLanguageTool;
 import org.languagetool.language.PortugalPortuguese;
 import org.languagetool.rules.RuleMatch;
+import org.reactfx.collection.LiveList;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -61,18 +66,18 @@ public class DiarioController implements Initializable {
     @FXML
     Tab firstTab;
     ArrayList<String> tituloTabs = new ArrayList<>();
+    int tamFonte = 15;
     @FXML
     private TextField txfProcura;
     @FXML
     private ListView<String> lstFiles;
     @FXML
-    private TextArea txaFicheiro;
+    private StyleClassedTextArea txaFicheiro;
     @FXML
     private DatePicker datePick;
     private String pathFile = "";
     private boolean savedFile = true;
     private boolean autoSaveToggle = false;
-
     /* SHORTCUTS */
     private KeyCombination saveCombo = new KeyCodeCombination(KeyCode.S, KeyCodeCombination.META_DOWN); //command Mac e Ctrl Windows
     private KeyCombination zoomInCombo = new KeyCodeCombination(KeyCode.EQUALS, KeyCodeCombination.META_DOWN);
@@ -136,15 +141,17 @@ public class DiarioController implements Initializable {
     // zoom in
     @FXML
     private void zoomIn(ActionEvent e) {
-        TextArea textArea = (TextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
-        textArea.setStyle("-fx-font-size: " + (textArea.getFont().getSize() + 1) + "px;");
+        StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+        tamFonte += 1;
+        textArea.setStyle("-fx-font-size: " + (tamFonte + 1) + "px;");
     }
 
     @FXML
     // zoom out
     private void zoomOut(ActionEvent e) {
-        TextArea textArea = (TextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
-        textArea.setStyle("-fx-font-size: " + (textArea.getFont().getSize() - 1) + "px;");
+        StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+        tamFonte -= 1;
+        textArea.setStyle("-fx-font-size: " + (tamFonte - 1) + "px;");
     }
 
     //toggle autoSave
@@ -185,7 +192,7 @@ public class DiarioController implements Initializable {
             int index = tituloTabs.indexOf(t1.getText());
             tabPane.getSelectionModel().select(index);
         } else {
-            TextArea textArea1 = new TextArea();
+            StyleClassedTextArea textArea1 = new StyleClassedTextArea();
             t1.setContent(textArea1);
             tabPane.getTabs().add(t1);
             tabPane.getSelectionModel().select(t1);
@@ -236,17 +243,35 @@ public class DiarioController implements Initializable {
                 e.printStackTrace();
             }
 
-            textArea1.setTextFormatter(new TextFormatter<String>((TextFormatter.Change c) -> {
-                String proposed = c.getControlNewText();
-                if (proposed.startsWith(textArea1.getText(0, 23))) {
-                    return c;
-                } else {
-                    return null;
-                }
-            }));
+
+            // textarea cursor listener
+            textArea1.caretPositionProperty().addListener(new ChangeListener<Number>() {
+                                                              @Override
+                                                              public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                                                                  int caretPosition = textArea1.getCaretPosition();
+                                                                  if (caretPosition > 0 && caretPosition < 24) {
+                                                                      textArea1.setEditable(false);
+                                                                  } else {
+                                                                      textArea1.setEditable(true);
+                                                                  }
+                                                              }
+                                                          }
+            );
+        }
+
+
+//            textArea1.setTextFormatter(new TextFormatter<String>((TextFormatter.Change c) -> {
+//                String proposed = c.getControlNewText();
+//                if (proposed.startsWith(textArea1.getText(0, 23))) {
+//                    return c;
+//                } else {
+//                    return null;
+//                }
+//            }));
 
 //            textArea1.requestFocus();
-        }
+
+
     }
 
     private void saveFuntion() throws IOException, CryptoException {
@@ -258,13 +283,13 @@ public class DiarioController implements Initializable {
             alert.showAndWait();
         }
         //obter da tab aberta txarea
-        TextArea textArea = (TextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
-        ObservableList<CharSequence> paragraph = textArea.getParagraphs();
-        Iterator<CharSequence> iter = paragraph.iterator();
+        StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+        LiveList<Paragraph<Collection<String>, String, Collection<String>>> paragraph = textArea.getParagraphs();
+        Iterator<Paragraph<Collection<String>, String, Collection<String>>> iter = paragraph.iterator();
         BufferedWriter bf = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pathFile), StandardCharsets.UTF_8));
         while (iter.hasNext()) {
-            CharSequence seq = iter.next();
-            bf.append(seq);
+            Paragraph<Collection<String>, String, Collection<String>> seq = iter.next();
+            bf.append(seq.getText());
             bf.newLine();
         }
         bf.flush();
@@ -319,7 +344,7 @@ public class DiarioController implements Initializable {
             File f = new File("src/files/" + fileName);
             if (f.exists()) {
                 BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-                TextArea textArea = (TextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+                StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
                 bw.write(textArea.getText());
                 bw.close();
             }
@@ -412,7 +437,7 @@ public class DiarioController implements Initializable {
     @FXML
     private void toPDF(ActionEvent e) {
         try {
-            TextArea textArea = (TextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+            StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
             String diaryEntry = textArea.getText();
             System.out.println(diaryEntry);
             String fileName = lstFiles.getSelectionModel().getSelectedItem();
@@ -420,7 +445,7 @@ public class DiarioController implements Initializable {
             PDPage page = new PDPage();
             PDPageContentStream content = new PDPageContentStream(doc, page);
             content.beginText();
-            content.newLineAtOffset(25,750);
+            content.newLineAtOffset(25, 750);
             content.setFont(PDType1Font.HELVETICA_BOLD, 12);
 //            String aux = "";
 //            for (int i = 0; i < diaryEntry.length(); i++){
@@ -457,30 +482,62 @@ public class DiarioController implements Initializable {
     /* ORTOGRAFIA */
     @FXML
     private void verificarOrtografia(ActionEvent e) throws IOException {
-        TextArea textArea = (TextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
-        String texto = textArea.getText().substring(textArea.getText().indexOf("\n") + 1).substring(textArea.getText().indexOf("\n") + 2).trim();
+        StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+        String texto = textArea.getText(); //.substring(textArea.getText().indexOf("\n") + 1).substring(textArea.getText().indexOf("\n") + 2).trim()
         JLanguageTool langTool = new JLanguageTool(new PortugalPortuguese());
         List<RuleMatch> matches = langTool.check(texto);
-        ArrayList<String> errosInicio = new ArrayList<>();
-        ArrayList<String> errosFim = new ArrayList<>();
+        ArrayList<Integer> errosInicio = new ArrayList<>();
+        ArrayList<Integer> errosFim = new ArrayList<>();
+        ArrayList<String> correcoes = new ArrayList<>();
+        // add to erros inicio e erros fim  excepto as primeiras duas linhas
         for (RuleMatch match : matches) {
-//            System.out.println("Potential error at characters " +
-//                    match.getFromPos() + "-" + match.getToPos() + ": " +
-//                    match.getMessage());
-//            System.out.println("Suggested correction(s): " +
-//                    match.getSuggestedReplacements());
-            errosInicio.add(String.valueOf(match.getFromPos()));
-            errosFim.add(String.valueOf(match.getToPos()));
-        }
-
-        ArrayList<String> palavras = new ArrayList<>();
-        if (errosInicio.size() > 0) {
-            for (int i = 0; i < errosInicio.size(); i++) {
-                palavras.add(texto.substring(Integer.parseInt(errosInicio.get(i)), Integer.parseInt(errosFim.get(i))));
+            if (match.getFromPos() > 20) {
+                errosInicio.add(match.getFromPos());
+                errosFim.add(match.getToPos());
+                correcoes.add(String.valueOf(match.getSuggestedReplacements().get(0)));
             }
         }
-        // underline as palavras erradas
+        System.out.println(correcoes);
+
+        for (int i = 0; i < errosInicio.size(); i++) {
+            textArea.setStyleClass(errosInicio.get(i), errosFim.get(i), "wrong-words");
+        }
+
     }
+
+//    private ArrayList<String> searchFiles(File file, String pattern, ArrayList<String> result) throws FileNotFoundException {
+//        System.out.println(result);
+//        if (!file.isDirectory()) {
+//            throw new IllegalArgumentException("File " + file + " is not a directory");
+//        }
+//
+//        if (result == null) {
+//            result = new ArrayList<>();
+//        }
+//
+//        File[] files = file.listFiles();
+//
+//        if (files != null) {
+//            for (File f : files) {
+//                if (f.isDirectory()) {
+//                    searchFiles(f, pattern, result);
+//                } else {
+//                    Scanner scanner = new Scanner(f);
+//                    if (scanner.findWithinHorizon(pattern, 0) != null) {
+//                        result.add(f.getName());
+//                    }
+//                    scanner.close();
+//                }
+//            }
+//        }
+//        return result;
+//    }
+
+
+//    @FXML
+//    public void procurarNotas(ActionEvent e) {
+//
+//    }
 
     /**
      * Initializes the controller class.
