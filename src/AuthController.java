@@ -116,6 +116,10 @@ public class AuthController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
+//        scene.setOnKeyPressed(e -> {
+//            if (e.getCode() == KeyCode.ENTER) {
+//                loginBTN.fire();
+//            }
+//        });
     }
 }

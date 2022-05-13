@@ -49,7 +49,7 @@ public class DiarioController implements Initializable {
     private static final String TRANSFORMATION = "AES";
 
     private final String[] dateSelectionOptions = {"Dia", "Intervalo de Datas", "Todas as Datas"};
-    //private int dateSelectionIndex = 0 // 0->"Dia", 1->"Intervalo de Datas", 2->"Todas as Datas"
+    private int dateSelectionIndex = 0; // 0->"Dia", 1->"Intervalo de Datas", 2->"Todas as Datas"
     private final boolean savedFile = true;
     /* SHORTCUTS */
     private final KeyCombination saveCombo = new KeyCodeCombination(KeyCode.S, KeyCodeCombination.META_DOWN); //command Mac e Ctrl Windows
@@ -196,90 +196,177 @@ public class DiarioController implements Initializable {
         }
     }
 
+    private boolean isTabOpen(String newTitle) {
+        return tituloTabs.contains(newTitle);
+    }
+
     //Funcao que abre novo tab
     private void openFileFunction(String filePath) {
 //        System.out.println("Opening file: " + filePath);
         // set firstTab Text
-        Tab t1 = new Tab(filePath.substring(0, filePath.length() - 4));
-        // verificar se o texto da tab ja esta aberto
-        if (tituloTabs.contains(t1.getText())) {
-            int index = tituloTabs.indexOf(t1.getText());
-            tabPane.getSelectionModel().select(index);
-        } else {
-            StyleClassedTextArea textArea1 = new StyleClassedTextArea();
-            textArea1.setWrapText(true);
-            t1.setContent(textArea1);
-            tabPane.getTabs().add(t1);
-            tabPane.getSelectionModel().select(t1);
-            tituloTabs.add(t1.getText());
-            // formatter na textArea
-            textArea1.setOnKeyTyped(event -> {
+
+        if (dateSelectionIndex == 0) {
+            Tab t1 = new Tab(filePath.substring(0, filePath.length() - 4));
+
+            if (isTabOpen(t1.getText())) {
+                int index = tituloTabs.indexOf(t1.getText());
+                tabPane.getSelectionModel().select(index);
+            } else {
+                StyleClassedTextArea textArea1 = new StyleClassedTextArea();
+                textArea1.setWrapText(true);
+                t1.setContent(textArea1);
+                tabPane.getTabs().add(t1);
+                tabPane.getSelectionModel().select(t1);
+                tituloTabs.add(t1.getText());
+                // formatter na textArea
+                textArea1.setOnKeyTyped(event -> {
+                    try {
+                        keyPressedAutoSave(event);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+                textArea1.setOnKeyPressed(event -> {
+                    try {
+                        textAreaShortcuts(event);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+                t1.setOnClosed(event -> {
+                    tituloTabs.remove(t1.getText());
+                });
                 try {
-                    keyPressedAutoSave(event);
+                    File f = new File("src/files/" + filePath);
+                    decrypt(chave, f, f);
+                    InputStream inputstream = new FileInputStream(pathFile);
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputstream, StandardCharsets.UTF_8);
+                    int data = inputStreamReader.read();
+
+                    while (data != -1) {
+                        char aChar = (char) data;
+                        textArea1.appendText(String.valueOf(aChar));
+                        data = inputStreamReader.read();
+                    }
+                    inputstream.close();
+
+                    encrypt(chave, f, f);
+                } catch (CryptoException e) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Erro");
+                    alert.setHeaderText("Este ficheiro não lhe pertence!");
+
+                    alert.showAndWait();
+                    t1.getTabPane().getTabs().remove(t1);
+                    tituloTabs.remove(t1.getText());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            });
-            textArea1.setOnKeyPressed(event -> {
-                try {
-                    textAreaShortcuts(event);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-            t1.setOnClosed(event -> {
-                tituloTabs.remove(t1.getText());
-            });
-            try {
-                File f = new File("src/files/" + filePath);
-                decrypt(chave, f, f);
-                InputStream inputstream = new FileInputStream(pathFile);
-                InputStreamReader inputStreamReader = new InputStreamReader(inputstream, StandardCharsets.UTF_8);
-                int data = inputStreamReader.read();
 
-                while (data != -1) {
-                    char aChar = (char) data;
-                    textArea1.appendText(String.valueOf(aChar));
-                    data = inputStreamReader.read();
-                }
-                inputstream.close();
-
-                encrypt(chave, f, f);
-
-            } catch (CryptoException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Erro");
-                alert.setHeaderText("Este ficheiro não lhe pertence!");
-
-                alert.showAndWait();
-                t1.getTabPane().getTabs().remove(t1);
-                tituloTabs.remove(t1.getText());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            String dataDia = (new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
+                String dataDia = (new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
 //            bw.write("\n");
 //            bw.write("------------\n");
-            String conteudoImo = dataDia + "\n------------\n";
-            // textarea cursor listener
-            textArea1.caretPositionProperty().addListener((ChangeListener<Number>) (observable, oldValue, newValue) -> {
-                int caretPosition = textArea1.getCaretPosition();
+                String conteudoImo = dataDia + "\n------------\n";
+                // textarea cursor listener
+                textArea1.caretPositionProperty().addListener((ChangeListener<Number>) (observable, oldValue, newValue) -> {
+                    int caretPosition = textArea1.getCaretPosition();
 
-                if (caretPosition >= 0 && caretPosition < 24) {
+                    if (caretPosition >= 0 && caretPosition < 24) {
 //                    textArea1.displaceCaret(25);
-                    String remaining = "";
-                    char[] remainigChars = conteudoImo.toCharArray();
-                    for (int i = caretPosition; i < 24; i++) {
-                        remaining += remainigChars[i];
+                        String remaining = "";
+                        char[] remainigChars = conteudoImo.toCharArray();
+                        for (int i = caretPosition; i < 24; i++) {
+                            remaining += remainigChars[i];
+                        }
+                        textArea1.replaceText(caretPosition, 23, remaining);
                     }
-                    textArea1.replaceText(caretPosition, 23, remaining);
-                }
-
-
-            });
+                });
+            }
+        }
+        if (dateSelectionIndex == 1) {
 
         }
+
+//        Tab t1 = new Tab(filePath.substring(0, filePath.length() - 4));
+//        // verificar se o texto da tab ja esta aberto
+//        if (tituloTabs.contains(t1.getText())) {
+//            int index = tituloTabs.indexOf(t1.getText());
+//            tabPane.getSelectionModel().select(index);
+//        } else {
+//            StyleClassedTextArea textArea1 = new StyleClassedTextArea();
+//            textArea1.setWrapText(true);
+//            t1.setContent(textArea1);
+//            tabPane.getTabs().add(t1);
+//            tabPane.getSelectionModel().select(t1);
+//            tituloTabs.add(t1.getText());
+//            // formatter na textArea
+//            textArea1.setOnKeyTyped(event -> {
+//                try {
+//                    keyPressedAutoSave(event);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            });
+//            textArea1.setOnKeyPressed(event -> {
+//                try {
+//                    textAreaShortcuts(event);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            });
+//            t1.setOnClosed(event -> {
+//                tituloTabs.remove(t1.getText());
+//            });
+//            try {
+//                File f = new File("src/files/" + filePath);
+//                decrypt(chave, f, f);
+//                InputStream inputstream = new FileInputStream(pathFile);
+//                InputStreamReader inputStreamReader = new InputStreamReader(inputstream, StandardCharsets.UTF_8);
+//                int data = inputStreamReader.read();
+//
+//                while (data != -1) {
+//                    char aChar = (char) data;
+//                    textArea1.appendText(String.valueOf(aChar));
+//                    data = inputStreamReader.read();
+//                }
+//                inputstream.close();
+//
+//                encrypt(chave, f, f);
+//
+//            } catch (CryptoException e) {
+//                Alert alert = new Alert(Alert.AlertType.ERROR);
+//                alert.setTitle("Erro");
+//                alert.setHeaderText("Este ficheiro não lhe pertence!");
+//
+//                alert.showAndWait();
+//                t1.getTabPane().getTabs().remove(t1);
+//                tituloTabs.remove(t1.getText());
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//            String dataDia = (new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
+////            bw.write("\n");
+////            bw.write("------------\n");
+//            String conteudoImo = dataDia + "\n------------\n";
+//            // textarea cursor listener
+//            textArea1.caretPositionProperty().addListener((ChangeListener<Number>) (observable, oldValue, newValue) -> {
+//                int caretPosition = textArea1.getCaretPosition();
+//
+//                if (caretPosition >= 0 && caretPosition < 24) {
+////                    textArea1.displaceCaret(25);
+//                    String remaining = "";
+//                    char[] remainigChars = conteudoImo.toCharArray();
+//                    for (int i = caretPosition; i < 24; i++) {
+//                        remaining += remainigChars[i];
+//                    }
+//                    textArea1.replaceText(caretPosition, 23, remaining);
+//                }
+//
+//
+//            });
+//
+//        }
 
     }
 
@@ -587,14 +674,17 @@ public class DiarioController implements Initializable {
         if (dateSelectionType.getValue().equals("Dia")) {
             datePick.setVisible(true);
             datePick2.setVisible(false);
+            dateSelectionIndex = 0;
         }
         if (dateSelectionType.getValue().equals("Intervalo de Datas")) {
             datePick.setVisible(true);
             datePick2.setVisible(true);
+            dateSelectionIndex = 1;
         }
         if (dateSelectionType.getValue().equals("Todas as Datas")) {
             datePick.setVisible(false);
             datePick2.setVisible(false);
+            dateSelectionIndex = 2;
         }
     }
 
