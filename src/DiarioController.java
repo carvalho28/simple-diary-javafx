@@ -1,13 +1,16 @@
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Cursor;
+
+import javafx.print.PageLayout;
+import javafx.print.PrinterJob;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -24,7 +27,6 @@ import org.reactfx.collection.LiveList;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import javax.print.PrintException;
-import java.awt.print.PrinterJob;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -72,7 +74,7 @@ public class DiarioController implements Initializable {
     @FXML
     MenuItem toPDF;
     @FXML
-    MenuItem ortografi;
+    MenuItem imprimir;
     @FXML
     TabPane tabPane;
     @FXML
@@ -516,10 +518,33 @@ public class DiarioController implements Initializable {
     // print content of textarea to printer
     @FXML
     private void print(ActionEvent e) throws IOException, PrintException {
+        System.out.println(tituloTabs);
+        if (tituloTabs.size() == 1 && tituloTabs.get(0).equals("Tab")) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erro");
+            alert.setHeaderText("Impossível imprimir");
+            alert.setContentText("Não existem textos para imprimir");
+            alert.showAndWait();
+            return;
+        }
         StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
-        String texto = textArea.getText();
-        PrinterJob job = PrinterJob.getPrinterJob();
 
+        TextFlow printArea = new TextFlow(new Text(textArea.getText()));
+
+        PrinterJob printerJob = PrinterJob.createPrinterJob();
+
+        if (printerJob != null && printerJob.showPrintDialog(textArea.getScene().getWindow())) {
+            PageLayout pageLayout = printerJob.getJobSettings().getPageLayout();
+            printArea.setMaxWidth(pageLayout.getPrintableWidth());
+            if (printerJob.printPage(printArea)) {
+                printerJob.endJob();
+                // done printing
+            } else {
+                System.out.println("Falhou a impressão");
+            }
+        } else {
+            System.out.println("Cancelado");
+        }
     }
 
     private boolean checkIfWordExistsFile(String path, String word) throws CryptoException {

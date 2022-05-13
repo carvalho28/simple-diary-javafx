@@ -9,25 +9,24 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="520.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="RegisterController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="520.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="RegisterController">
    <center>
       <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #b4d2e7;" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="registoBTN" layoutX="140.0" layoutY="308.0" mnemonicParsing="false" onAction="#registo" prefHeight="30.0" prefWidth="240.0" styleClass="btn" stylesheets="@styles/auth.css" text="Registo" />
-            <Label layoutX="140.0" layoutY="140.0" text="Username">
+            <Button fx:id="registoBTN" layoutX="140.0" layoutY="308.0" mnemonicParsing="false" onAction="#registo" styleClass="btn" stylesheets="@styles/auth.css" text="Registo" AnchorPane.leftAnchor="140.0" AnchorPane.rightAnchor="140.0" />
+            <Label layoutX="140.0" layoutY="140.0" text="Username" AnchorPane.leftAnchor="140.0">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
-            <Label layoutX="141.0" layoutY="222.0" text="Password">
+            <Label layoutX="141.0" layoutY="222.0" text="Password" AnchorPane.leftAnchor="140.0">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
-            <TextField fx:id="usernameTF" layoutX="228.0" layoutY="136.0" />
-            <PasswordField fx:id="passwordTF" layoutX="228.0" layoutY="214.0" />
-            <Label layoutX="84.0" layoutY="37.0" text="Registo de novo utilizador">
+            <TextField fx:id="usernameTF" layoutX="228.0" layoutY="136.0" AnchorPane.leftAnchor="231.0" AnchorPane.rightAnchor="140.0" />
+            <PasswordField fx:id="passwordTF" layoutX="228.0" layoutY="214.0" AnchorPane.leftAnchor="231.0" AnchorPane.rightAnchor="140.0" />
+            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="84.0" layoutY="37.0" text="Registo de novo utilizador" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                <font>
                   <Font name="Verdana Bold" size="24.0" />
                </font>

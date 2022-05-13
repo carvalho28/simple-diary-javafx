@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
@@ -14,11 +15,11 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="520.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="AuthController">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="AuthController">
    <left>
-      <AnchorPane prefHeight="407.0" prefWidth="228.0" style="-fx-background-color: #6096ba;" BorderPane.alignment="CENTER">
+      <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="300.0" style="-fx-background-color: #6096ba;" BorderPane.alignment="CENTER">
          <children>
-            <Label alignment="CENTER" layoutX="2.0" layoutY="175.0" prefHeight="17.0" prefWidth="227.0" text="O meu Diário" textFill="WHITE">
+            <Label alignment="CENTER" layoutX="2.0" layoutY="175.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="O meu Diário" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                <font>
                   <Font name="Verdana Bold" size="24.0" />
                </font>
@@ -26,7 +27,7 @@
                   <DropShadow />
                </effect>
             </Label>
-            <Label alignment="CENTER" layoutX="6.0" layoutY="223.0" prefHeight="70.0" prefWidth="227.0" text="Uma coisa bela nunca é perfeita" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+            <Label alignment="CENTER" layoutX="6.0" layoutY="223.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Uma coisa bela nunca é perfeita" textAlignment="CENTER" textFill="WHITE" wrapText="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                <font>
                   <Font name="Apple Braille Outline 6 Dot" size="18.0" />
                </font>
@@ -34,8 +35,8 @@
                   <DropShadow />
                </effect>
             </Label>
-            <Line endX="100.0" layoutX="116.0" layoutY="223.0" startX="-100.0" stroke="WHITE" />
-            <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="41.0" layoutY="14.0" opacity="0.4" pickOnBounds="true" preserveRatio="true">
+            <Line endX="182.5" layoutX="116.0" layoutY="223.0" startX="-100.0" stroke="WHITE" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" />
+            <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="77.0" layoutY="14.0" opacity="0.4" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@images/book2.png" />
                </image>
@@ -46,10 +47,10 @@
          </children>
       </AnchorPane>
    </left>
-   <right>
-      <AnchorPane prefHeight="400.0" prefWidth="332.0" style="-fx-background-color: #b4d2e7;" BorderPane.alignment="CENTER">
+   <center>
+      <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="380.0" style="-fx-background-color: #b4d2e7;" BorderPane.alignment="CENTER">
          <children>
-            <Label alignment="CENTER" layoutX="4.0" layoutY="40.0" prefHeight="39.0" prefWidth="279.0" text="Login" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+            <Label alignment="CENTER" layoutX="4.0" layoutY="40.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Login" textAlignment="CENTER" textFill="WHITE" wrapText="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                <font>
                   <Font name="Apple Braille Outline 6 Dot" size="22.0" />
                </font>
@@ -57,23 +58,29 @@
                   <InnerShadow />
                </effect>
             </Label>
-            <Label layoutX="24.0" layoutY="141.0" text="Username">
+            <Label layoutX="24.0" layoutY="131.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Username" AnchorPane.leftAnchor="26.0">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
-            <Label layoutX="26.0" layoutY="196.0" text="Password">
+            <Label layoutX="26.0" layoutY="190.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Password" AnchorPane.leftAnchor="26.0">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
-            <TextField fx:id="usernameTF" layoutX="106.0" layoutY="128.0" />
-            <PasswordField fx:id="passwordTF" layoutX="106.0" layoutY="187.0" />
-            <Button fx:id="loginBTN" layoutX="24.0" layoutY="248.0" mnemonicParsing="false" onAction="#login" prefHeight="30.0" prefWidth="240.0" styleClass="btn" stylesheets="@styles/auth.css" text="Login" />
-            <Button fx:id="cancelBTN" layoutX="24.0" layoutY="294.0" mnemonicParsing="false" onAction="#cancel" prefHeight="30.0" prefWidth="240.0" styleClass="btn" stylesheets="@styles/auth.css" text="Cancel" />
+            <TextField fx:id="usernameTF" layoutX="106.0" layoutY="128.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.leftAnchor="106.0" AnchorPane.rightAnchor="20.0" />
+            <PasswordField fx:id="passwordTF" layoutX="106.0" layoutY="187.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.leftAnchor="106.0" AnchorPane.rightAnchor="20.0" />
+            <Button fx:id="loginBTN" layoutX="24.0" layoutY="248.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#login" styleClass="btn" stylesheets="@styles/auth.css" text="Login" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0">
+               <padding>
+                  <Insets bottom="5.0" top="5.0" />
+               </padding></Button>
+            <Button fx:id="cancelBTN" layoutX="24.0" layoutY="294.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#cancel" styleClass="btn" stylesheets="@styles/auth.css" text="Cancel" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0">
+               <padding>
+                  <Insets bottom="5.0" top="5.0" />
+               </padding></Button>
             <Label fx:id="loginMessageLB" alignment="CENTER" layoutX="12.0" layoutY="97.0" prefHeight="18.0" prefWidth="263.0" textFill="RED" />
-            <Button fx:id="registoBTN" layoutX="205.0" layoutY="356.0" mnemonicParsing="false" onAction="#registo" styleClass="btn" stylesheets="@styles/auth.css" text="Registo" />
+            <Button fx:id="registoBTN" layoutX="190.0" layoutY="341.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#registo" styleClass="btn" stylesheets="@styles/auth.css" text="Registo" AnchorPane.leftAnchor="190.0" AnchorPane.rightAnchor="25.0" />
          </children>
       </AnchorPane>
-   </right>
+   </center>
 </BorderPane>

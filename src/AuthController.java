@@ -8,6 +8,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 import javax.swing.plaf.nimbus.State;
@@ -35,6 +37,7 @@ public class AuthController implements Initializable {
     Label loginMessageLB;
 
     public static String keyUser = "";
+
 
     @FXML
     private void login(ActionEvent e) throws IOException {
@@ -100,6 +103,16 @@ public class AuthController implements Initializable {
             e.printStackTrace();
         }
     }
+
+//    private void loginOnEnterPress(ActionEvent e) {
+//        Scene scene = loginBTN.getScene();
+//        scene.setOnKeyPressed(e -> {
+//            if (e.getCode() == KeyCode.ENTER) {
+//                    loginBTN.fire();
+//
+//            }
+//        });
+//    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

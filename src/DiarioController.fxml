@@ -33,6 +33,7 @@
                               <MenuItem fx:id="autoSave" mnemonicParsing="false" onAction="#autoSave" text="AutoSave " />
                               <MenuItem fx:id="toPDF" mnemonicParsing="false" onAction="#toPDF" text="Export to PDF" />
                               <MenuItem fx:id="ortografia" mnemonicParsing="false" onAction="#verificarOrtografia" text="Verificar Ortografia" />
+                              <MenuItem fx:id="imprimir" mnemonicParsing="false" onAction="#print" text="Imprimir" />
                         </items>
                       </Menu>
                         <Menu mnemonicParsing="false" text="View">
