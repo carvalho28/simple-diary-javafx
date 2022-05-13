@@ -15,3 +15,15 @@
     -fx-fill: red;
     -fx-underline: true;
 }
+
+.list-cell {
+    -fx-font-size: 15px;
+}
+
+.menu .label{
+    -fx-font-size: 15px;
+}
+
+.tab .tab-label {
+    -fx-font-size: 15px;
+}

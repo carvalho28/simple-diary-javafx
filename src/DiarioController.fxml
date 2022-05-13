@@ -1,27 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
 <?import org.fxmisc.richtext.StyleClassedTextArea?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#keyPressedChange" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="DiarioController">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="1000.0" onKeyPressed="#keyPressedChange" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="DiarioController">
    <left>
-      <SplitPane dividerPositions="0.4296482412060301" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
-        <items>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="90.0" prefWidth="158.0">
+      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-border-color: black;">
+         <children>
+          <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                <children>
-                  <DatePicker fx:id="datePick" layoutX="32.0" layoutY="51.0" onAction="#pickDate" prefHeight="25.0" prefWidth="93.0" />
-                  <TextField fx:id="txfProcura" layoutX="14.0" layoutY="129.0" prefHeight="25.0" prefWidth="129.0" />
-                  <MenuBar layoutX="-1.0" layoutY="1.0" prefHeight="27.0" prefWidth="159.0">
+                  <DatePicker fx:id="datePick" layoutX="39.0" layoutY="160.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#pickDate" />
+                  <TextField fx:id="txfProcura" layoutX="51.0" layoutY="39.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                  <MenuBar layoutX="-1.0" layoutY="1.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="248.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <menus>
                       <Menu mnemonicParsing="false" text="File">
                         <items>
@@ -45,25 +47,30 @@
                         </items>
                       </Menu>
                     </menus>
+                     <padding>
+                        <Insets left="10.0" top="2.0" />
+                     </padding>
                   </MenuBar>
+                  <ChoiceBox fx:id="dateSelectionType" layoutX="100.0" layoutY="109.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                  <DatePicker fx:id="datePick2" layoutX="39.0" layoutY="201.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                </children>
             </AnchorPane>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+          <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                <children>
-                  <ListView fx:id="lstFiles" onMouseClicked="#btnOpen" prefHeight="223.0" prefWidth="158.0" />
+                  <ListView fx:id="lstFiles" layoutY="19.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#btnOpen" prefHeight="381.0" prefWidth="248.0" stylesheets="@styles/diario.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="19.0" />
                </children>
             </AnchorPane>
-        </items>
-      </SplitPane>
+         </children>
+      </VBox>
    </left>
    <center>
-      <TabPane fx:id="tabPane" onKeyTyped="#keyPressedAutoSave" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onKeyTyped="#keyPressedAutoSave" BorderPane.alignment="CENTER">
         <tabs>
           <Tab fx:id="firstTab" text="Tab">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="380.0" prefWidth="440.0">
+              <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                      <children>
-                        <StyleClassedTextArea fx:id="txaFicheiro" prefHeight="369.0" prefWidth="439.0" />
+                        <StyleClassedTextArea fx:id="txaFicheiro" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                      </children>
                   </AnchorPane>
             </content>

@@ -22,6 +22,11 @@ import org.reactfx.collection.LiveList;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+import javax.print.*;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
+import javax.print.attribute.standard.Copies;
+import java.awt.print.PrinterJob;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -42,6 +47,7 @@ public class DiarioController implements Initializable {
     /* ENCRYTPION/ DECRYPTION */
     private static final String ALGORITHM = "AES";
     private static final String TRANSFORMATION = "AES";
+    private final String[] dateSelectionOptions = {"Dia", "Intervalo de Datas", "Todas as Datas"};
     String chave = AuthController.keyUser;
     @FXML
     MenuItem menuNovo;
@@ -252,16 +258,12 @@ public class DiarioController implements Initializable {
 
             // textarea cursor listener
             textArea1.caretPositionProperty().addListener(new ChangeListener<Number>() {
-                                                              @Override
-                                                              public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                                                                  int caretPosition = textArea1.getCaretPosition();
-                                                                  if (caretPosition > 0 && caretPosition < 24) {
-                                                                      textArea1.setEditable(false);
-                                                                  } else {
-                                                                      textArea1.setEditable(true);
-                                                                  }
-                                                              }
-                                                          }
+                  @Override
+                  public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                      int caretPosition = textArea1.getCaretPosition();
+                      textArea1.setEditable(caretPosition <= 0 || caretPosition >= 24);
+                  }
+              }
             );
         }
 
@@ -511,39 +513,30 @@ public class DiarioController implements Initializable {
 
     }
 
-//    private ArrayList<String> searchFiles(File file, String pattern, ArrayList<String> result) throws FileNotFoundException {
-//        System.out.println(result);
-//        if (!file.isDirectory()) {
-//            throw new IllegalArgumentException("File " + file + " is not a directory");
-//        }
-//
-//        if (result == null) {
-//            result = new ArrayList<>();
-//        }
-//
-//        File[] files = file.listFiles();
-//
-//        if (files != null) {
-//            for (File f : files) {
-//                if (f.isDirectory()) {
-//                    searchFiles(f, pattern, result);
-//                } else {
-//                    Scanner scanner = new Scanner(f);
-//                    if (scanner.findWithinHorizon(pattern, 0) != null) {
-//                        result.add(f.getName());
-//                    }
-//                    scanner.close();
-//                }
-//            }
-//        }
-//        return result;
-//    }
 
+    // print content of textarea to printer
+    @FXML
+    private void print(ActionEvent e) throws IOException, PrintException {
+        StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+        String texto = textArea.getText();
+        PrinterJob job = PrinterJob.getPrinterJob();
 
-//    @FXML
-//    public void procurarNotas(ActionEvent e) {
-//
-//    }
+    }
+
+    public void selectionType(ActionEvent e) {
+        if (dateSelectionType.getValue().equals("Dia")) {
+            datePick.setVisible(true);
+            datePick2.setVisible(false);
+        }
+        if (dateSelectionType.getValue().equals("Intervalo de Datas")) {
+            datePick.setVisible(true);
+            datePick2.setVisible(true);
+        }
+        if (dateSelectionType.getValue().equals("Todas as Datas")) {
+            datePick.setVisible(false);
+            datePick2.setVisible(false);
+        }
+    }
 
     /**
      * Initializes the controller class.
@@ -562,26 +555,11 @@ public class DiarioController implements Initializable {
         lstFiles.setItems(items);
         tituloTabs.add(firstTab.getText());
 
-        //dateSelectionType.getItems().addAll(dateSelectionOptions);
+        dateSelectionType.getItems().addAll(dateSelectionOptions);
+        dateSelectionType.setValue(dateSelectionOptions[0]);
+        dateSelectionType.setOnAction(this::selectionType);
 
-//        txfProcura.textProperty().addListener((observable, oldValue, newValue) -> {
-//            if (newValue.isEmpty()) {
-//                lstFiles.setItems(items);
-//            }
-//            else {
-//                String texto = txfProcura.getText();
-//
-//                File folder1 = new File("src/files");
-//                ArrayList<String> files = new ArrayList<>();
-//                try {
-//                    files = searchFiles(folder1, texto, files);
-//                } catch (FileNotFoundException ex) {
-//                    ex.printStackTrace();
-//                }
-//                lstFiles.setItems(FXCollections.observableArrayList(files));
-//            }
-//        }
-//        );
+        datePick2.setVisible(false);
     }
 }
 
