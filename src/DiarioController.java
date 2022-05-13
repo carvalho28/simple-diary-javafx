@@ -86,7 +86,6 @@ public class DiarioController implements Initializable {
     private DatePicker datePick2;
     @FXML
     private ChoiceBox<String> dateSelectionType;
-    private String[] dateSelectionOptions = {"Dia", "Intervalo de Datas", "Todas as Datas"};
     private String pathFile = "";
     private boolean savedFile = true;
     private boolean autoSaveToggle = false;
