@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -22,10 +23,7 @@ import org.reactfx.collection.LiveList;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
-import javax.print.*;
-import javax.print.attribute.HashPrintRequestAttributeSet;
-import javax.print.attribute.PrintRequestAttributeSet;
-import javax.print.attribute.standard.Copies;
+import javax.print.PrintException;
 import java.awt.print.PrinterJob;
 import java.io.*;
 import java.net.URL;
@@ -48,6 +46,13 @@ public class DiarioController implements Initializable {
     private static final String ALGORITHM = "AES";
     private static final String TRANSFORMATION = "AES";
     private final String[] dateSelectionOptions = {"Dia", "Intervalo de Datas", "Todas as Datas"};
+    //private int dateSelectionIndex = 0 // 0->"Dia", 1->"Intervalo de Datas", 2->"Todas as Datas"
+    private final boolean savedFile = true;
+    /* SHORTCUTS */
+    private final KeyCombination saveCombo = new KeyCodeCombination(KeyCode.S, KeyCodeCombination.META_DOWN); //command Mac e Ctrl Windows
+    private final KeyCombination zoomInCombo = new KeyCodeCombination(KeyCode.EQUALS, KeyCodeCombination.META_DOWN);
+    private final KeyCombination zoomOutCombo = new KeyCodeCombination(KeyCode.MINUS, KeyCodeCombination.META_DOWN);
+    private final KeyCombination refreshCombo = new KeyCodeCombination(KeyCode.R, KeyCodeCombination.META_DOWN);
     String chave = AuthController.keyUser;
     @FXML
     MenuItem menuNovo;
@@ -87,13 +92,7 @@ public class DiarioController implements Initializable {
     @FXML
     private ChoiceBox<String> dateSelectionType;
     private String pathFile = "";
-    private boolean savedFile = true;
     private boolean autoSaveToggle = false;
-    /* SHORTCUTS */
-    private KeyCombination saveCombo = new KeyCodeCombination(KeyCode.S, KeyCodeCombination.META_DOWN); //command Mac e Ctrl Windows
-    private KeyCombination zoomInCombo = new KeyCodeCombination(KeyCode.EQUALS, KeyCodeCombination.META_DOWN);
-    private KeyCombination zoomOutCombo = new KeyCodeCombination(KeyCode.MINUS, KeyCodeCombination.META_DOWN);
-    private KeyCombination refreshCombo = new KeyCodeCombination(KeyCode.R, KeyCodeCombination.META_DOWN);
 
     private static void doCrypto(int cipherMode, String key, File inputFile, File outputFile) throws CryptoException {
         try {
@@ -204,6 +203,7 @@ public class DiarioController implements Initializable {
             tabPane.getSelectionModel().select(index);
         } else {
             StyleClassedTextArea textArea1 = new StyleClassedTextArea();
+            textArea1.setWrapText(true);
             t1.setContent(textArea1);
             tabPane.getTabs().add(t1);
             tabPane.getSelectionModel().select(t1);
@@ -254,30 +254,28 @@ public class DiarioController implements Initializable {
                 e.printStackTrace();
             }
 
-
+            String dataDia = (new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
+//            bw.write("\n");
+//            bw.write("------------\n");
+            String conteudoImo = dataDia + "\n------------\n";
             // textarea cursor listener
-            textArea1.caretPositionProperty().addListener(new ChangeListener<Number>() {
-                  @Override
-                  public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                      int caretPosition = textArea1.getCaretPosition();
-                      textArea1.setEditable(caretPosition <= 0 || caretPosition >= 24);
-                  }
-              }
-            );
+            textArea1.caretPositionProperty().addListener((ChangeListener<Number>) (observable, oldValue, newValue) -> {
+                int caretPosition = textArea1.getCaretPosition();
+
+                if (caretPosition >= 0 && caretPosition < 24) {
+//                    textArea1.displaceCaret(25);
+                    String remaining = "";
+                    char[] remainigChars = conteudoImo.toCharArray();
+                    for (int i = caretPosition; i < 24; i++) {
+                        remaining += remainigChars[i];
+                    }
+                    textArea1.replaceText(caretPosition, 23, remaining);
+                }
+
+
+            });
+
         }
-
-
-//            textArea1.setTextFormatter(new TextFormatter<String>((TextFormatter.Change c) -> {
-//                String proposed = c.getControlNewText();
-//                if (proposed.startsWith(textArea1.getText(0, 23))) {
-//                    return c;
-//                } else {
-//                    return null;
-//                }
-//            }));
-
-//            textArea1.requestFocus();
-
 
     }
 
@@ -522,6 +520,42 @@ public class DiarioController implements Initializable {
 
     }
 
+    private boolean checkIfWordExistsFile(String path, String word) throws CryptoException {
+        File f = new File("src/files/" + path);
+        decrypt(chave, f, f);
+        // check if word exists in file
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(f));
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.toLowerCase().contains(word.toLowerCase())) {
+                    encrypt(chave, f, f);
+                    return true;
+                }
+            }
+            br.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        encrypt(chave, f, f);
+        return false;
+    }
+
+    private ArrayList<String> checkAllFilesInFolder(String palavra) throws CryptoException {
+        ArrayList<String> files = new ArrayList<>();
+        File folder = new File("src/files");
+        File[] listOfFiles = folder.listFiles();
+        for (File file : listOfFiles) {
+            if (file.isFile() && file.getName().endsWith(".txt")) {
+                if (checkIfWordExistsFile(file.getName(), palavra)) {
+                    files.add(file.getName());
+                }
+            }
+
+        }
+        return files;
+    }
+
     public void selectionType(ActionEvent e) {
         if (dateSelectionType.getValue().equals("Dia")) {
             datePick.setVisible(true);
@@ -559,6 +593,26 @@ public class DiarioController implements Initializable {
         dateSelectionType.setOnAction(this::selectionType);
 
         datePick2.setVisible(false);
+
+
+        //listener in txfProcura
+        txfProcura.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                if (newValue.length() > 0) {
+                    ArrayList<String> files = checkAllFilesInFolder(newValue);
+                    ObservableList<String> items2 = FXCollections.observableArrayList();
+                    for (String file : files) {
+                        items2.add(file);
+                    }
+                    lstFiles.setItems(items2);
+                }  else {
+                    lstFiles.setItems(items);
+                }
+            } catch (CryptoException e) {
+                e.printStackTrace();
+            }
+        }
+        );
     }
 }
 
