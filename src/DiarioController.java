@@ -45,6 +45,7 @@ public class DiarioController implements Initializable {
     /* ENCRYTPION/ DECRYPTION */
     private static final String ALGORITHM = "AES";
     private static final String TRANSFORMATION = "AES";
+
     private final String[] dateSelectionOptions = {"Dia", "Intervalo de Datas", "Todas as Datas"};
     //private int dateSelectionIndex = 0 // 0->"Dia", 1->"Intervalo de Datas", 2->"Todas as Datas"
     private final boolean savedFile = true;
@@ -193,6 +194,7 @@ public class DiarioController implements Initializable {
         }
     }
 
+    //Funcao que abre novo tab
     private void openFileFunction(String filePath) {
 //        System.out.println("Opening file: " + filePath);
         // set firstTab Text
