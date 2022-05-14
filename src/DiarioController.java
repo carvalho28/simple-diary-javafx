@@ -2,6 +2,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 
@@ -177,6 +178,21 @@ public class DiarioController implements Initializable {
         textArea.setStyle("-fx-font-size: " + (tamFonte - 1) + "px;");
     }
 
+    @FXML
+    //refresh listfiles
+    private void refreshListFiles(ActionEvent e) {
+        lstFiles.getItems().clear();
+        ArrayList<String> items = new ArrayList<>();
+        File folder = new File("src/files");
+        File[] listOfFiles = folder.listFiles();
+        for (int i = 0; i < Objects.requireNonNull(listOfFiles).length; i++) {
+            if (listOfFiles[i].isFile() && listOfFiles[i].getName().endsWith(".txt")) {
+                items.add(listOfFiles[i].getName());
+            }
+        }
+        lstFiles.getItems().addAll(items);
+    }
+
     //toggle autoSave
     @FXML
     private void autoSave(ActionEvent e) {
@@ -201,9 +217,9 @@ public class DiarioController implements Initializable {
         if (zoomOutCombo.match(e)) {
             zoomOut.fire();
         }
-//        if (refreshCombo.match(e)) {
-//            openFileFunction(pathFile);
-//        }
+        if (refreshCombo.match(e)) {
+            refreshListFiles(new ActionEvent());
+        }
     }
 
     private boolean isTabOpen(String newTitle) {
@@ -416,14 +432,6 @@ public class DiarioController implements Initializable {
                 tabPane.getTabs().add(t1);
                 tabPane.getSelectionModel().select(t1);
                 tituloTabs.add(t1.getText());
-                // formatter na textArea
-//                textArea1.setOnKeyTyped(event -> {
-//                    try {
-//                        keyPressedAutoSave(event);
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                });
                 textArea1.setOnKeyPressed(event -> {
                     try {
                         textAreaShortcuts(event);
@@ -436,7 +444,9 @@ public class DiarioController implements Initializable {
                 });
 
                 File folder = new File("src/files");
-                File[] listOfFiles = folder.listFiles();
+                //list of files with .txt
+                File[] listOfFiles = folder.listFiles((dir, name) -> name.endsWith(".txt"));
+
                 if (listOfFiles.length == 0) {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Erro");
@@ -556,8 +566,9 @@ public class DiarioController implements Initializable {
 //            });
 //
 //        }
-
     }
+
+
 
     private void saveFuntion() throws IOException, CryptoException {
         if (lstFiles.getSelectionModel().getSelectedItem() == null) {
@@ -737,48 +748,30 @@ public class DiarioController implements Initializable {
             datePick2.setDisable(false);
             datePick2.setOpacity(1);
         }
-//        LocalDate localDate = datePick.getValue();
-//        String dataFinal = localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-//        String fileName = "src/files/" + dataFinal + ".txt";
-//        File f = new File(fileName);
-//        // open file to textarea
-//        if (f.exists()) {
-//            // abrir ficheiro na textarea
-//            lstFiles.getSelectionModel().select(fileName);
-//            lstFiles.scrollTo(fileName);
-//            pathFile = "src/files/" + dataFinal /*+ ".txt"*/;
-//            openFileFunction(dataFinal + ".txt");
-//        } else {
-//            Alert alert = new Alert(Alert.AlertType.ERROR);
-//            alert.setTitle("Erro!");
-//            alert.setHeaderText("O ficheiro da data selecionada não existe!");
-//            alert.setContentText("");
-//            alert.showAndWait().get();
-//        }
-
-
-//        datePick.getEditor().clear();
-//        datePick.setValue(null);
     }
 
     @FXML
     private void pickDate2(ActionEvent e) {
         dataFim = datePick2.getValue();
-        String dataFinal = dataFim.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        file2 =dataFinal + ".txt";
-        if (!dataInicio.equals(dataFim)) {
-            openFileFunction(1);
-        } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erro!");
-            alert.setHeaderText("Insira datas diferentes para obter as entradas entre elas!");
-            alert.setContentText("");
-            alert.showAndWait().get();
+        if (dataFim != null) {
+            String dataFinal = dataFim.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            file2 =dataFinal + ".txt";
+            if (!dataInicio.equals(dataFim)) {
+                openFileFunction(1);
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erro!");
+                alert.setHeaderText("Insira datas diferentes para obter as entradas entre elas!");
+                alert.setContentText("");
+                alert.showAndWait().get();
+            }
+            datePick.getEditor().clear();
+            datePick.setValue(null);
+            datePick2.getEditor().clear();
+            datePick2.setDisable(true);
+            datePick2.setOpacity(0.5);
+            datePick2.setValue(null);
         }
-        datePick.getEditor().clear();
-        datePick2.getEditor().clear();
-        datePick2.setDisable(true);
-        datePick2.setOpacity(0.5);
     }
 
     @FXML
@@ -843,11 +836,29 @@ public class DiarioController implements Initializable {
                 correcoes.add(String.valueOf(match.getSuggestedReplacements().get(0)));
             }
         }
-        System.out.println(correcoes);
-
         for (int i = 0; i < errosInicio.size(); i++) {
             textArea.setStyleClass(errosInicio.get(i), errosFim.get(i), "wrong-words");
         }
+        
+        // on tabpane click word postiion show corrections
+        tabPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getClickCount() == 2) {
+                    int pos = textArea.getCaretPosition();
+                    for (int i = 0; i < errosInicio.size(); i++) {
+                        if (pos >= errosInicio.get(i) && pos <= errosFim.get(i)) {
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Correção Possível");
+                            alert.setContentText(correcoes.get(i));
+                            alert.showAndWait();
+                        }
+                    }
+                }
+            }
+        }
+        );
+
 
     }
 
