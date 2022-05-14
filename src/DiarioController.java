@@ -293,6 +293,7 @@ public class DiarioController implements Initializable {
                 String dataDia = (new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
                 String conteudoImo = dataDia + "\n------------\n";
                 // textarea cursor listener
+
                 textArea1.caretPositionProperty().addListener((ChangeListener<Number>) (observable, oldValue, newValue) -> {
                     int caretPosition = textArea1.getCaretPosition();
 
