@@ -50,6 +50,11 @@ public class DiarioController implements Initializable {
 
     private final String[] dateSelectionOptions = {"Dia", "Intervalo de Datas", "Todas as Datas"};
     private int dateSelectionIndex = 0; // 0->"Dia", 1->"Intervalo de Datas", 2->"Todas as Datas"
+    private LocalDate dataInicio;
+    private String file1 = "";
+    private LocalDate dataFim;
+    private String file2 = "";
+
     private final boolean savedFile = true;
     /* SHORTCUTS */
     private final KeyCombination saveCombo = new KeyCodeCombination(KeyCode.S, KeyCodeCombination.META_DOWN); //command Mac e Ctrl Windows
@@ -89,12 +94,13 @@ public class DiarioController implements Initializable {
     private StyleClassedTextArea txaFicheiro;
     @FXML
     private DatePicker datePick;
-    //Ainda n existe datePick2 nem spinner  no scenebuilder
     @FXML
     private DatePicker datePick2;
     @FXML
     private ChoiceBox<String> dateSelectionType;
     private String pathFile = "";
+    private String fileName = "";
+    private LocalDate fileDate;
     private boolean autoSaveToggle = false;
 
     private static void doCrypto(int cipherMode, String key, File inputFile, File outputFile) throws CryptoException {
@@ -191,9 +197,9 @@ public class DiarioController implements Initializable {
         if (zoomOutCombo.match(e)) {
             zoomOut.fire();
         }
-        if (refreshCombo.match(e)) {
-            openFileFunction(pathFile);
-        }
+//        if (refreshCombo.match(e)) {
+//            openFileFunction(pathFile);
+//        }
     }
 
     private boolean isTabOpen(String newTitle) {
@@ -201,11 +207,13 @@ public class DiarioController implements Initializable {
     }
 
     //Funcao que abre novo tab
-    private void openFileFunction(String filePath) {
+    //Changes -> O antigo String FilePath tornou-se na var. global fileName
+    //openType: 0 -> 1 entrada; 1 -> intervalo de entradas; 2 -> todas as entradas
+    private void openFileFunction(int openType) {
 //        System.out.println("Opening file: " + filePath);
         // set firstTab Text
 
-        if (dateSelectionIndex == 0) {
+        if (openType == 0) {
             Tab t1 = new Tab(filePath.substring(0, filePath.length() - 4));
 
             if (isTabOpen(t1.getText())) {
@@ -214,6 +222,11 @@ public class DiarioController implements Initializable {
             } else {
                 StyleClassedTextArea textArea1 = new StyleClassedTextArea();
                 textArea1.setWrapText(true);
+                if (fileDate.equals(LocalDate.now())) {
+                    textArea1.setEditable(true);
+                } else {
+                    textArea1.setEditable(false);
+                }
                 t1.setContent(textArea1);
                 tabPane.getTabs().add(t1);
                 tabPane.getSelectionModel().select(t1);
@@ -283,8 +296,164 @@ public class DiarioController implements Initializable {
                 });
             }
         }
-        if (dateSelectionIndex == 1) {
+        if (openType == 1) {
+            Tab t1 = new Tab(file1.substring(0, file1.length() - 4) + " - " + file2.substring(0, file2.length() - 4));
 
+            if (isTabOpen(t1.getText())) {
+                int index = tituloTabs.indexOf(t1.getText());
+                tabPane.getSelectionModel().select(index);
+            } else {
+                StyleClassedTextArea textArea1 = new StyleClassedTextArea();
+                textArea1.setEditable(false);
+                textArea1.setWrapText(true);
+                t1.setContent(textArea1);
+                tabPane.getTabs().add(t1);
+                tabPane.getSelectionModel().select(t1);
+                tituloTabs.add(t1.getText());
+                // formatter na textArea
+//                textArea1.setOnKeyTyped(event -> {
+//                    try {
+//                        keyPressedAutoSave(event);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                });
+                textArea1.setOnKeyPressed(event -> {
+                    try {
+                        textAreaShortcuts(event);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+                t1.setOnClosed(event -> {
+                    tituloTabs.remove(t1.getText());
+                });
+
+                if (dataInicio.isAfter(dataFim)) {
+                    LocalDate aux = dataInicio;
+                    dataInicio = dataFim;
+                    dataFim = aux;
+                }
+
+                String dateAux;
+                int fileCounter = 0;
+                while (dataInicio.isBefore(dataFim)) {
+                    dateAux = dataInicio.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                    String pathAux = "src/files/" + dateAux + ".txt";
+                    try {
+                        File f = new File(pathAux);
+                        if (f.exists()) {
+                            fileCounter++;
+                            decrypt(chave, f, f);
+                            InputStream inputstream = new FileInputStream(pathAux);
+                            InputStreamReader inputStreamReader = new InputStreamReader(inputstream, StandardCharsets.UTF_8);
+                            int data = inputStreamReader.read();
+
+                            while (data != -1) {
+                                char aChar = (char) data;
+                                textArea1.appendText(String.valueOf(aChar));
+                                data = inputStreamReader.read();
+                            }
+                            textArea1.appendText("\n\n--------------------------------\n\n");
+                            inputstream.close();
+                            encrypt(chave, f, f);
+                        }
+                    } catch (CryptoException e) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Erro");
+                        alert.setHeaderText("Este ficheiro não lhe pertence!");
+
+                        alert.showAndWait();
+                        t1.getTabPane().getTabs().remove(t1);
+                        tituloTabs.remove(t1.getText());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    dataInicio = dataInicio.plusDays(1);
+                }
+                if (fileCounter == 0) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Erro");
+                    alert.setHeaderText("Não existem entradas entre estas datas!");
+
+                    alert.showAndWait();
+                    t1.getTabPane().getTabs().remove(t1);
+                }
+            }
+        }
+
+        if (openType == 2) {
+            Tab t1 = new Tab("Todas as Entradas"));
+
+            if (isTabOpen(t1.getText())) {
+                int index = tituloTabs.indexOf(t1.getText());
+                tabPane.getSelectionModel().select(index);
+            } else {
+                StyleClassedTextArea textArea1 = new StyleClassedTextArea();
+                textArea1.setEditable(false);
+                textArea1.setWrapText(true);
+                t1.setContent(textArea1);
+                tabPane.getTabs().add(t1);
+                tabPane.getSelectionModel().select(t1);
+                tituloTabs.add(t1.getText());
+                // formatter na textArea
+//                textArea1.setOnKeyTyped(event -> {
+//                    try {
+//                        keyPressedAutoSave(event);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                });
+                textArea1.setOnKeyPressed(event -> {
+                    try {
+                        textAreaShortcuts(event);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+                t1.setOnClosed(event -> {
+                    tituloTabs.remove(t1.getText());
+                });
+
+                File folder = new File("src/files");
+                File[] listOfFiles = folder.listFiles();
+                if (listOfFiles.length == 0) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Erro");
+                    alert.setHeaderText("Não existem entradas entre estas datas!");
+
+                    alert.showAndWait();
+                    t1.getTabPane().getTabs().remove(t1);
+                } else {
+                    for (File f: listOfFiles) {
+                        try {
+                            decrypt(chave, f, f);
+                            InputStream inputstream = new FileInputStream(pathAux);
+                            InputStreamReader inputStreamReader = new InputStreamReader(inputstream, StandardCharsets.UTF_8);
+                            int data = inputStreamReader.read();
+
+                            while (data != -1) {
+                                char aChar = (char) data;
+                                textArea1.appendText(String.valueOf(aChar));
+                                data = inputStreamReader.read();
+                            }
+                            textArea1.appendText("\n\n--------------------------------\n\n");
+                            inputstream.close();
+                            encrypt(chave, f, f);
+                        } catch (CryptoException e) {
+                            Alert alert = new Alert(Alert.AlertType.ERROR);
+                            alert.setTitle("Erro");
+                            alert.setHeaderText("Este ficheiro não lhe pertence!");
+
+                            alert.showAndWait();
+                            t1.getTabPane().getTabs().remove(t1);
+                            tituloTabs.remove(t1.getText());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
         }
 
 //        Tab t1 = new Tab(filePath.substring(0, filePath.length() - 4));
@@ -377,21 +546,33 @@ public class DiarioController implements Initializable {
             alert.setHeaderText("Não existe nenhum ficheiro selecionado");
 
             alert.showAndWait();
+            return;
         }
-        //obter da tab aberta txarea
-        StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
-        LiveList<Paragraph<Collection<String>, String, Collection<String>>> paragraph = textArea.getParagraphs();
-        Iterator<Paragraph<Collection<String>, String, Collection<String>>> iter = paragraph.iterator();
-        BufferedWriter bf = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pathFile), StandardCharsets.UTF_8));
-        while (iter.hasNext()) {
-            Paragraph<Collection<String>, String, Collection<String>> seq = iter.next();
-            bf.append(seq.getText());
-            bf.newLine();
+
+        //Perguntar Diogo: Deixar ou n deixar user gravar ficheiro com intervalo de datas
+        if (tabPane.getSelectionModel().getSelectedItem().getText().length() == 10) {
+            //obter da tab aberta txarea
+            StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+            LiveList<Paragraph<Collection<String>, String, Collection<String>>> paragraph = textArea.getParagraphs();
+            Iterator<Paragraph<Collection<String>, String, Collection<String>>> iter = paragraph.iterator();
+            BufferedWriter bf = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pathFile), StandardCharsets.UTF_8));
+            while (iter.hasNext()) {
+                Paragraph<Collection<String>, String, Collection<String>> seq = iter.next();
+                bf.append(seq.getText());
+                bf.newLine();
+            }
+            bf.flush();
+            bf.close();
+            File f = new File(pathFile);
+            encrypt(chave, f, f);
         }
-        bf.flush();
-        bf.close();
-        File f = new File(pathFile);
-        encrypt(chave, f, f);
+//        else {
+//            Alert alert = new Alert(Alert.AlertType.ERROR);
+//            alert.setTitle("Erro");
+//            alert.setHeaderText("Não é possível guardar um ficheiro com diversas entradas!");
+//
+//            alert.showAndWait();
+//        }
     }
 
 
@@ -420,9 +601,10 @@ public class DiarioController implements Initializable {
                 lstFiles.getSelectionModel().selectPrevious();
             }
         }
-        String filePath = lstFiles.getSelectionModel().getSelectedItem();
-        pathFile = "src/files/" + filePath;
-        openFileFunction(filePath);
+        //Sera que falta + ".txt" ?????
+        fileName = lstFiles.getSelectionModel().getSelectedItem();
+        pathFile = "src/files/" + fileName;
+        openFileFunction(0);
     }
 
     //Auto save off
@@ -436,8 +618,8 @@ public class DiarioController implements Initializable {
     @FXML
     private void keyPressedAutoSave(KeyEvent e) throws IOException {
         if (autoSaveToggle) {
-            String fileName = lstFiles.getSelectionModel().getSelectedItem();
-            File f = new File("src/files/" + fileName);
+            String name = lstFiles.getSelectionModel().getSelectedItem();
+            File f = new File("src/files/" + name);
             if (f.exists()) {
                 BufferedWriter bw = new BufferedWriter(new FileWriter(f));
                 StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
@@ -451,12 +633,10 @@ public class DiarioController implements Initializable {
     @FXML
     // criar ficheiro na diretoria src/files
     private void btnNew(ActionEvent e) throws IOException, CryptoException {
-        String fileName;
         LocalDate localDate = LocalDate.now();
-        fileName = localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        fileName = fileName + ".txt";
-        pathFile = "src/files/" + fileName;
-        File f = new File("src/files/" + fileName);
+        String name = localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        name = name + ".txt";
+        File f = new File("src/files/" + name);
         if (f.exists()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Erro!");
@@ -472,11 +652,13 @@ public class DiarioController implements Initializable {
             bw.write("------------\n");
             bw.close();
             encrypt(chave, f, f);
-            openFileFunction(fileName);
+            pathFile = "src/files/" + name;
+            fileName = name;
+            openFileFunction(0);
             // abrir ficheiro na textarea
-            lstFiles.getItems().add(fileName);
-            lstFiles.getSelectionModel().select(fileName);
-            lstFiles.scrollTo(fileName);
+            lstFiles.getItems().add(name);
+            lstFiles.getSelectionModel().select(name);
+            lstFiles.scrollTo(name);
 
 //            TextArea textArea = (TextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
 //            textArea.requestFocus();
@@ -486,8 +668,8 @@ public class DiarioController implements Initializable {
     //function to delete file
     @FXML
     private void btnDelete(ActionEvent e) {
-        String fileName = lstFiles.getSelectionModel().getSelectedItem();
-        File f = new File("src/files/" + fileName);
+        String name = lstFiles.getSelectionModel().getSelectedItem();
+        File f = new File("src/files/" + name);
         if (f.exists()) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Apagar ficheiro");
@@ -498,7 +680,7 @@ public class DiarioController implements Initializable {
             if (b == ButtonType.OK) {
                 f.delete();
                 tituloTabs.remove(tabPane.getSelectionModel().getSelectedIndex());
-                lstFiles.getItems().remove(fileName);
+                lstFiles.getItems().remove(name);
                 lstFiles.getSelectionModel().select(0);
                 tabPane.getTabs().remove(tabPane.getSelectionModel().getSelectedIndex());
             }
@@ -507,27 +689,78 @@ public class DiarioController implements Initializable {
 
     // obter data
     @FXML
-    private void pickDate(ActionEvent e) throws IOException {
-        LocalDate localDate = datePick.getValue();
-        String dataFinal = localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        String fileName = "src/files/" + dataFinal + ".txt";
-        File f = new File(fileName);
-        // open file to textarea
-        if (f.exists()) {
-            // abrir ficheiro na textarea
-            lstFiles.getSelectionModel().select(fileName);
-            lstFiles.scrollTo(fileName);
-            pathFile = "src/files/" + dataFinal /*+ ".txt"*/;
-            openFileFunction(dataFinal + ".txt");
+    private void pickDate1(ActionEvent e) throws IOException {
+
+        if (dateSelectionIndex == 0) {
+            fileDate = datePick.getValue();
+            String dataFinal = fileDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            String path = "src/files/" + dataFinal + ".txt";
+            File f = new File(path);
+            // open file to textarea
+            if (f.exists()) {
+                // abrir ficheiro na textarea
+                lstFiles.getSelectionModel().select(path);
+                lstFiles.scrollTo(path);
+                pathFile = "src/files/" + dataFinal;
+                fileName = dataFinal + ".txt";
+                openFileFunction(0);
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erro!");
+                alert.setHeaderText("O ficheiro da data selecionada não existe!");
+                alert.setContentText("");
+                alert.showAndWait().get();
+            }
+        }
+        if (dateSelectionIndex == 1) {
+            dataInicio = datePick.getValue();
+            String dataFinal = dataInicio.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            file1 =dataFinal + ".txt";
+            datePick2.setDisable(false);
+            datePick2.setOpacity(1);
+        }
+//        LocalDate localDate = datePick.getValue();
+//        String dataFinal = localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+//        String fileName = "src/files/" + dataFinal + ".txt";
+//        File f = new File(fileName);
+//        // open file to textarea
+//        if (f.exists()) {
+//            // abrir ficheiro na textarea
+//            lstFiles.getSelectionModel().select(fileName);
+//            lstFiles.scrollTo(fileName);
+//            pathFile = "src/files/" + dataFinal /*+ ".txt"*/;
+//            openFileFunction(dataFinal + ".txt");
+//        } else {
+//            Alert alert = new Alert(Alert.AlertType.ERROR);
+//            alert.setTitle("Erro!");
+//            alert.setHeaderText("O ficheiro da data selecionada não existe!");
+//            alert.setContentText("");
+//            alert.showAndWait().get();
+//        }
+
+
+//        datePick.getEditor().clear();
+//        datePick.setValue(null);
+    }
+
+    @FXML
+    private void pickDate2(ActionEvent e) {
+        dataFim = datePick2.getValue();
+        String dataFinal = dataFim.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        file2 =dataFinal + ".txt";
+        if (!dataInicio.equals(dataFim)) {
+            openFileFunction(1);
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Erro!");
-            alert.setHeaderText("O ficheiro da data selecionada não existe!");
+            alert.setHeaderText("Insira datas diferentes para obter as entradas entre elas!");
             alert.setContentText("");
             alert.showAndWait().get();
         }
-//        datePick.getEditor().clear();
-//        datePick.setValue(null);
+        datePick.getEditor().clear();
+        datePick2.getEditor().clear();
+        datePick2.setDisable(true);
+        datePick2.setOpacity(0.5);
     }
 
     @FXML
@@ -536,7 +769,7 @@ public class DiarioController implements Initializable {
             StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
             String diaryEntry = textArea.getText();
             System.out.println(diaryEntry);
-            String fileName = lstFiles.getSelectionModel().getSelectedItem();
+            String name = lstFiles.getSelectionModel().getSelectedItem();
             PDDocument doc = new PDDocument();
             PDPage page = new PDPage();
             PDPageContentStream content = new PDPageContentStream(doc, page);
@@ -568,7 +801,7 @@ public class DiarioController implements Initializable {
             content.endText();
             content.close();
             doc.addPage(page);
-            doc.save("src/files/" + fileName + ".pdf");
+            doc.save("src/files/" + name + ".pdf");
             doc.close();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -678,6 +911,8 @@ public class DiarioController implements Initializable {
         }
         if (dateSelectionType.getValue().equals("Intervalo de Datas")) {
             datePick.setVisible(true);
+            datePick2.setDisable(true);
+            datePick2.setOpacity(0.5);
             datePick2.setVisible(true);
             dateSelectionIndex = 1;
         }
@@ -685,6 +920,7 @@ public class DiarioController implements Initializable {
             datePick.setVisible(false);
             datePick2.setVisible(false);
             dateSelectionIndex = 2;
+            openFileFunction(2);
         }
     }
 
@@ -733,3 +969,4 @@ public class DiarioController implements Initializable {
     }
 }
 
+//FALTA: Verificar PDF, verificar search, fix \n bug when backspacing at index 25

@@ -15,13 +15,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.fxmisc.richtext.StyleClassedTextArea?>
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="1000.0" onKeyPressed="#keyPressedChange" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="DiarioController">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="1000.0" onKeyPressed="#keyPressedChange" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="DiarioController">
    <left>
       <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-border-color: black;">
          <children>
           <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                <children>
-                  <DatePicker fx:id="datePick" layoutX="39.0" layoutY="160.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#pickDate" />
+                  <DatePicker fx:id="datePick" layoutX="39.0" layoutY="160.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#pickDate1" />
                   <TextField fx:id="txfProcura" layoutX="51.0" layoutY="39.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                   <MenuBar layoutX="-1.0" layoutY="1.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="248.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <menus>
@@ -53,7 +53,7 @@
                      </padding>
                   </MenuBar>
                   <ChoiceBox fx:id="dateSelectionType" layoutX="100.0" layoutY="109.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
-                  <DatePicker fx:id="datePick2" layoutX="39.0" layoutY="201.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                  <DatePicker fx:id="datePick2" layoutX="39.0" layoutY="201.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#pickDate2" />
                </children>
             </AnchorPane>
           <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
