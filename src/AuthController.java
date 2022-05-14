@@ -1,3 +1,6 @@
+import com.carrotsearch.hppc.CharSet;
+import io.grpc.netty.shaded.io.netty.handler.codec.base64.Base64;
+import io.netty.util.CharsetUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,9 +15,13 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import javax.swing.plaf.nimbus.State;
 import java.io.IOException;
 import java.net.URL;
+import java.security.Key;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -37,14 +44,26 @@ public class AuthController implements Initializable {
     Label loginMessageLB;
 
     public static String keyUser = "";
+    public static String userName = "";
+
+//    //decrypt password
+//    public static String decrypt(String encryptedText, String key) throws Exception {
+//        Cipher cipher = Cipher.getInstance("AES");
+//        Key secretKey = new SecretKeySpec(key.getBytes(), "AES");
+//        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+//        byte[] decryptedText = cipher.doFinal(encryptedText.getBytes());
+//        return new String(decryptedText, "UTF-8");
+//    }
+
 
 
     @FXML
-    private void login(ActionEvent e) throws IOException {
+    private void login(ActionEvent e) throws Exception {
         keyUser = "";
         if (!usernameTF.getText().isBlank() && !passwordTF.getText().isBlank()){
             validateLogin();
             if (loginMessageLB.getText().equals("Login successful")){
+                userName = usernameTF.getText();
                 Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("DiarioController.fxml")));
                 Scene scene = new Scene(parent);
                 scene.getStylesheets().add("/styles/diario.css");
@@ -73,11 +92,14 @@ public class AuthController implements Initializable {
         appStage.show();
     }
 
-    public void validateLogin() {
+    public void validateLogin() throws Exception {
         DatabaseConnection db = new DatabaseConnection();
         Connection connection = db.getConnection();
 
-        String verifyUser = "SELECT COUNT(1) FROM userAccounts WHERE username = '" + usernameTF.getText() + "' AND password = '" + passwordTF.getText() + "'";
+
+        String password = RegisterController.encrypt(passwordTF.getText(), "chavesecreta1234");
+
+        String verifyUser = "SELECT COUNT(1) FROM userAccounts WHERE username = '" + usernameTF.getText() + "' AND password = '" + password + "'";
 
         try {
             Statement statement = connection.createStatement();

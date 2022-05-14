@@ -8,14 +8,19 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
+import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URL;
+import java.security.Key;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Base64;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -32,8 +37,18 @@ public class RegisterController implements Initializable {
     @FXML
     private TextField usernameTF;
 
+    // fucntion to encrypt
+    public static String encrypt(String text, String key) throws Exception {
+        Cipher cipher = Cipher.getInstance("AES");
+        Key secretKey = new SecretKeySpec(key.getBytes(), "AES");
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        byte[] encrypted = cipher.doFinal(text.getBytes());
+        return Base64.getEncoder().encodeToString(encrypted);
+    }
+
+
     @FXML
-    private void registo(ActionEvent e) throws IOException {
+    private void registo(ActionEvent e) throws Exception {
         if(usernameTF.getText().isEmpty() || passwordTF.getText().isEmpty()){
             registerMessageLB.setText("Preencha todos os campos");
         }else{
@@ -41,6 +56,16 @@ public class RegisterController implements Initializable {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Registo");
             alert.setHeaderText("Registo efetuado com sucesso");
+            alert.setContentText("Pode iniciar sessão");
+            alert.showAndWait();
+
+            // criar pasta para o utilizador
+            String path = "src/files/" + usernameTF.getText();
+            File theDir = new File(path);
+            if (!theDir.exists()) {
+                System.out.println("making dir");
+                theDir.mkdir();
+            }
 
             Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Auth.fxml")));
             Scene scene = new Scene(parent);
@@ -49,7 +74,7 @@ public class RegisterController implements Initializable {
             appStage.show();
         }
     }
-    public void validarRegisto(){
+    public void validarRegisto() throws Exception {
         DatabaseConnection db = new DatabaseConnection();
         Connection connection = db.getConnection();
 
@@ -73,7 +98,11 @@ public class RegisterController implements Initializable {
                     SecretKey secretKey = gen.generateKey();
                     byte[] binary = secretKey.getEncoded();
                     String key = String.format("%032X", new BigInteger(+1, binary));
-                    System.out.println(key);
+
+                    // generate encryption with key string
+                    password = encrypt(password, "chavesecreta1234");
+
+
                     String query = "INSERT INTO userAccounts (username, password, keyUser) VALUES ('" + username + "', '" + password + "', '" + key + "')";
 
                     try{

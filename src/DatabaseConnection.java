@@ -1,10 +1,12 @@
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
 public class DatabaseConnection {
     public Connection databaseConnection;
 
-    public Connection getConnection() {
+    public Connection getConnection() throws Exception {
         String databaseName = "authIHC";
         String databaseUser = "root";
         String databasePassword = "root1234";
