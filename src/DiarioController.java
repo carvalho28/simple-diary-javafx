@@ -306,30 +306,36 @@ public class DiarioController implements Initializable {
                     e.printStackTrace();
                 }
 
-                String dataDia = (new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
-                String conteudoImo = dataDia + "\n------------\n";
-                // textarea cursor listener
+                // first two lines on textarea not editable
 
-                textArea1.caretPositionProperty().addListener((ChangeListener<Number>) (observable, oldValue, newValue) -> {
-                    int caretPosition = textArea1.getCaretPosition();
 
-                    if (caretPosition >= 0 && caretPosition < 24) {
-//                    textArea1.displaceCaret(25);
-                        String remaining = "";
-                        char[] remainigChars = conteudoImo.toCharArray();
-                        for (int i = caretPosition; i < 24; i++) {
-                            remaining += remainigChars[i];
-                        }
-                        textArea1.replaceText(caretPosition, 23, remaining);
-                    }
-                });
+
+
+                //CARRET ATTEMP TO MAKE FIRST 2 LINES UMNEDITABLE
+//                String dataDia = (new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
+//                String conteudoImo = dataDia + "\n------------\n";
+//                // textarea cursor listener
+//
+//                textArea1.caretPositionProperty().addListener((ChangeListener<Number>) (observable, oldValue, newValue) -> {
+//                    int caretPosition = textArea1.getCaretPosition();
+//
+//                    if (caretPosition >= 0 && caretPosition < 24) {
+////                    textArea1.displaceCaret(25);
+//                        String remaining = "";
+//                        char[] remainigChars = conteudoImo.toCharArray();
+//                        for (int i = caretPosition; i < 24; i++) {
+//                            remaining += remainigChars[i];
+//                        }
+//                        textArea1.replaceText(caretPosition, 23, remaining);
+//                    }
+//                });
 
                 //prevent user to select all text and delete it
-                textArea1.setOnKeyPressed(event -> {
-                    if (event.getCode() == KeyCode.A && event.isShortcutDown()) {
-                        event.consume();
-                    }
-                });
+//                textArea1.setOnKeyPressed(event -> {
+//                    if (event.getCode() == KeyCode.A && event.isShortcutDown()) {
+//                        event.consume();
+//                    }
+//                });
             }
         }
         if (openType == 1) {
@@ -370,6 +376,7 @@ public class DiarioController implements Initializable {
                     dataInicio = dataFim;
                     dataFim = aux;
                 }
+                dataFim = dataFim.plusDays(1);
 
                 String dateAux;
                 int fileCounter = 0;
@@ -624,10 +631,8 @@ public class DiarioController implements Initializable {
 
             if (b == ButtonType.OK) {
                 saveFuntion();
-                System.out.println("File Saved!");
             }
             if (b == ButtonType.CANCEL) {
-                System.out.println("File not Saved!");
                 lstFiles.getSelectionModel().selectPrevious();
             }
         }
@@ -722,31 +727,38 @@ public class DiarioController implements Initializable {
 
         if (dateSelectionIndex == 0) {
             fileDate = datePick.getValue();
-            String dataFinal = fileDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            String path = "src/files/" + dataFinal + ".txt";
-            File f = new File(path);
-            // open file to textarea
-            if (f.exists()) {
-                // abrir ficheiro na textarea
-                lstFiles.getSelectionModel().select(dataFinal);
-                lstFiles.scrollTo(dataFinal);
-                pathFile = "src/files/" + dataFinal;
-                fileName = dataFinal + ".txt";
-                openFileFunction(0);
-            } else {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Erro!");
-                alert.setHeaderText("O ficheiro da data selecionada não existe!");
-                alert.setContentText("");
-                alert.showAndWait().get();
+            if (fileDate != null) {
+                String dataFinal = fileDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                String path = "src/files/" + dataFinal + ".txt";
+                File f = new File(path);
+                // open file to textarea
+                if (f.exists()) {
+                    // abrir ficheiro na textarea
+                    lstFiles.getSelectionModel().select(dataFinal);
+                    lstFiles.scrollTo(dataFinal);
+                    pathFile = "src/files/" + dataFinal;
+                    fileName = dataFinal + ".txt";
+                    openFileFunction(0);
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Erro!");
+                    alert.setHeaderText("O ficheiro da data selecionada não existe!");
+                    alert.setContentText("");
+                    alert.showAndWait().get();
+                }
             }
+            datePick.getEditor().clear();
+            datePick.setValue(null);
         }
         if (dateSelectionIndex == 1) {
             dataInicio = datePick.getValue();
-            String dataFinal = dataInicio.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            file1 =dataFinal + ".txt";
-            datePick2.setDisable(false);
-            datePick2.setOpacity(1);
+            if (dataInicio != null) {
+                System.out.println(dataInicio);
+                String dataFinal = dataInicio.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                file1 = dataFinal + ".txt";
+                datePick2.setDisable(false);
+                datePick2.setOpacity(1);
+            }
         }
     }
 
@@ -998,4 +1010,4 @@ public class DiarioController implements Initializable {
     }
 }
 
-//FALTA: Verificar PDF, verificar search, fix \n bug when backspacing at index 25
+//FALTA: Verificar PDF, verificar search, fix \n bug when backspacing at index 24
