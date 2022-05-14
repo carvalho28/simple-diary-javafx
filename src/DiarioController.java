@@ -188,7 +188,7 @@ public class DiarioController implements Initializable {
     private void refreshListFiles(ActionEvent e) {
         lstFiles.getItems().clear();
         ArrayList<String> items = new ArrayList<>();
-        File folder = new File("src/files");
+        File folder = new File("src/files/" + nomeUtilizador + "/");
         File[] listOfFiles = folder.listFiles();
         for (int i = 0; i < Objects.requireNonNull(listOfFiles).length; i++) {
             if (listOfFiles[i].isFile() && listOfFiles[i].getName().endsWith(".txt")) {
