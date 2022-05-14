@@ -11,6 +11,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.util.Callback;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -100,7 +101,7 @@ public class DiarioController implements Initializable {
     private ChoiceBox<String> dateSelectionType;
     private String pathFile = "";
     private String fileName = "";
-    private LocalDate fileDate;
+    private LocalDate fileDate = null;
     private boolean autoSaveToggle = false;
 
     private static void doCrypto(int cipherMode, String key, File inputFile, File outputFile) throws CryptoException {
@@ -150,10 +151,12 @@ public class DiarioController implements Initializable {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("About");
         alert.setHeaderText("Sobre o programa");
-        alert.setContentText("Este programa foi desenvolvido por:\n" +
-                "Diogo Carvalho, 45716\n" +
-                "João Marques, 45722\n" +
-                "para a Unidade Curricular de Interação Humana com o Computador\n");
+        alert.setContentText("""
+                Este programa foi desenvolvido por:
+                Diogo Carvalho, 45716
+                João Marques, 45722
+                para a Unidade Curricular de Interação Humana com o Computador
+                """);
         alert.showAndWait();
     }
 
@@ -235,14 +238,15 @@ public class DiarioController implements Initializable {
                 textArea1.setOnKeyTyped(event -> {
                     try {
                         keyPressedAutoSave(event);
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 });
-                textArea1.setOnKeyPressed(event -> {
+                tabPane.setOnKeyPressed(event -> {
                     try {
                         textAreaShortcuts(event);
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                     }
                 });
@@ -265,6 +269,7 @@ public class DiarioController implements Initializable {
 
                     encrypt(chave, f, f);
                 } catch (CryptoException e) {
+                    e.printStackTrace();
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Erro");
                     alert.setHeaderText("Este ficheiro não lhe pertence!");
@@ -277,8 +282,6 @@ public class DiarioController implements Initializable {
                 }
 
                 String dataDia = (new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
-//            bw.write("\n");
-//            bw.write("------------\n");
                 String conteudoImo = dataDia + "\n------------\n";
                 // textarea cursor listener
                 textArea1.caretPositionProperty().addListener((ChangeListener<Number>) (observable, oldValue, newValue) -> {
@@ -292,6 +295,13 @@ public class DiarioController implements Initializable {
                             remaining += remainigChars[i];
                         }
                         textArea1.replaceText(caretPosition, 23, remaining);
+                    }
+                });
+
+                //prevent user to select all text and delete it
+                textArea1.setOnKeyPressed(event -> {
+                    if (event.getCode() == KeyCode.A && event.isShortcutDown()) {
+                        event.consume();
                     }
                 });
             }
@@ -383,7 +393,7 @@ public class DiarioController implements Initializable {
         }
 
         if (openType == 2) {
-            Tab t1 = new Tab("Todas as Entradas"));
+            Tab t1 = new Tab("Todas as Entradas");
 
             if (isTabOpen(t1.getText())) {
                 int index = tituloTabs.indexOf(t1.getText());
@@ -428,7 +438,7 @@ public class DiarioController implements Initializable {
                     for (File f: listOfFiles) {
                         try {
                             decrypt(chave, f, f);
-                            InputStream inputstream = new FileInputStream(pathAux);
+                            InputStream inputstream = new FileInputStream("src/files/" + f.getName());
                             InputStreamReader inputStreamReader = new InputStreamReader(inputstream, StandardCharsets.UTF_8);
                             int data = inputStreamReader.read();
 
@@ -555,7 +565,7 @@ public class DiarioController implements Initializable {
             StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
             LiveList<Paragraph<Collection<String>, String, Collection<String>>> paragraph = textArea.getParagraphs();
             Iterator<Paragraph<Collection<String>, String, Collection<String>>> iter = paragraph.iterator();
-            BufferedWriter bf = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pathFile), StandardCharsets.UTF_8));
+            BufferedWriter bf = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pathFile + ".txt"), StandardCharsets.UTF_8));
             while (iter.hasNext()) {
                 Paragraph<Collection<String>, String, Collection<String>> seq = iter.next();
                 bf.append(seq.getText());
@@ -563,7 +573,7 @@ public class DiarioController implements Initializable {
             }
             bf.flush();
             bf.close();
-            File f = new File(pathFile);
+            File f = new File(pathFile  + ".txt");
             encrypt(chave, f, f);
         }
 //        else {
@@ -607,16 +617,9 @@ public class DiarioController implements Initializable {
         openFileFunction(0);
     }
 
-    //Auto save off
-    @FXML
-    private void keyPressedChange(KeyEvent e) {
-//        savedFile = false;
-    }
-
-    //  POSSIBLY IMPLEMENT AUTOSAVE TOGGLE ON MENU BAR
     //Auto save on
     @FXML
-    private void keyPressedAutoSave(KeyEvent e) throws IOException {
+    private void keyPressedAutoSave(KeyEvent e) throws IOException, CryptoException {
         if (autoSaveToggle) {
             String name = lstFiles.getSelectionModel().getSelectedItem();
             File f = new File("src/files/" + name);
@@ -625,6 +628,7 @@ public class DiarioController implements Initializable {
                 StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
                 bw.write(textArea.getText());
                 bw.close();
+                encrypt(chave, f, f);
             }
 
         }
@@ -656,9 +660,10 @@ public class DiarioController implements Initializable {
             fileName = name;
             openFileFunction(0);
             // abrir ficheiro na textarea
-            lstFiles.getItems().add(name);
-            lstFiles.getSelectionModel().select(name);
-            lstFiles.scrollTo(name);
+//            String substring = name.substring(0, name.length() - 4);
+            lstFiles.getItems().add(fileName);
+            lstFiles.getSelectionModel().select(fileName);
+            lstFiles.scrollTo(fileName);
 
 //            TextArea textArea = (TextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
 //            textArea.requestFocus();
@@ -939,6 +944,7 @@ public class DiarioController implements Initializable {
         }
 
         lstFiles.setItems(items);
+
         tituloTabs.add(firstTab.getText());
 
         dateSelectionType.getItems().addAll(dateSelectionOptions);

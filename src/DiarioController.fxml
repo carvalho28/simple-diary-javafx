@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.fxmisc.richtext.StyleClassedTextArea?>
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="1000.0" onKeyPressed="#keyPressedChange" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="DiarioController">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="1000.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="DiarioController">
    <left>
       <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-border-color: black;">
          <children>
