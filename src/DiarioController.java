@@ -103,6 +103,7 @@ public class DiarioController implements Initializable {
     private String fileName = "";
     private LocalDate fileDate = null;
     private boolean autoSaveToggle = false;
+    private boolean newFile = false;
 
     private static void doCrypto(int cipherMode, String key, File inputFile, File outputFile) throws CryptoException {
         try {
@@ -192,7 +193,7 @@ public class DiarioController implements Initializable {
     @FXML
     private void textAreaShortcuts(KeyEvent e) throws IOException, CryptoException {
         if (saveCombo.match(e)) {
-            saveFuntion();
+            btnClick(new ActionEvent());
         }
         if (zoomInCombo.match(e)) {
             zoomIn.fire();
@@ -217,7 +218,7 @@ public class DiarioController implements Initializable {
         // set firstTab Text
 
         if (openType == 0) {
-            Tab t1 = new Tab(filePath.substring(0, filePath.length() - 4));
+            Tab t1 = new Tab(fileName.substring(0, fileName.length() - 4));
 
             if (isTabOpen(t1.getText())) {
                 int index = tituloTabs.indexOf(t1.getText());
@@ -225,11 +226,20 @@ public class DiarioController implements Initializable {
             } else {
                 StyleClassedTextArea textArea1 = new StyleClassedTextArea();
                 textArea1.setWrapText(true);
+                if (fileDate == null) {
+                    if (newFile) {
+                        fileDate = LocalDate.now();
+                    } else {
+                        fileDate = LocalDate.parse((lstFiles.getSelectionModel().getSelectedItem()).substring(0, 10));
+                    }
+                }
+                newFile = false;
                 if (fileDate.equals(LocalDate.now())) {
                     textArea1.setEditable(true);
                 } else {
                     textArea1.setEditable(false);
                 }
+                fileDate = null;
                 t1.setContent(textArea1);
                 tabPane.getTabs().add(t1);
                 tabPane.getSelectionModel().select(t1);
@@ -254,9 +264,9 @@ public class DiarioController implements Initializable {
                     tituloTabs.remove(t1.getText());
                 });
                 try {
-                    File f = new File("src/files/" + filePath);
+                    File f = new File("src/files/" + fileName);
                     decrypt(chave, f, f);
-                    InputStream inputstream = new FileInputStream(pathFile);
+                    InputStream inputstream = new FileInputStream("src/files/" + fileName);
                     InputStreamReader inputStreamReader = new InputStreamReader(inputstream, StandardCharsets.UTF_8);
                     int data = inputStreamReader.read();
 
@@ -266,7 +276,6 @@ public class DiarioController implements Initializable {
                         data = inputStreamReader.read();
                     }
                     inputstream.close();
-
                     encrypt(chave, f, f);
                 } catch (CryptoException e) {
                     e.printStackTrace();
@@ -554,7 +563,6 @@ public class DiarioController implements Initializable {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Erro");
             alert.setHeaderText("Não existe nenhum ficheiro selecionado");
-
             alert.showAndWait();
             return;
         }
@@ -576,13 +584,13 @@ public class DiarioController implements Initializable {
             File f = new File(pathFile  + ".txt");
             encrypt(chave, f, f);
         }
-//        else {
-//            Alert alert = new Alert(Alert.AlertType.ERROR);
-//            alert.setTitle("Erro");
-//            alert.setHeaderText("Não é possível guardar um ficheiro com diversas entradas!");
-//
-//            alert.showAndWait();
-//        }
+        else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erro");
+            alert.setHeaderText("Não é possível guardar um ficheiro com diversas entradas!");
+
+            alert.showAndWait();
+        }
     }
 
 
@@ -613,8 +621,12 @@ public class DiarioController implements Initializable {
         }
         //Sera que falta + ".txt" ?????
         fileName = lstFiles.getSelectionModel().getSelectedItem();
-        pathFile = "src/files/" + fileName;
-        openFileFunction(0);
+        if (fileName != null) {
+            System.out.println(fileName);
+            pathFile = "src/files/" + fileName.substring(0, (fileName).length() - 4);
+//        fileName += ".txt";
+            openFileFunction(0);
+        }
     }
 
     //Auto save on
@@ -639,8 +651,7 @@ public class DiarioController implements Initializable {
     private void btnNew(ActionEvent e) throws IOException, CryptoException {
         LocalDate localDate = LocalDate.now();
         String name = localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        name = name + ".txt";
-        File f = new File("src/files/" + name);
+        File f = new File("src/files/" + name + ".txt");
         if (f.exists()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Erro!");
@@ -657,7 +668,8 @@ public class DiarioController implements Initializable {
             bw.close();
             encrypt(chave, f, f);
             pathFile = "src/files/" + name;
-            fileName = name;
+            fileName = name + ".txt";
+            newFile = true;
             openFileFunction(0);
             // abrir ficheiro na textarea
 //            String substring = name.substring(0, name.length() - 4);
@@ -704,8 +716,8 @@ public class DiarioController implements Initializable {
             // open file to textarea
             if (f.exists()) {
                 // abrir ficheiro na textarea
-                lstFiles.getSelectionModel().select(path);
-                lstFiles.scrollTo(path);
+                lstFiles.getSelectionModel().select(dataFinal);
+                lstFiles.scrollTo(dataFinal);
                 pathFile = "src/files/" + dataFinal;
                 fileName = dataFinal + ".txt";
                 openFileFunction(0);
@@ -773,7 +785,6 @@ public class DiarioController implements Initializable {
         try {
             StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
             String diaryEntry = textArea.getText();
-            System.out.println(diaryEntry);
             String name = lstFiles.getSelectionModel().getSelectedItem();
             PDDocument doc = new PDDocument();
             PDPage page = new PDPage();
