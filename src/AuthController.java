@@ -1,6 +1,3 @@
-import com.carrotsearch.hppc.CharSet;
-import io.grpc.netty.shaded.io.netty.handler.codec.base64.Base64;
-import io.netty.util.CharsetUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,17 +8,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import javax.swing.plaf.nimbus.State;
 import java.io.IOException;
 import java.net.URL;
-import java.security.Key;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;

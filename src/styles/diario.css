@@ -31,3 +31,81 @@
 .list-view .list-cell {
     -fx-font-size: 15px;
 }
+
+.tab-pane *.tab-header-area *.tab-header-background {
+    -fx-background-color: whitesmoke;
+    -fx-tab-min-width:120px;
+    -fx-tab-max-width:120px;
+    -fx-tab-min-height:50px;
+    -fx-tab-max-height:50px;
+}
+.tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
+    -fx-border-color: transparent;
+}
+
+.tab {
+    -fx-font-family: Arial;
+    -fx-font-size: 15;
+    -fx-background-color: #ffffff;
+    -fx-border-width: 1px 1px 0px 1px;
+    -fx-border-color: black;
+    -fx-border-radius: 3px;
+}
+
+.tab:selected {
+    -fx-background-color: #d3d3d3 ;
+}
+
+.menu-bar {
+    -fx-background-color: #d3d3d3 ;
+    -fx-border-width: 0 0 1px 0;
+    -fx-border-color: black;
+
+}
+.menu-bar .label {
+    -fx-font-size: 14.0 pt;
+    -fx-font-family: "Arial";
+    -fx-text-fill: black;
+}
+
+.menu-bar .menu-button:hover, .menu-bar .menu-button:focused, .menu-bar .menu-button:showing {
+    -fx-background: whitesmoke ;
+    -fx-text-fill: black;
+}
+
+.menu-item {
+    -fx-text-fill: black;
+    -fx-background: whitesmoke ;
+}
+.menu-item .label{
+    -fx-font-size: 14.0 pt;
+    -fx-text-fill: black;
+}
+.menu-item .label:hover{
+    -fx-font-size: 14.0 pt;
+    -fx-background: #b4b4b4 ;
+    -fx-text-fill: black;
+}
+
+
+.list-cell:filled:selected:focused, .list-cell:filled:selected {
+    -fx-background-color: linear-gradient(#D4D4D4 0%, #B8B8B8 100%);
+    -fx-text-fill: black;
+}
+
+.list-cell:even {
+    -fx-background-color: whitesmoke;
+}
+.list-cell:odd {
+    -fx-background-color: white;
+}
+
+.list-cell:filled:hover {
+    -fx-background-color: #B4B4B4;
+    -fx-text-fill: black;
+}
+
+.anchorTab {
+    -fx-border-color: black;
+    -fx-border-width: 1px 0px 0px 0px;
+}

@@ -2,7 +2,6 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
@@ -33,7 +32,6 @@ import org.reactfx.collection.LiveList;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
-import javax.print.PrintException;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -42,6 +40,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DiarioController implements Initializable {
 
@@ -260,6 +259,8 @@ public class DiarioController implements Initializable {
     private void openFileFunction(int openType) {
         if (openType == 0) {
             Tab t1 = new Tab(fileName.substring(0, fileName.length() - 4));
+//            add class to t1
+//            t1.getStyleClass().add("anchorTab");
 
             if (isTabOpen(t1.getText())) {
                 int index = tituloTabs.indexOf(t1.getText());
@@ -757,19 +758,16 @@ public class DiarioController implements Initializable {
         }
         
         /* Mostrar correcoes quando click na palavra */
-        tabPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (event.getClickCount() == 2) {
-                    int pos = textArea.getCaretPosition();
-                    for (int i = 0; i < errosInicio.size(); i++) {
-                        if (pos >= errosInicio.get(i) && pos <= errosFim.get(i)) {
-                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                            alert.setTitle("Correção");
-                            alert.setHeaderText("Correção");
-                            alert.setContentText(correcoes.get(i));
-                            alert.showAndWait();
-                        }
+        tabPane.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                int pos = textArea.getCaretPosition();
+                for (int i = 0; i < errosInicio.size(); i++) {
+                    if (pos >= errosInicio.get(i) && pos <= errosFim.get(i)) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Correção");
+                        alert.setHeaderText("Correção");
+                        alert.setContentText(correcoes.get(i));
+                        alert.showAndWait();
                     }
                 }
             }
@@ -779,8 +777,7 @@ public class DiarioController implements Initializable {
 
     /* Imprimir conteúdo da página para impressora /ou PDF */
     @FXML
-    private void print(ActionEvent e) throws IOException, PrintException {
-        System.out.println(tituloTabs);
+    private void print(ActionEvent e) {
         if (tituloTabs.size() == 1 && tituloTabs.get(0).equals("Tab Inicial")) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Erro");
@@ -804,48 +801,55 @@ public class DiarioController implements Initializable {
                 System.out.println("Falhou a impressão");
             }
         } else {
-            System.out.println("Cancelado");
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Impressão cancelada");
+            alert.setHeaderText("Impressão cancelada");
+            alert.showAndWait();
+
         }
     }
 
     /* Verifica se dada string existe nos ficheiros do utilizador */
-    private int checkIfWordExistsFile(String path, String word) throws CryptoException {
+    private int checkIfWordExistsFile(String path, String procura) throws CryptoException, IOException {
         File f = new File("src/files/" + nomeUtilizador + "/" + path);
         decrypt(chave, f, f);
-        int counter = 0;
-        // check if word exists in file
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(f));
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (line.toLowerCase().contains(word.toLowerCase())) {
-                    counter++;
+        String[] words;
+        FileReader fr = new FileReader(f);
+        BufferedReader br = new BufferedReader(fr);
+        String str;
+        int count = 0;
+        while((str = br.readLine()) != null)
+        {
+            words = str.split( "(?=[,.])|\\\\s+");
+            for (String word : words)
+            {
+                if (word.contains(procura.toLowerCase()))
+                {
+                    count++;
                 }
             }
-            br.close();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         encrypt(chave, f, f);
-        return counter;
+        return count;
     }
 
     /* Verificar ficheiros na pasta pela string da procura */
-    private ArrayList<String> checkAllFilesInFolder(String palavra) throws CryptoException {
+    private ArrayList<String> checkAllFilesInFolder(String palavra) throws CryptoException, IOException {
         // Tuplo com os ficheiros e o numero de vezes que aparece a palavra
-        Pair<String, Integer> tuplo;
-        ArrayList<String> files = new ArrayList<>();
+        ArrayList<Pair<String, Integer>> tuplos = new ArrayList<>();
         File folder = new File("src/files/" + nomeUtilizador + "/");
         File[] listOfFiles = folder.listFiles();
         for (File file : listOfFiles) {
             if (file.isFile() && file.getName().endsWith(".txt")) {
                 if (checkIfWordExistsFile(file.getName(), palavra) != 0) {
-                    files.add(file.getName());
+                    tuplos.add(new Pair<>(file.getName(), checkIfWordExistsFile(file.getName(), palavra)));
                 }
             }
 
         }
-        return files;
+        // ordenação do tuplo
+        tuplos.sort((o1, o2) -> o2.getValue() - o1.getValue());
+        return tuplos.stream().map(Pair::getKey).collect(Collectors.toCollection(ArrayList::new));
     }
 
     /* Seleção por dia, intervalo ou todas */
@@ -872,7 +876,7 @@ public class DiarioController implements Initializable {
 
     @FXML
     private void fileIconFunction(MouseEvent e) {
-        fileBack.setStyle("-fx-fill: #85837e;");
+        fileBack.setStyle("-fx-fill: #b4b4b4;");
         calendarBack.setStyle("-fx-fill: whitesmoke;");
         searchBack.setStyle("-fx-fill: whitesmoke;");
         txfProcura.setVisible(false);
@@ -886,7 +890,7 @@ public class DiarioController implements Initializable {
     private void searchIconFunction(MouseEvent e) {
         fileBack.setStyle("-fx-fill: whitesmoke;");
         calendarBack.setStyle("-fx-fill: whitesmoke;");
-        searchBack.setStyle("-fx-fill: #85837e;");
+        searchBack.setStyle("-fx-fill: #b4b4b4;");
         txfProcura.setVisible(true);
         dateSelectionType.setVisible(false);
         datePick.setVisible(false);
@@ -897,7 +901,7 @@ public class DiarioController implements Initializable {
     private void calendarIconFunction(MouseEvent e) {
         fileBack.setStyle("-fx-fill: whitesmoke;");
         searchBack.setStyle("-fx-fill: whitesmoke;");
-        calendarBack.setStyle("-fx-fill: #85837e;");
+        calendarBack.setStyle("-fx-fill: #b4b4b4;");
         txfProcura.setVisible(false);
         dateSelectionType.setVisible(true);
         datePick.setVisible(true);
@@ -946,14 +950,12 @@ public class DiarioController implements Initializable {
                 if (newValue.length() > 0) {
                     ArrayList<String> files = checkAllFilesInFolder(newValue);
                     ObservableList<String> items2 = FXCollections.observableArrayList();
-                    for (String file : files) {
-                        items2.add(file);
-                    }
+                    items2.addAll(files);
                     lstFiles.setItems(items2);
                 }  else {
                     lstFiles.setItems(items);
                 }
-            } catch (CryptoException e) {
+            } catch (CryptoException | IOException e) {
                 e.printStackTrace();
             }
         }
@@ -976,5 +978,6 @@ public class DiarioController implements Initializable {
  * Mudar listView/ anchor pane
  * Resizing
  * PDF e impressao, podem ser na mesmo icone?
- * Rich text area, e legal?
+ * Rich text area, e legal, caret position?
+ * Cores? Muito monotono?
  */

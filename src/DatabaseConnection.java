@@ -1,5 +1,3 @@
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 import java.sql.Connection;
 import java.sql.DriverManager;
 

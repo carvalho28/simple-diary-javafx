@@ -13,7 +13,6 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URL;
 import java.security.Key;

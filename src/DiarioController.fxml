@@ -59,7 +59,7 @@
                   </MenuBar>
                   <ChoiceBox fx:id="dateSelectionType" layoutX="90.0" layoutY="120.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" />
                   <DatePicker fx:id="datePick2" layoutX="39.0" layoutY="201.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#pickDate2" promptText="Selecione data" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" />
-                  <Rectangle fx:id="fileBack" arcHeight="5.0" arcWidth="5.0" fill="#85837e" height="40.0" layoutX="54.0" layoutY="39.0" onMouseClicked="#fileIconFunction" stroke="BLACK" strokeType="INSIDE" width="40.0">
+                  <Rectangle fx:id="fileBack" arcHeight="5.0" arcWidth="5.0" fill="#b4b4b4" height="40.0" layoutX="54.0" layoutY="39.0" onMouseClicked="#fileIconFunction" stroke="BLACK" strokeType="INSIDE" width="40.0">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor></Rectangle>
@@ -98,9 +98,9 @@
         <tabs>
           <Tab fx:id="firstTab" text="Tab Inicial">
             <content>
-              <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+              <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="anchorTab" stylesheets="@styles/diario.css">
                      <children>
-                        <StyleClassedTextArea fx:id="txaFicheiro" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <StyleClassedTextArea fx:id="txaFicheiro" editable="false" layoutX="1.0" layoutY="-1.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="618.0" prefWidth="739.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-2.0" />
                         <Hyperlink layoutX="14.0" layoutY="91.0" onAction="#entradaHoje" text="Nota de Hoje">
                            <font>
                               <Font size="15.0" />
