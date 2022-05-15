@@ -27,3 +27,7 @@
 .tab .tab-label {
     -fx-font-size: 15px;
 }
+
+.list-view .list-cell {
+    -fx-font-size: 15px;
+}

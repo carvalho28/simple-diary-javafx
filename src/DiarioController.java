@@ -1,3 +1,7 @@
+import de.jensd.fx.glyphs.GlyphIcon;
+import de.jensd.fx.glyphs.GlyphsStack;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,7 +17,10 @@ import javafx.print.PageLayout;
 import javafx.print.PrinterJob;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.util.Callback;
@@ -49,6 +56,27 @@ public class DiarioController implements Initializable {
 //    Button btnNovo;
 //    @FXML
 //    Button btnApagar;
+
+    /* ICONS */
+    @FXML
+    FontAwesomeIconView fileIcon;
+    @FXML
+    Rectangle fileBack;
+    @FXML
+    FontAwesomeIconView searchIcon;
+    @FXML
+    Rectangle searchBack;
+    @FXML
+    FontAwesomeIconView calendarIcon;
+    @FXML
+    Rectangle calendarBack;
+
+    @FXML
+    AnchorPane anchoPaneText;
+
+
+    @FXML
+    VBox vBox;
 
     /* ENCRYTPION/ DECRYPTION */
     private static final String ALGORITHM = "AES";
@@ -976,6 +1004,41 @@ public class DiarioController implements Initializable {
         }
     }
 
+    @FXML
+    private void fileIconFunction(MouseEvent e) {
+        fileBack.setStyle("-fx-fill: #85837e;");
+        calendarBack.setStyle("-fx-fill: whitesmoke;");
+        searchBack.setStyle("-fx-fill: whitesmoke;");
+        txfProcura.setVisible(false);
+        dateSelectionType.setVisible(false);
+        datePick.setVisible(false);
+        datePick2.setVisible(false);
+        searchBack.setStyle("-fx-fill: whitesmoke;");
+    }
+
+    @FXML
+    private void searchIconFunction(MouseEvent e) {
+        fileBack.setStyle("-fx-fill: whitesmoke;");
+        calendarBack.setStyle("-fx-fill: whitesmoke;");
+        searchBack.setStyle("-fx-fill: #85837e;");
+        txfProcura.setVisible(true);
+        dateSelectionType.setVisible(false);
+        datePick.setVisible(false);
+        datePick2.setVisible(false);
+    }
+
+    @FXML
+    private void calendarIconFunction(MouseEvent e) {
+        fileBack.setStyle("-fx-fill: whitesmoke;");
+        searchBack.setStyle("-fx-fill: whitesmoke;");
+        calendarBack.setStyle("-fx-fill: #85837e;");
+        txfProcura.setVisible(false);
+        dateSelectionType.setVisible(true);
+        datePick.setVisible(true);
+        datePick2.setVisible(true);
+    }
+
+
     /**
      * Initializes the controller class.
      */
@@ -1000,7 +1063,6 @@ public class DiarioController implements Initializable {
 
         datePick2.setVisible(false);
 
-
         //listener in txfProcura
         txfProcura.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
@@ -1019,6 +1081,13 @@ public class DiarioController implements Initializable {
             }
         }
         );
+
+        // background of fileIcon
+
+        txfProcura.setVisible(false);
+        datePick.setVisible(false);
+        datePick2.setVisible(false);
+        dateSelectionType.setVisible(false);
     }
 }
 
