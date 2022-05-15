@@ -33,6 +33,7 @@ import org.bouncycastle.crypto.CryptoException;
 import org.fxmisc.richtext.StyleClassedTextArea;
 import org.fxmisc.richtext.model.Paragraph;
 import org.languagetool.JLanguageTool;
+import org.languagetool.language.NewZealandEnglish;
 import org.languagetool.language.PortugalPortuguese;
 import org.languagetool.rules.RuleMatch;
 import org.reactfx.collection.LiveList;
