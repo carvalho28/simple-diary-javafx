@@ -267,6 +267,7 @@ public class DiarioController implements Initializable {
                 tabPane.getSelectionModel().select(index);
             } else {
                 StyleClassedTextArea textArea1 = new StyleClassedTextArea();
+                textArea1.getStyleClass().add("anchorTab");
                 textArea1.setWrapText(true);
                 textArea1.setPadding(new Insets(10, 10, 10, 10));
                 if (fileDate == null) {
@@ -560,7 +561,6 @@ public class DiarioController implements Initializable {
         }
         fileName = lstFiles.getSelectionModel().getSelectedItem();
         if (fileName != null) {
-            System.out.println(fileName);
             pathFile = "src/files/" + nomeUtilizador + "/" + fileName.substring(0, (fileName).length() - 4);
             openFileFunction(0);
         }
@@ -667,7 +667,6 @@ public class DiarioController implements Initializable {
         if (dateSelectionIndex == 1) {
             dataInicio = datePick.getValue();
             if (dataInicio != null) {
-                System.out.println(dataInicio);
                 String dataFinal = dataInicio.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                 file1 = dataFinal + ".txt";
                 datePick2.setDisable(false);
@@ -798,7 +797,11 @@ public class DiarioController implements Initializable {
             if (printerJob.printPage(printArea)) {
                 printerJob.endJob();
             } else {
-                System.out.println("Falhou a impressão");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erro");
+                alert.setHeaderText("A impressão falhou!");
+                alert.setContentText("Não existem textos para imprimir");
+                alert.showAndWait();
             }
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -976,7 +979,7 @@ public class DiarioController implements Initializable {
 /**
  * Duvidas:
  * Mudar listView/ anchor pane
- * Resizing
+ * Resizing windows
  * PDF e impressao, podem ser na mesmo icone?
  * Rich text area, e legal, caret position?
  * Cores? Muito monotono?
