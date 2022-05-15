@@ -1,15 +1,10 @@
-import de.jensd.fx.glyphs.GlyphIcon;
-import de.jensd.fx.glyphs.GlyphsStack;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
-import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -17,13 +12,12 @@ import javafx.print.PageLayout;
 import javafx.print.PrinterJob;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import javafx.util.Callback;
+import javafx.util.Pair;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -33,7 +27,6 @@ import org.bouncycastle.crypto.CryptoException;
 import org.fxmisc.richtext.StyleClassedTextArea;
 import org.fxmisc.richtext.model.Paragraph;
 import org.languagetool.JLanguageTool;
-import org.languagetool.language.NewZealandEnglish;
 import org.languagetool.language.PortugalPortuguese;
 import org.languagetool.rules.RuleMatch;
 import org.reactfx.collection.LiveList;
@@ -504,87 +497,6 @@ public class DiarioController implements Initializable {
                 }
             }
         }
-
-//        Tab t1 = new Tab(filePath.substring(0, filePath.length() - 4));
-//        // verificar se o texto da tab ja esta aberto
-//        if (tituloTabs.contains(t1.getText())) {
-//            int index = tituloTabs.indexOf(t1.getText());
-//            tabPane.getSelectionModel().select(index);
-//        } else {
-//            StyleClassedTextArea textArea1 = new StyleClassedTextArea();
-//            textArea1.setWrapText(true);
-//            t1.setContent(textArea1);
-//            tabPane.getTabs().add(t1);
-//            tabPane.getSelectionModel().select(t1);
-//            tituloTabs.add(t1.getText());
-//            // formatter na textArea
-//            textArea1.setOnKeyTyped(event -> {
-//                try {
-//                    keyPressedAutoSave(event);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            });
-//            textArea1.setOnKeyPressed(event -> {
-//                try {
-//                    textAreaShortcuts(event);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            });
-//            t1.setOnClosed(event -> {
-//                tituloTabs.remove(t1.getText());
-//            });
-//            try {
-//                File f = new File("src/files/" + filePath);
-//                decrypt(chave, f, f);
-//                InputStream inputstream = new FileInputStream(pathFile);
-//                InputStreamReader inputStreamReader = new InputStreamReader(inputstream, StandardCharsets.UTF_8);
-//                int data = inputStreamReader.read();
-//
-//                while (data != -1) {
-//                    char aChar = (char) data;
-//                    textArea1.appendText(String.valueOf(aChar));
-//                    data = inputStreamReader.read();
-//                }
-//                inputstream.close();
-//
-//                encrypt(chave, f, f);
-//
-//            } catch (CryptoException e) {
-//                Alert alert = new Alert(Alert.AlertType.ERROR);
-//                alert.setTitle("Erro");
-//                alert.setHeaderText("Este ficheiro não lhe pertence!");
-//
-//                alert.showAndWait();
-//                t1.getTabPane().getTabs().remove(t1);
-//                tituloTabs.remove(t1.getText());
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//
-//            String dataDia = (new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
-////            bw.write("\n");
-////            bw.write("------------\n");
-//            String conteudoImo = dataDia + "\n------------\n";
-//            // textarea cursor listener
-//            textArea1.caretPositionProperty().addListener((ChangeListener<Number>) (observable, oldValue, newValue) -> {
-//                int caretPosition = textArea1.getCaretPosition();
-//
-//                if (caretPosition >= 0 && caretPosition < 24) {
-////                    textArea1.displaceCaret(25);
-//                    String remaining = "";
-//                    char[] remainigChars = conteudoImo.toCharArray();
-//                    for (int i = caretPosition; i < 24; i++) {
-//                        remaining += remainigChars[i];
-//                    }
-//                    textArea1.replaceText(caretPosition, 23, remaining);
-//                }
-//
-//
-//            });
-//
-//        }
     }
 
 
@@ -621,8 +533,7 @@ public class DiarioController implements Initializable {
         }
     }
 
-
-    //Saves file
+    /* Guardar on click */
     @FXML
     private void btnClick(ActionEvent e) throws IOException, CryptoException {
         saveFuntion();
@@ -646,17 +557,15 @@ public class DiarioController implements Initializable {
                 lstFiles.getSelectionModel().selectPrevious();
             }
         }
-        //Sera que falta + ".txt" ?????
         fileName = lstFiles.getSelectionModel().getSelectedItem();
         if (fileName != null) {
             System.out.println(fileName);
             pathFile = "src/files/" + nomeUtilizador + "/" + fileName.substring(0, (fileName).length() - 4);
-//        fileName += ".txt";
             openFileFunction(0);
         }
     }
 
-    //Auto save on
+    /* Guarda on key press */
     @FXML
     private void keyPressedAutoSave(KeyEvent e) throws IOException, CryptoException {
         if (autoSaveToggle) {
@@ -698,14 +607,9 @@ public class DiarioController implements Initializable {
             fileName = name + ".txt";
             newFile = true;
             openFileFunction(0);
-            // abrir ficheiro na textarea
-//            String substring = name.substring(0, name.length() - 4);
             lstFiles.getItems().add(fileName);
             lstFiles.getSelectionModel().select(fileName);
             lstFiles.scrollTo(fileName);
-
-//            TextArea textArea = (TextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
-//            textArea.requestFocus();
         }
     }
 
@@ -796,6 +700,7 @@ public class DiarioController implements Initializable {
         }
     }
 
+    //DEIXAR ESTAR, COLOCAR DUVIDA
     @FXML
     private void toPDF(ActionEvent e) {
         try {
@@ -870,12 +775,9 @@ public class DiarioController implements Initializable {
             }
         }
         );
-
-
     }
 
-
-    // print content of textarea to printer
+    /* Imprimir conteúdo da página para impressora /ou PDF */
     @FXML
     private void print(ActionEvent e) throws IOException, PrintException {
         System.out.println(tituloTabs);
@@ -906,17 +808,18 @@ public class DiarioController implements Initializable {
         }
     }
 
-    private boolean checkIfWordExistsFile(String path, String word) throws CryptoException {
+    /* Verifica se dada string existe nos ficheiros do utilizador */
+    private int checkIfWordExistsFile(String path, String word) throws CryptoException {
         File f = new File("src/files/" + nomeUtilizador + "/" + path);
         decrypt(chave, f, f);
+        int counter = 0;
         // check if word exists in file
         try {
             BufferedReader br = new BufferedReader(new FileReader(f));
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.toLowerCase().contains(word.toLowerCase())) {
-                    encrypt(chave, f, f);
-                    return true;
+                    counter++;
                 }
             }
             br.close();
@@ -924,7 +827,7 @@ public class DiarioController implements Initializable {
             e.printStackTrace();
         }
         encrypt(chave, f, f);
-        return false;
+        return counter;
     }
 
     /* Verificar ficheiros na pasta pela string da procura */
@@ -936,7 +839,7 @@ public class DiarioController implements Initializable {
         File[] listOfFiles = folder.listFiles();
         for (File file : listOfFiles) {
             if (file.isFile() && file.getName().endsWith(".txt")) {
-                if (checkIfWordExistsFile(file.getName(), palavra)) {
+                if (checkIfWordExistsFile(file.getName(), palavra) != 0) {
                     files.add(file.getName());
                 }
             }
@@ -1068,4 +971,10 @@ public class DiarioController implements Initializable {
     }
 }
 
-//FALTA: Verificar PDF, verificar search, fix \n bug when backspacing at index 24
+/**
+ * Duvidas:
+ * Mudar listView/ anchor pane
+ * Resizing
+ * PDF e impressao, podem ser na mesmo icone?
+ * Rich text area, e legal?
+ */
