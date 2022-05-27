@@ -1,5 +1,6 @@
 .btn {
-    -fx-background-color: #00a5e0;
+    -fx-background-color: #4592af;
+    -fx-font-size: 18px;
 }
 .btn:hover {
     -fx-cursor: hand;

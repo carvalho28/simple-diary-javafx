@@ -26,6 +26,7 @@
 
 .tab .tab-label {
     -fx-font-size: 15px;
+    -fx-text-fill: black;
 }
 
 .list-view .list-cell {
@@ -46,36 +47,49 @@
 .tab {
     -fx-font-family: Arial;
     -fx-font-size: 15;
-    -fx-background-color: #ffffff;
+    -fx-background-color: #b4d2e7;
     -fx-border-width: 1px 1px 0px 1px;
     -fx-border-color: black;
     -fx-border-radius: 3px;
 }
 
+.tab:selected .tab-label {
+    /*-fx-background-color: #b4d2e7;*/
+    -fx-text-fill: white;
+}
+
 .tab:selected {
-    -fx-background-color: #d3d3d3 ;
+    -fx-background-color: #4592af;
+    /*-fx-text-fill: black;*/
 }
 
 .menu-bar {
-    -fx-background-color: #d3d3d3 ;
+    -fx-background-color: #4592af;
     -fx-border-width: 0 0 1px 0;
     -fx-border-color: black;
-
 }
 .menu-bar .label {
     -fx-font-size: 14.0 pt;
     -fx-font-family: "Arial";
-    -fx-text-fill: black;
+    -fx-text-fill: white;
+}
+
+.menu:hover {
+    -fx-text-fill: black ;
+}
+
+.menu-bar:hover{
+    -fx-text-fill: black ;
 }
 
 .menu-bar .menu-button:hover, .menu-bar .menu-button:focused, .menu-bar .menu-button:showing {
-    -fx-background: whitesmoke ;
     -fx-text-fill: black;
+    -fx-background: #b4d2e7;
 }
 
 .menu-item {
     -fx-text-fill: black;
-    -fx-background: whitesmoke ;
+    -fx-background: #4592af;
 }
 .menu-item .label{
     -fx-font-size: 14.0 pt;
@@ -83,29 +97,67 @@
 }
 .menu-item .label:hover{
     -fx-font-size: 14.0 pt;
-    -fx-background: #b4b4b4 ;
-    -fx-text-fill: black;
+    -fx-background: #b4d2e7;
+    -fx-text-fill: white;
 }
 
-
 .list-cell:filled:selected:focused, .list-cell:filled:selected {
-    -fx-background-color: linear-gradient(#D4D4D4 0%, #B8B8B8 100%);
-    -fx-text-fill: black;
+    -fx-background-color: #4592af;
+    -fx-text-fill: white;
 }
 
 .list-cell:even {
-    -fx-background-color: whitesmoke;
+    -fx-background-color: rgba(198, 213, 227, 0.5);
 }
 .list-cell:odd {
     -fx-background-color: white;
 }
 
 .list-cell:filled:hover {
-    -fx-background-color: #B4B4B4;
+    -fx-background-color: #b4d2e7;
     -fx-text-fill: black;
 }
+
+.list-view:focused .list-cell:filled:focused:selected {
+    -fx-background-color: #4592af;
+    -fx-text-fill: white;
+}
+
 
 .anchorTab {
     -fx-border-color: black;
     -fx-border-width: 1px 0px 0px 0px;
+}
+
+.list-view {
+    -fx-border-color: #4592af;
+    -fx-border-width: 2px 0px 0px 0px;
+}
+
+.anchorBaixo {
+    -fx-border-color: #4592af;
+    -fx-border-width: 0px 1px 0px 0px;
+}
+
+.anchorCima {
+    -fx-border-color: #4592af;
+    -fx-border-width: 0px 1px 0px 0px;
+}
+
+.choice-box {
+    -fx-background-color: whitesmoke;
+    -fx-border-color: black;
+    -fx-border-radius: 5px;
+}
+
+.date-picker {
+    -fx-background-color: whitesmoke;
+    -fx-border-color: black;
+    -fx-border-radius: 5px;
+}
+
+.tfPesquisa {
+    -fx-background-color: whitesmoke;
+    -fx-border-color: black;
+    -fx-border-radius: 5px;
 }

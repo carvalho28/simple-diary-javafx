@@ -6,6 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -29,23 +30,12 @@ public class AuthController implements Initializable {
     @FXML
     Button cancelBTN;
     @FXML
-    Button registoBTN;
+    Hyperlink registoBTN;
     @FXML
     Label loginMessageLB;
 
     public static String keyUser = "";
     public static String userName = "";
-
-//    //decrypt password
-//    public static String decrypt(String encryptedText, String key) throws Exception {
-//        Cipher cipher = Cipher.getInstance("AES");
-//        Key secretKey = new SecretKeySpec(key.getBytes(), "AES");
-//        cipher.init(Cipher.DECRYPT_MODE, secretKey);
-//        byte[] decryptedText = cipher.doFinal(encryptedText.getBytes());
-//        return new String(decryptedText, "UTF-8");
-//    }
-
-
 
     @FXML
     private void login(ActionEvent e) throws Exception {

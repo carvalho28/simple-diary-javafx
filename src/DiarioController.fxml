@@ -3,6 +3,7 @@
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Hyperlink?>
@@ -18,16 +19,17 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 <?import org.fxmisc.richtext.StyleClassedTextArea?>
 
 <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="1000.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="DiarioController">
    <left>
       <VBox fx:id="vBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-border-color: black;">
          <children>
-          <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+          <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="anchorCima" stylesheets="@styles/diario.css">
                <children>
                   <DatePicker fx:id="datePick" layoutX="39.0" layoutY="160.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#pickDate1" promptText="Selecione data" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" />
-                  <TextField fx:id="txfProcura" layoutX="40.0" layoutY="120.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="186.0" promptText="Pesquisa" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" />
+                  <TextField fx:id="txfProcura" layoutX="40.0" layoutY="120.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="186.0" promptText="Pesquisa" styleClass="tfPesquisa" stylesheets="@styles/diario.css" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" />
                   <MenuBar layoutX="-1.0" layoutY="1.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="248.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <menus>
                       <Menu mnemonicParsing="false" text="Ficheiro">
@@ -59,15 +61,15 @@
                   </MenuBar>
                   <ChoiceBox fx:id="dateSelectionType" layoutX="90.0" layoutY="120.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" />
                   <DatePicker fx:id="datePick2" layoutX="39.0" layoutY="201.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#pickDate2" promptText="Selecione data" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" />
-                  <Rectangle fx:id="fileBack" arcHeight="5.0" arcWidth="5.0" fill="#b4b4b4" height="40.0" layoutX="54.0" layoutY="39.0" onMouseClicked="#fileIconFunction" stroke="BLACK" strokeType="INSIDE" width="40.0">
+                  <Rectangle fx:id="fileBack" arcHeight="5.0" arcWidth="5.0" fill="#b4d2e7" height="40.0" layoutX="54.0" layoutY="39.0" onMouseClicked="#fileIconFunction" stroke="BLACK" strokeType="INSIDE" width="40.0">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor></Rectangle>
-                  <Rectangle fx:id="searchBack" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="40.0" layoutX="104.0" layoutY="39.0" onMouseClicked="#searchIconFunction" stroke="BLACK" strokeType="INSIDE" width="40.0">
+                  <Rectangle fx:id="searchBack" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="40.0" layoutX="102.0" layoutY="39.0" onMouseClicked="#searchIconFunction" stroke="BLACK" strokeType="INSIDE" width="40.0">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor></Rectangle>
-                  <Rectangle fx:id="calendarBack" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="40.0" layoutX="157.0" layoutY="39.0" onMouseClicked="#calendarIconFunction" stroke="BLACK" strokeType="INSIDE" width="40.0">
+                  <Rectangle fx:id="calendarBack" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="40.0" layoutX="149.0" layoutY="39.0" onMouseClicked="#calendarIconFunction" stroke="BLACK" strokeType="INSIDE" width="40.0">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor></Rectangle>
@@ -75,17 +77,22 @@
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor></FontAwesomeIconView>
-                  <FontAwesomeIconView fx:id="searchIcon" glyphName="SEARCH" layoutX="115.0" layoutY="66.0" onMouseClicked="#searchIconFunction" size="20">
+                  <FontAwesomeIconView fx:id="searchIcon" glyphName="SEARCH" layoutX="113.0" layoutY="66.0" onMouseClicked="#searchIconFunction" size="20">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor></FontAwesomeIconView>
-                  <FontAwesomeIconView fx:id="calendarIcon" glyphName="CALENDAR" layoutX="168.0" layoutY="66.0" onMouseClicked="#calendarIconFunction" size="20">
+                  <FontAwesomeIconView fx:id="calendarIcon" glyphName="CALENDAR" layoutX="160.0" layoutY="66.0" onMouseClicked="#calendarIconFunction" size="20">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor></FontAwesomeIconView>
+                  <Text fx:id="txtWords" layoutX="45.0" layoutY="139.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nº de Entradas: 3" textAlignment="CENTER" wrappingWidth="154.0">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Text>
                </children>
             </AnchorPane>
-          <AnchorPane fx:id="anchoPaneText" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+          <AnchorPane fx:id="anchoPaneText" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="anchorBaixo" stylesheets="@styles/diario.css" VBox.vgrow="ALWAYS">
                <children>
                   <ListView fx:id="lstFiles" layoutY="-44.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#btnOpen" stylesheets="@styles/diario.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="19.0" />
                </children>
@@ -106,6 +113,14 @@
                               <Font size="15.0" />
                            </font>
                         </Hyperlink>
+                        <Button layoutX="14.0" layoutY="193.0" mnemonicParsing="false" onAction="#logoutHandle" style="-fx-background-color: #b4d2e7; -fx-border-color: black; -fx-border-radius: 5;" text="Logout">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Button>
                      </children>
                   </AnchorPane>
             </content>

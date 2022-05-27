@@ -3,12 +3,16 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.print.PageLayout;
 import javafx.print.PrinterJob;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
@@ -16,6 +20,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.stage.Stage;
 import javafx.util.Pair;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -113,6 +118,8 @@ public class DiarioController implements Initializable {
     private DatePicker datePick2;
     @FXML
     private ChoiceBox<String> dateSelectionType;
+    @FXML
+    private Text txtWords;
 
     /* Outras variáveis */
     private String pathFile = "";
@@ -217,6 +224,7 @@ public class DiarioController implements Initializable {
             }
         }
         lstFiles.getItems().addAll(items);
+        txtWords.setText("Nº de Entradas: " + items.size());
     }
 
     /* Toggle autosave */
@@ -611,6 +619,7 @@ public class DiarioController implements Initializable {
             lstFiles.getItems().add(fileName);
             lstFiles.getSelectionModel().select(fileName);
             lstFiles.scrollTo(fileName);
+            txtWords.setText("Nº de Entradas: " + lstFiles.getItems().size());
         }
     }
 
@@ -632,6 +641,7 @@ public class DiarioController implements Initializable {
                 lstFiles.getItems().remove(name);
                 lstFiles.getSelectionModel().select(0);
                 tabPane.getTabs().remove(tabPane.getSelectionModel().getSelectedIndex());
+                txtWords.setText("Nº de Entradas: " + lstFiles.getItems().size());
             }
         }
     }
@@ -879,7 +889,8 @@ public class DiarioController implements Initializable {
 
     @FXML
     private void fileIconFunction(MouseEvent e) {
-        fileBack.setStyle("-fx-fill: #b4b4b4;");
+        txtWords.setVisible(true);
+        fileBack.setStyle("-fx-fill: #b4d2e7;");
         calendarBack.setStyle("-fx-fill: whitesmoke;");
         searchBack.setStyle("-fx-fill: whitesmoke;");
         txfProcura.setVisible(false);
@@ -891,9 +902,10 @@ public class DiarioController implements Initializable {
 
     @FXML
     private void searchIconFunction(MouseEvent e) {
+        txtWords.setVisible(false);
         fileBack.setStyle("-fx-fill: whitesmoke;");
         calendarBack.setStyle("-fx-fill: whitesmoke;");
-        searchBack.setStyle("-fx-fill: #b4b4b4;");
+        searchBack.setStyle("-fx-fill: #b4d2e7;");
         txfProcura.setVisible(true);
         dateSelectionType.setVisible(false);
         datePick.setVisible(false);
@@ -902,13 +914,14 @@ public class DiarioController implements Initializable {
 
     @FXML
     private void calendarIconFunction(MouseEvent e) {
+        txtWords.setVisible(false);
         fileBack.setStyle("-fx-fill: whitesmoke;");
         searchBack.setStyle("-fx-fill: whitesmoke;");
-        calendarBack.setStyle("-fx-fill: #b4b4b4;");
+        calendarBack.setStyle("-fx-fill: #b4d2e7;");
         txfProcura.setVisible(false);
         dateSelectionType.setVisible(true);
         datePick.setVisible(true);
-        datePick2.setVisible(true);
+        datePick2.setVisible(false);
     }
 
     /* Entrada Hoje pelo hyperlink */
@@ -927,6 +940,22 @@ public class DiarioController implements Initializable {
         }
     }
 
+    /* Logout */
+    @FXML
+    public void logoutHandle(ActionEvent e) throws IOException {
+        Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Auth.fxml")));
+        Scene scene = new Scene(parent);
+        scene.setOnKeyPressed(e2 -> {
+        if (e2.getCode() == KeyCode.ENTER) {
+            Button btn = (Button) scene.lookup("#loginBTN");
+            btn.fire();
+        }
+        });
+        Stage appStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+        appStage.setScene(scene);
+        appStage.show();
+    }
+
     /**
      * Initializes the controller class.
      */
@@ -940,6 +969,10 @@ public class DiarioController implements Initializable {
                 items.add(listOfFiles[i].getName());
             }
         }
+        txtWords.setText("Nº de Entradas: " + items.size());
+
+        firstTab.setClosable(false);
+
         lstFiles.setItems(items);
         tituloTabs.add(firstTab.getText());
         dateSelectionType.getItems().addAll(dateSelectionOptions);
@@ -971,7 +1004,8 @@ public class DiarioController implements Initializable {
         txaFicheiro.setPadding(new Insets(10, 10, 10, 10));
         String dataHoje = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
         txaFicheiro.appendText("Bem-vindo/a ao seu Diário, " + nomeUtilizador + "!\n");
-        txaFicheiro.appendText("Hoje é " + dataHoje + ".\n");
+        txaFicheiro.appendText("Hoje é " + dataHoje + ".\n\n\n\n");
+        txaFicheiro.appendText("Para ir para a nota de hoje");
 
     }
 }
