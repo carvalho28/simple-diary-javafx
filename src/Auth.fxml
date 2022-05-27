@@ -11,90 +11,121 @@
 <?import javafx.scene.effect.InnerShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
 <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="600.0" minWidth="800.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="AuthController">
    <left>
-      <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="300.0" style="-fx-background-color: #6096ba;" BorderPane.alignment="CENTER">
+      <StackPane prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #6096ba#6096ba;" stylesheets="@styles/auth.css" BorderPane.alignment="CENTER">
          <children>
-            <Label alignment="CENTER" layoutY="309.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="O meu Diário" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="309.0">
+            <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="O meu Diário" textFill="WHITE">
                <font>
                   <Font name="Verdana Bold" size="24.0" />
                </font>
                <effect>
                   <DropShadow />
                </effect>
+               <StackPane.margin>
+                  <Insets bottom="50.0" top="80.0" />
+               </StackPane.margin>
             </Label>
-            <Label alignment="CENTER" layoutY="357.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Uma coisa bela nunca é perfeita" textAlignment="CENTER" textFill="WHITE" wrapText="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="357.0">
+            <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Uma coisa bela nunca é perfeita" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                <font>
                   <Font name="Apple Braille Outline 6 Dot" size="18.0" />
                </font>
                <effect>
                   <DropShadow />
                </effect>
+               <StackPane.margin>
+                  <Insets top="125.0" />
+               </StackPane.margin>
             </Label>
-            <Line endX="182.5" layoutX="110.0" layoutY="357.0" startX="-100.0" stroke="WHITE" AnchorPane.leftAnchor="9.5" AnchorPane.rightAnchor="10.5" AnchorPane.topAnchor="356.5" />
-            <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="77.0" layoutY="148.0" opacity="0.4" pickOnBounds="true" preserveRatio="true" AnchorPane.topAnchor="148.0">
+            <Line endX="182.5" startX="-100.0" stroke="WHITE">
+               <StackPane.margin>
+                  <Insets top="80.0" />
+               </StackPane.margin>
+            </Line>
+            <ImageView fitHeight="150.0" fitWidth="200.0" opacity="0.4" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@images/book2.png" />
                </image>
                <effect>
                   <Glow />
                </effect>
+               <StackPane.margin>
+                  <Insets bottom="250.0" />
+               </StackPane.margin>
             </ImageView>
          </children>
-      </AnchorPane>
+      </StackPane>
    </left>
    <center>
-      <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="380.0" style="-fx-background-color: #b4d2e7;" BorderPane.alignment="CENTER">
+      <StackPane prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #b4d2e7 #b4d2e7;" stylesheets="@styles/auth.css" BorderPane.alignment="CENTER">
          <children>
-            <Label alignment="CENTER" layoutY="115.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Login" textAlignment="CENTER" wrapText="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="115.0">
+            <Label alignment="CENTER" text="Login" textAlignment="CENTER" wrapText="true">
                <font>
                   <Font name="Verdana Bold" size="45.0" />
                </font>
                <effect>
                   <InnerShadow />
                </effect>
+               <StackPane.margin>
+                  <Insets bottom="350.0" />
+               </StackPane.margin>
             </Label>
-            <Label layoutX="26.0" layoutY="216.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Username" AnchorPane.leftAnchor="26.0" AnchorPane.topAnchor="216.0">
+            <Label text="Username">
                <font>
                   <Font size="18.0" />
                </font>
+               <StackPane.margin>
+                  <Insets bottom="175.0" left="-300.0" />
+               </StackPane.margin>
             </Label>
-            <Label layoutX="26.0" layoutY="275.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Password" AnchorPane.leftAnchor="26.0" AnchorPane.topAnchor="275.0">
+            <Label text="Password">
                <font>
                   <Font size="18.0" />
                </font>
+               <StackPane.margin>
+                  <Insets bottom="100.0" left="-300.0" />
+               </StackPane.margin>
             </Label>
-            <TextField fx:id="usernameTF" layoutX="129.0" layoutY="213.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="26.0" prefWidth="348.0" AnchorPane.leftAnchor="129.0" AnchorPane.rightAnchor="26.0" AnchorPane.topAnchor="213.0" />
-            <PasswordField fx:id="passwordTF" layoutX="128.0" layoutY="272.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="26.0" prefWidth="349.0" AnchorPane.leftAnchor="129.0" AnchorPane.rightAnchor="26.0" AnchorPane.topAnchor="272.0" />
-            <Button fx:id="loginBTN" layoutX="129.0" layoutY="332.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#login" styleClass="btn" stylesheets="@styles/auth.css" text="Login" textFill="WHITE" AnchorPane.leftAnchor="129.0" AnchorPane.rightAnchor="111.0" AnchorPane.topAnchor="332.0">
+            <TextField fx:id="usernameTF" prefHeight="26.0" prefWidth="348.0">
+               <StackPane.margin>
+                  <Insets bottom="175.0" left="175.0" right="50.0" />
+               </StackPane.margin></TextField>
+            <PasswordField fx:id="passwordTF" prefHeight="26.0" prefWidth="349.0">
+               <StackPane.margin>
+                  <Insets bottom="100.0" left="175.0" right="50.0" />
+               </StackPane.margin></PasswordField>
+            <Button fx:id="loginBTN" mnemonicParsing="false" onAction="#login" styleClass="btn" stylesheets="@styles/auth.css" text="Login" textFill="WHITE">
                <padding>
                   <Insets bottom="5.0" top="5.0" />
                </padding>
                <font>
                   <Font size="10.0" />
                </font></Button>
-            <Button fx:id="cancelBTN" layoutX="129.0" layoutY="385.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#cancel" styleClass="btn" stylesheets="@styles/auth.css" text="Cancel" textFill="WHITE" AnchorPane.leftAnchor="129.0" AnchorPane.rightAnchor="111.0" AnchorPane.topAnchor="332.0">
-               <padding>
-                  <Insets bottom="5.0" top="5.0" />
-               </padding></Button>
-            <Label fx:id="loginMessageLB" alignment="CENTER" layoutX="12.0" layoutY="97.0" prefHeight="18.0" prefWidth="263.0" textFill="RED" />
-            <Hyperlink fx:id="registoBTN" layoutX="406.0" layoutY="493.0" onAction="#registo" text="aqui." AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="493.0">
+            <Button fx:id="cancelBTN" mnemonicParsing="false" onAction="#cancel" styleClass="btn" stylesheets="@styles/auth.css" text="Cancel" textFill="WHITE" />
+            <Label fx:id="loginMessageLB" alignment="CENTER" prefHeight="18.0" prefWidth="263.0" textFill="RED" />
+            <Hyperlink fx:id="registoBTN" onAction="#registo" text="aqui.">
                <font>
                   <Font size="18.0" />
                </font>
+               <StackPane.margin>
+                  <Insets left="250.0" top="400.0" />
+               </StackPane.margin>
             </Hyperlink>
-            <Text layoutX="201.0" layoutY="515.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Não tem conta? Registe-se" AnchorPane.rightAnchor="95.0" AnchorPane.topAnchor="497.59765625">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Não tem conta? Registe-se">
                <font>
                   <Font size="18.0" />
                </font>
+               <StackPane.margin>
+                  <Insets top="400.0" />
+               </StackPane.margin>
             </Text>
          </children>
-      </AnchorPane>
+      </StackPane>
    </center>
 </BorderPane>
