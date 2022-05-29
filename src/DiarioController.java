@@ -2,6 +2,7 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -20,6 +21,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.scene.web.HTMLEditor;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -198,7 +200,8 @@ public class DiarioController implements Initializable {
     /* Zoom In */
     @FXML
     private void zoomIn(ActionEvent e) {
-        StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+//        StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+        HTMLEditor textArea = (HTMLEditor) tabPane.getSelectionModel().getSelectedItem().getContent();
         tamFonte += 1;
         textArea.setStyle("-fx-font-size: " + (tamFonte + 1) + "px;");
     }
@@ -206,7 +209,8 @@ public class DiarioController implements Initializable {
     /* Zoom Out */
     @FXML
     private void zoomOut(ActionEvent e) {
-        StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+//        StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+        HTMLEditor textArea = (HTMLEditor) tabPane.getSelectionModel().getSelectedItem().getContent();
         tamFonte -= 1;
         textArea.setStyle("-fx-font-size: " + (tamFonte - 1) + "px;");
     }
@@ -219,7 +223,7 @@ public class DiarioController implements Initializable {
         File folder = new File("src/files/" + nomeUtilizador + "/");
         File[] listOfFiles = folder.listFiles();
         for (int i = 0; i < Objects.requireNonNull(listOfFiles).length; i++) {
-            if (listOfFiles[i].isFile() && listOfFiles[i].getName().endsWith(".txt")) {
+            if (listOfFiles[i].isFile() && listOfFiles[i].getName().endsWith(".html")) {
                 items.add(listOfFiles[i].getName());
             }
         }
@@ -266,7 +270,7 @@ public class DiarioController implements Initializable {
     //openType: 0 -> 1 entrada; 1 -> intervalo de entradas; 2 -> todas as entradas
     private void openFileFunction(int openType) {
         if (openType == 0) {
-            Tab t1 = new Tab(fileName.substring(0, fileName.length() - 4));
+            Tab t1 = new Tab(fileName.substring(0, fileName.length() - 5));
 //            add class to t1
 //            t1.getStyleClass().add("anchorTab");
 
@@ -274,9 +278,10 @@ public class DiarioController implements Initializable {
                 int index = tituloTabs.indexOf(t1.getText());
                 tabPane.getSelectionModel().select(index);
             } else {
-                StyleClassedTextArea textArea1 = new StyleClassedTextArea();
+//                StyleClassedTextArea textArea1 = new StyleClassedTextArea();
+                HTMLEditor textArea1= new HTMLEditor();
                 textArea1.getStyleClass().add("anchorTab");
-                textArea1.setWrapText(true);
+//                textArea1.setWrapText(true);
                 textArea1.setPadding(new Insets(10, 10, 10, 10));
                 if (fileDate == null) {
                     if (newFile) {
@@ -286,22 +291,26 @@ public class DiarioController implements Initializable {
                     }
                 }
                 newFile = false;
-                textArea1.setEditable(fileDate.equals(LocalDate.now()));
+//                textArea1.setEditable(fileDate.equals(LocalDate.now()));
+                if (fileDate.equals(LocalDate.now())) {
+                    textArea1.setDisable(true);
+                }
                 fileDate = null;
                 t1.setContent(textArea1);
                 tabPane.getTabs().add(t1);
                 tabPane.getSelectionModel().select(t1);
                 tituloTabs.add(t1.getText());
-                textArea1.setOnKeyTyped(event -> {
-                    try {
-                        keyPressedAutoSave(event);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                });
+//                textArea1.setOnKeyTyped(event -> {
+//                    try {
+//                        keyPressedAutoSave(event);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                });
                 tabPane.setOnKeyPressed(event -> {
                     try {
                         textAreaShortcuts(event);
+                        keyPressedAutoSave(event);
                     }
                     catch (Exception e) {
                         e.printStackTrace();
@@ -314,12 +323,19 @@ public class DiarioController implements Initializable {
                     InputStream inputstream = new FileInputStream("src/files/" + nomeUtilizador + "/" + fileName);
                     InputStreamReader inputStreamReader = new InputStreamReader(inputstream, StandardCharsets.UTF_8);
                     int data = inputStreamReader.read();
-
+                    // set text from html file
                     while (data != -1) {
-                        char aChar = (char) data;
-                        textArea1.appendText(String.valueOf(aChar));
+                        char current = (char) data;
+                        textArea1.setHtmlText(textArea1.getHtmlText() + current);
                         data = inputStreamReader.read();
                     }
+//                    while (data != -1) {
+//                        char aChar = (char) data;
+////                        textArea1.appendText(String.valueOf(aChar));
+//                        textArea1.setHtmlText(String.valueOf(aChar));
+//                        data = inputStreamReader.read();
+//
+//                    }
                     inputstream.close();
                     encrypt(chave, f, f);
                 } catch (CryptoException e) {
@@ -335,13 +351,7 @@ public class DiarioController implements Initializable {
                     e.printStackTrace();
                 }
 
-                Separator separator = new Separator();
-                separator.setOrientation(Orientation.HORIZONTAL);
-                separator.setPadding(new Insets(0, 0, 0, 0));
-                separator.setMaxWidth(Double.MAX_VALUE);
-                separator.setHalignment(HPos.CENTER);
-
-
+                // text formatter for not being able to edit first line
 
                 //CARRET ATTEMP TO MAKE FIRST 2 LINES UMNEDITABLE
 //                String dataDia = (new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
@@ -365,15 +375,16 @@ public class DiarioController implements Initializable {
             }
         }
         if (openType == 1) {
-            Tab t1 = new Tab(file1.substring(0, file1.length() - 4) + " - " + file2.substring(0, file2.length() - 4));
+            Tab t1 = new Tab(file1.substring(0, file1.length() - 5) + " - " + file2.substring(0, file2.length() - 5));
 
             if (isTabOpen(t1.getText())) {
                 int index = tituloTabs.indexOf(t1.getText());
                 tabPane.getSelectionModel().select(index);
             } else {
-                StyleClassedTextArea textArea1 = new StyleClassedTextArea();
-                textArea1.setEditable(false);
-                textArea1.setWrapText(true);
+//                StyleClassedTextArea textArea1 = new StyleClassedTextArea();
+                HTMLEditor textArea1 = new HTMLEditor();
+//                textArea1.setEditable(false);
+//                textArea1.setWrapText(true);
                 textArea1.setPadding(new Insets(10, 10, 10, 10));
                 t1.setContent(textArea1);
                 tabPane.getTabs().add(t1);
@@ -399,7 +410,7 @@ public class DiarioController implements Initializable {
                 int fileCounter = 0;
                 while (dataInicio.isBefore(dataFim)) {
                     dateAux = dataInicio.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                    String pathAux = "src/files/" + nomeUtilizador + "/" + dateAux + ".txt";
+                    String pathAux = "src/files/" + nomeUtilizador + "/" + dateAux + ".html";
                     try {
                         File f = new File(pathAux);
                         if (f.exists()) {
@@ -410,11 +421,11 @@ public class DiarioController implements Initializable {
                             int data = inputStreamReader.read();
 
                             while (data != -1) {
-                                char aChar = (char) data;
-                                textArea1.appendText(String.valueOf(aChar));
+                                char current = (char) data;
+                                textArea1.setHtmlText(textArea1.getHtmlText() + current);
                                 data = inputStreamReader.read();
                             }
-                            textArea1.appendText("\n\n--------------------------------\n\n");
+                            textArea1.setHtmlText(textArea1.getHtmlText());
                             inputstream.close();
                             encrypt(chave, f, f);
                         }
@@ -449,9 +460,10 @@ public class DiarioController implements Initializable {
                 int index = tituloTabs.indexOf(t1.getText());
                 tabPane.getSelectionModel().select(index);
             } else {
-                StyleClassedTextArea textArea1 = new StyleClassedTextArea();
-                textArea1.setEditable(false);
-                textArea1.setWrapText(true);
+//                StyleClassedTextArea textArea1 = new StyleClassedTextArea();
+                HTMLEditor textArea1 = new HTMLEditor();
+                textArea1.setDisable(true);
+//                textArea1.setWrapText(true);
                 textArea1.setPadding(new Insets(10, 10, 10, 10));
                 t1.setContent(textArea1);
                 tabPane.getTabs().add(t1);
@@ -467,7 +479,7 @@ public class DiarioController implements Initializable {
                 t1.setOnClosed(event -> tituloTabs.remove(t1.getText()));
 
                 File folder = new File("src/files/" + nomeUtilizador + "/");
-                File[] listOfFiles = folder.listFiles((dir, name) -> name.endsWith(".txt"));
+                File[] listOfFiles = folder.listFiles((dir, name) -> name.endsWith(".html"));
 
                 if (listOfFiles.length == 0) {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -485,11 +497,12 @@ public class DiarioController implements Initializable {
                             int data = inputStreamReader.read();
 
                             while (data != -1) {
-                                char aChar = (char) data;
-                                textArea1.appendText(String.valueOf(aChar));
+                                char current = (char) data;
+                                textArea1.setHtmlText(textArea1.getHtmlText() + current);
                                 data = inputStreamReader.read();
                             }
-                            textArea1.appendText("\n\n--------------------------------\n\n");
+//                            textArea1.appendText("\n\n--------------------------------\n\n");
+                            textArea1.setHtmlText(textArea1.getHtmlText());
                             inputstream.close();
                             encrypt(chave, f, f);
                         } catch (CryptoException e) {
@@ -521,18 +534,20 @@ public class DiarioController implements Initializable {
         }
 
         if (tabPane.getSelectionModel().getSelectedItem().getText().length() == 10) {
-            StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
-            LiveList<Paragraph<Collection<String>, String, Collection<String>>> paragraph = textArea.getParagraphs();
-            Iterator<Paragraph<Collection<String>, String, Collection<String>>> iter = paragraph.iterator();
-            BufferedWriter bf = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pathFile + ".txt"), StandardCharsets.UTF_8));
-            while (iter.hasNext()) {
-                Paragraph<Collection<String>, String, Collection<String>> seq = iter.next();
-                bf.append(seq.getText());
-                bf.newLine();
-            }
+//            StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+            HTMLEditor textArea = (HTMLEditor) tabPane.getSelectionModel().getSelectedItem().getContent();
+//            LiveList<Paragraph<Collection<String>, String, Collection<String>>> paragraph = textArea.getParagraphs();
+//            Iterator<Paragraph<Collection<String>, String, Collection<String>>> iter = paragraph.iterator();
+            BufferedWriter bf = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pathFile + ".html"), StandardCharsets.UTF_8));
+            bf.write(textArea.getHtmlText());
+//            while (iter.hasNext()) {
+//                Paragraph<Collection<String>, String, Collection<String>> seq = iter.next();
+//                bf.append(seq.getText());
+//                bf.newLine();
+//            }
             bf.flush();
             bf.close();
-            File f = new File(pathFile  + ".txt");
+            File f = new File(pathFile  + ".html");
             encrypt(chave, f, f);
         }
         else {
@@ -569,7 +584,7 @@ public class DiarioController implements Initializable {
         }
         fileName = lstFiles.getSelectionModel().getSelectedItem();
         if (fileName != null) {
-            pathFile = "src/files/" + nomeUtilizador + "/" + fileName.substring(0, (fileName).length() - 4);
+            pathFile = "src/files/" + nomeUtilizador + "/" + fileName.substring(0, (fileName).length() - 5);
             openFileFunction(0);
         }
     }
@@ -582,8 +597,9 @@ public class DiarioController implements Initializable {
             File f = new File("src/files/" + nomeUtilizador + "/" + name);
             if (f.exists()) {
                 BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-                StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
-                bw.write(textArea.getText());
+//                StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+                HTMLEditor textArea = (HTMLEditor) tabPane.getSelectionModel().getSelectedItem().getContent();
+                bw.write(textArea.getHtmlText());
                 bw.close();
                 encrypt(chave, f, f);
             }
@@ -596,7 +612,7 @@ public class DiarioController implements Initializable {
     private void btnNew(ActionEvent e) throws IOException, CryptoException {
         LocalDate localDate = LocalDate.now();
         String name = localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        File f = new File("src/files/" + nomeUtilizador + "/" + name + ".txt");
+        File f = new File("src/files/" + nomeUtilizador + "/" + name + ".html");
         if (f.exists()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Erro!");
@@ -606,14 +622,24 @@ public class DiarioController implements Initializable {
         } else {
             f.createNewFile();
             //adicionar data à primeira linha
+//            BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+//            bw.write(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
+//            bw.write("\n");
+//            bw.write("<hr>");
+//            bw.close();
+            //adicionar data à primeira linha
             BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-            bw.write(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
-            bw.write("\n");
-            bw.write("------------\n");
+            // create a span that is not editable
+            bw.write("<h3>");
+            bw.write(new SimpleDateFormat("dd/MM/yyyy").format(new Date()) + "\n");
+            bw.write("</h3>");
+            bw.write("<hr>\n");
+            bw.write("<br>\n");
             bw.close();
+
             encrypt(chave, f, f);
             pathFile = "src/files/" + nomeUtilizador + "/" + name;
-            fileName = name + ".txt";
+            fileName = name + ".html";
             newFile = true;
             openFileFunction(0);
             lstFiles.getItems().add(fileName);
@@ -653,7 +679,7 @@ public class DiarioController implements Initializable {
             fileDate = datePick.getValue();
             if (fileDate != null) {
                 String dataFinal = fileDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                String path = "src/files/" + nomeUtilizador + "/" + dataFinal + ".txt";
+                String path = "src/files/" + nomeUtilizador + "/" + dataFinal + ".html";
                 File f = new File(path);
                 // open file to textarea
                 if (f.exists()) {
@@ -661,7 +687,7 @@ public class DiarioController implements Initializable {
                     lstFiles.getSelectionModel().select(dataFinal);
                     lstFiles.scrollTo(dataFinal);
                     pathFile = "src/files/" + nomeUtilizador + "/" + dataFinal;
-                    fileName = dataFinal + ".txt";
+                    fileName = dataFinal + ".html";
                     openFileFunction(0);
                 } else {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -678,7 +704,7 @@ public class DiarioController implements Initializable {
             dataInicio = datePick.getValue();
             if (dataInicio != null) {
                 String dataFinal = dataInicio.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                file1 = dataFinal + ".txt";
+                file1 = dataFinal + ".html";
                 datePick2.setDisable(false);
                 datePick2.setOpacity(1);
             }
@@ -691,7 +717,7 @@ public class DiarioController implements Initializable {
         dataFim = datePick2.getValue();
         if (dataFim != null) {
             String dataFinal = dataFim.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            file2 =dataFinal + ".txt";
+            file2 =dataFinal + ".html";
             if (!dataInicio.equals(dataFim)) {
                 openFileFunction(1);
             } else {
@@ -714,8 +740,9 @@ public class DiarioController implements Initializable {
     @FXML
     private void toPDF(ActionEvent e) {
         try {
-            StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
-            String diaryEntry = textArea.getText();
+//            StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+            HTMLEditor textArea = (HTMLEditor) tabPane.getSelectionModel().getSelectedItem().getContent();
+            String diaryEntry = textArea.getHtmlText();
             String name = lstFiles.getSelectionModel().getSelectedItem();
             PDDocument doc = new PDDocument();
             PDPage page = new PDPage();
@@ -747,41 +774,55 @@ public class DiarioController implements Initializable {
     /* ORTOGRAFIA */
     @FXML
     private void verificarOrtografia(ActionEvent e) throws IOException {
-        StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
-        String texto = textArea.getText();
+//        StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+        HTMLEditor textArea = (HTMLEditor) tabPane.getSelectionModel().getSelectedItem().getContent();
+        String text = textArea.getHtmlText();
+        // if there is a paragraph, then new line is needed
+        text = text.replaceAll("</p>", "\n");
+        String allText = text;
+        // html tags minus newlines
+        text = text.replaceAll("<[^>]*>", "");
+        // non-alphanumeric characters
+//        text = text.replaceAll("[^a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]", "");
         JLanguageTool langTool = new JLanguageTool(new PortugalPortuguese());
-        List<RuleMatch> matches = langTool.check(texto);
-        ArrayList<Integer> errosInicio = new ArrayList<>();
-        ArrayList<Integer> errosFim = new ArrayList<>();
+        List<RuleMatch> matches = langTool.check(text);
+        ArrayList<String> palavrasErradas = new ArrayList<>();
         ArrayList<String> correcoes = new ArrayList<>();
-        // add to erros inicio e erros fim  excepto as primeiras duas linhas
+
         for (RuleMatch match : matches) {
-            if (match.getFromPos() > 20) {
-                errosInicio.add(match.getFromPos());
-                errosFim.add(match.getToPos());
-                correcoes.add(String.valueOf(match.getSuggestedReplacements().get(0)));
-            }
+            palavrasErradas.add(text.substring(match.getFromPos(), match.getToPos()));
+            correcoes.add(match.getSuggestedReplacements().get(0));
         }
-        for (int i = 0; i < errosInicio.size(); i++) {
-            textArea.setStyleClass(errosInicio.get(i), errosFim.get(i), "wrong-words");
+        int i = 0;
+        StringBuilder mostraErros = new StringBuilder();
+        for (String palavra : palavrasErradas) {
+//            mostraErros += palavra + " -> " + correcoes.get(i) + "\n";
+            mostraErros.append(palavra).append(" -> ").append(correcoes.get(i)).append("\n");
+            i++;
         }
-        
-        /* Mostrar correcoes quando click na palavra */
-        tabPane.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
-                int pos = textArea.getCaretPosition();
-                for (int i = 0; i < errosInicio.size(); i++) {
-                    if (pos >= errosInicio.get(i) && pos <= errosFim.get(i)) {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Correção");
-                        alert.setHeaderText("Correção");
-                        alert.setContentText(correcoes.get(i));
-                        alert.showAndWait();
-                    }
+        System.out.println(mostraErros);
+        if (mostraErros.length() != 0) {
+            ButtonType btnCorrigir = new ButtonType("Corrigir", ButtonBar.ButtonData.OK_DONE);
+            ButtonType btnIgnorar = new ButtonType("Ignorar", ButtonBar.ButtonData.CANCEL_CLOSE);
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Erros encontrados", btnCorrigir, btnIgnorar);
+            alert.setTitle("Erros de ortografia");
+            alert.setHeaderText("Erros encontrados");
+            alert.setContentText(mostraErros.toString());
+            alert.showAndWait();
+            if (alert.getResult() == btnCorrigir) {
+                for (int j = 0; j < palavrasErradas.size(); j++) {
+                    allText = allText.replace(palavrasErradas.get(j), correcoes.get(j));
+                    textArea.setHtmlText(allText);
                 }
             }
         }
-        );
+        else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Erros de ortografia");
+            alert.setHeaderText("Erros encontrados");
+            alert.setContentText("Não foram encontrados erros de ortografia.");
+            alert.showAndWait();
+        }
     }
 
     /* Imprimir conteúdo da página para impressora /ou PDF */
@@ -795,31 +836,51 @@ public class DiarioController implements Initializable {
             alert.showAndWait();
             return;
         }
-        StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+//        StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+        HTMLEditor textArea = (HTMLEditor) tabPane.getSelectionModel().getSelectedItem().getContent();
+        PrinterJob job = PrinterJob.createPrinterJob();
+        textArea.print(job);
 
-        TextFlow printArea = new TextFlow(new Text(textArea.getText()));
-
-        PrinterJob printerJob = PrinterJob.createPrinterJob();
-
-        if (printerJob != null && printerJob.showPrintDialog(textArea.getScene().getWindow())) {
-            PageLayout pageLayout = printerJob.getJobSettings().getPageLayout();
-            printArea.setMaxWidth(pageLayout.getPrintableWidth());
-            if (printerJob.printPage(printArea)) {
-                printerJob.endJob();
-            } else {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Erro");
-                alert.setHeaderText("A impressão falhou!");
-                alert.setContentText("Não existem textos para imprimir");
+        if (job != null && job.showPrintDialog(textArea.getScene().getWindow())) {
+            boolean success = job.printPage(textArea);
+            if (success) {
+                job.endJob();
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Impressão");
+                alert.setHeaderText("Impressão concluída");
+                alert.setContentText("Impressão concluída com sucesso");
                 alert.showAndWait();
             }
         } else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Impressão cancelada");
-            alert.setHeaderText("Impressão cancelada");
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erro");
+            alert.setHeaderText("Impossível imprimir");
+            alert.setContentText("Não foi possível imprimir");
             alert.showAndWait();
-
         }
+
+//
+//        PrinterJob printerJob = PrinterJob.createPrinterJob();
+//
+//        if (printerJob != null && printerJob.showPrintDialog(textArea.getScene().getWindow())) {
+//            PageLayout pageLayout = printerJob.getJobSettings().getPageLayout();
+//            printArea.setMaxWidth(pageLayout.getPrintableWidth());
+//            if (printerJob.printPage(printArea)) {
+//                printerJob.endJob();
+//            } else {
+//                Alert alert = new Alert(Alert.AlertType.ERROR);
+//                alert.setTitle("Erro");
+//                alert.setHeaderText("A impressão falhou!");
+//                alert.setContentText("Não existem textos para imprimir");
+//                alert.showAndWait();
+//            }
+//        } else {
+//            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//            alert.setTitle("Impressão cancelada");
+//            alert.setHeaderText("Impressão cancelada");
+//            alert.showAndWait();
+//
+//        }
     }
 
     /* Verifica se dada string existe nos ficheiros do utilizador */
@@ -853,7 +914,7 @@ public class DiarioController implements Initializable {
         File folder = new File("src/files/" + nomeUtilizador + "/");
         File[] listOfFiles = folder.listFiles();
         for (File file : listOfFiles) {
-            if (file.isFile() && file.getName().endsWith(".txt")) {
+            if (file.isFile() && file.getName().endsWith(".html")) {
                 if (checkIfWordExistsFile(file.getName(), palavra) != 0) {
                     tuplos.add(new Pair<>(file.getName(), checkIfWordExistsFile(file.getName(), palavra)));
                 }
@@ -929,13 +990,13 @@ public class DiarioController implements Initializable {
     public void entradaHoje(ActionEvent e) throws IOException, CryptoException {
         LocalDate hoje = LocalDate.now();
         String name = hoje.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        File f = new File("src/files/" + nomeUtilizador + "/" + name + ".txt");
+        File f = new File("src/files/" + nomeUtilizador + "/" + name + ".html");
         if (!f.exists()) {
             btnNew(new ActionEvent());
         } else {
             fileDate = hoje;
             pathFile = "src/files/" + nomeUtilizador + "/" + name;
-            fileName = name + ".txt";
+            fileName = name + ".html";
             openFileFunction(0);
         }
     }
@@ -965,7 +1026,7 @@ public class DiarioController implements Initializable {
         File folder = new File("src/files/" + nomeUtilizador + "/");
         File[] listOfFiles = folder.listFiles();
         for (int i = 0; i < Objects.requireNonNull(listOfFiles).length; i++) {
-            if (listOfFiles[i].isFile() && listOfFiles[i].getName().endsWith(".txt")) {
+            if (listOfFiles[i].isFile() && listOfFiles[i].getName().endsWith(".html")) {
                 items.add(listOfFiles[i].getName());
             }
         }

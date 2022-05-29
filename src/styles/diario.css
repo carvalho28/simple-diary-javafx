@@ -161,3 +161,10 @@
     -fx-border-color: black;
     -fx-border-radius: 5px;
 }
+
+.html-editor
+{
+    -fx-font: 12 Arial;
+    /*-fx-border-color: blue;*/
+}
+
