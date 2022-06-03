@@ -2,6 +2,7 @@
     -fx-background-color: #4592af;
     -fx-font-size: 18px;
 }
+
 .btn:hover {
     -fx-cursor: hand;
     -fx-background-color: #32CBFF;

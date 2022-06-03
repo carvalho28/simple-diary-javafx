@@ -18,114 +18,140 @@
 <?import javafx.scene.text.Text?>
 
 <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="600.0" minWidth="800.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="AuthController">
-   <left>
-      <StackPane prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #6096ba#6096ba;" stylesheets="@styles/auth.css" BorderPane.alignment="CENTER">
-         <children>
-            <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="O meu Diário" textFill="WHITE">
-               <font>
-                  <Font name="Verdana Bold" size="24.0" />
-               </font>
-               <effect>
-                  <DropShadow />
-               </effect>
-               <StackPane.margin>
-                  <Insets bottom="50.0" top="80.0" />
-               </StackPane.margin>
-            </Label>
-            <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Uma coisa bela nunca é perfeita" textAlignment="CENTER" textFill="WHITE" wrapText="true">
-               <font>
-                  <Font name="Apple Braille Outline 6 Dot" size="18.0" />
-               </font>
-               <effect>
-                  <DropShadow />
-               </effect>
-               <StackPane.margin>
-                  <Insets top="125.0" />
-               </StackPane.margin>
-            </Label>
-            <Line endX="182.5" startX="-100.0" stroke="WHITE">
-               <StackPane.margin>
-                  <Insets top="80.0" />
-               </StackPane.margin>
-            </Line>
-            <ImageView fitHeight="150.0" fitWidth="200.0" opacity="0.4" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@images/book2.png" />
-               </image>
-               <effect>
-                  <Glow />
-               </effect>
-               <StackPane.margin>
-                  <Insets bottom="250.0" />
-               </StackPane.margin>
-            </ImageView>
-         </children>
-      </StackPane>
-   </left>
-   <center>
-      <StackPane prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #b4d2e7 #b4d2e7;" stylesheets="@styles/auth.css" BorderPane.alignment="CENTER">
-         <children>
-            <Label alignment="CENTER" text="Login" textAlignment="CENTER" wrapText="true">
-               <font>
-                  <Font name="Verdana Bold" size="45.0" />
-               </font>
-               <effect>
-                  <InnerShadow />
-               </effect>
-               <StackPane.margin>
-                  <Insets bottom="350.0" />
-               </StackPane.margin>
-            </Label>
-            <Label text="Username">
+    <left>
+        <StackPane prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #6096ba#6096ba;" stylesheets="@styles/auth.css" BorderPane.alignment="CENTER">
+            <children>
+                <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="O meu Diário" textFill="WHITE">
+                    <font>
+                        <Font name="Verdana Bold" size="24.0" />
+                    </font>
+                    <effect>
+                        <DropShadow />
+                    </effect>
+                    <StackPane.margin>
+                        <Insets bottom="50.0" top="80.0" />
+                    </StackPane.margin>
+                </Label>
+                <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Desabafo sem pressão." textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                    <font>
+                        <Font name="Apple Braille Outline 6 Dot" size="18.0" />
+                    </font>
+                    <effect>
+                        <DropShadow />
+                    </effect>
+                    <StackPane.margin>
+                        <Insets top="125.0" />
+                    </StackPane.margin>
+                </Label>
+                <Line endX="182.5" startX="-100.0" stroke="WHITE">
+                    <StackPane.margin>
+                        <Insets top="80.0" />
+                    </StackPane.margin>
+                </Line>
+                <ImageView fitHeight="150.0" fitWidth="200.0" opacity="0.4" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@images/book2.png" />
+                    </image>
+                    <effect>
+                        <Glow />
+                    </effect>
+                    <StackPane.margin>
+                        <Insets bottom="250.0" />
+                    </StackPane.margin>
+                </ImageView>
+            </children>
+        </StackPane>
+    </left>
+    <center>
+        <StackPane prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #b4d2e7 #b4d2e7;" stylesheets="@styles/auth.css" BorderPane.alignment="CENTER">
+            <children>
+                <Label alignment="CENTER" text="Login" textAlignment="CENTER" wrapText="true">
+                    <font>
+                        <Font name="Verdana Bold" size="45.0" />
+                    </font>
+                    <effect>
+                        <InnerShadow />
+                    </effect>
+                    <StackPane.margin>
+                        <Insets bottom="400.0" />
+                    </StackPane.margin>
+                </Label>
+                <Label text="Username">
+                    <font>
+                        <Font size="18.0" />
+                    </font>
+                    <StackPane.margin>
+                        <Insets bottom="200.0" left="-300.0" />
+                    </StackPane.margin>
+                </Label>
+                <Label text="Password">
+                    <font>
+                        <Font size="18.0" />
+                    </font>
+                    <StackPane.margin>
+                        <Insets bottom="100.0" left="-300.0" />
+                    </StackPane.margin>
+                </Label>
+                <TextField fx:id="usernameTF" prefHeight="26.0" prefWidth="348.0">
+                    <StackPane.margin>
+                        <Insets bottom="200.0" left="175.0" right="50.0" />
+                    </StackPane.margin>
+                    <font>
+                        <Font size="18.0" />
+                    </font>
+                </TextField>
+                <PasswordField fx:id="passwordTF" prefHeight="26.0" prefWidth="349.0">
+                    <StackPane.margin>
+                        <Insets bottom="100.0" left="175.0" right="50.0" />
+                    </StackPane.margin>
+                    <font>
+                        <Font size="18.0" />
+                    </font>
+                </PasswordField>
+                <Button fx:id="cancelBTN" cancelButton="true" mnemonicParsing="false" onAction="#cancel" prefHeight="35.0" prefWidth="120.0" styleClass="btn" stylesheets="@styles/auth.css" text="Cancel" textFill="WHITE">
+                    <StackPane.margin>
+                        <Insets top="160.0" />
+                    </StackPane.margin>
+                    <font>
+                        <Font size="18.0" />
+                    </font>
+                </Button>
+                <Label fx:id="loginMessageLB" alignment="CENTER" prefHeight="18.0" prefWidth="263.0" textFill="RED">
+                    <StackPane.margin>
+                        <Insets bottom="300.0" />
+                    </StackPane.margin>
                <font>
                   <Font size="18.0" />
                </font>
-               <StackPane.margin>
-                  <Insets bottom="175.0" left="-300.0" />
-               </StackPane.margin>
-            </Label>
-            <Label text="Password">
-               <font>
-                  <Font size="18.0" />
-               </font>
-               <StackPane.margin>
-                  <Insets bottom="100.0" left="-300.0" />
-               </StackPane.margin>
-            </Label>
-            <TextField fx:id="usernameTF" prefHeight="26.0" prefWidth="348.0">
-               <StackPane.margin>
-                  <Insets bottom="175.0" left="175.0" right="50.0" />
-               </StackPane.margin></TextField>
-            <PasswordField fx:id="passwordTF" prefHeight="26.0" prefWidth="349.0">
-               <StackPane.margin>
-                  <Insets bottom="100.0" left="175.0" right="50.0" />
-               </StackPane.margin></PasswordField>
-            <Button fx:id="loginBTN" mnemonicParsing="false" onAction="#login" styleClass="btn" stylesheets="@styles/auth.css" text="Login" textFill="WHITE">
-               <padding>
-                  <Insets bottom="5.0" top="5.0" />
-               </padding>
-               <font>
-                  <Font size="10.0" />
-               </font></Button>
-            <Button fx:id="cancelBTN" mnemonicParsing="false" onAction="#cancel" styleClass="btn" stylesheets="@styles/auth.css" text="Cancel" textFill="WHITE" />
-            <Label fx:id="loginMessageLB" alignment="CENTER" prefHeight="18.0" prefWidth="263.0" textFill="RED" />
-            <Hyperlink fx:id="registoBTN" onAction="#registo" text="aqui.">
-               <font>
-                  <Font size="18.0" />
-               </font>
-               <StackPane.margin>
-                  <Insets left="250.0" top="400.0" />
-               </StackPane.margin>
-            </Hyperlink>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Não tem conta? Registe-se">
-               <font>
-                  <Font size="18.0" />
-               </font>
-               <StackPane.margin>
-                  <Insets top="400.0" />
-               </StackPane.margin>
-            </Text>
-         </children>
-      </StackPane>
-   </center>
+                </Label>
+                <Hyperlink fx:id="registoBTN" onAction="#registo" text="aqui.">
+                    <font>
+                        <Font size="18.0" />
+                    </font>
+                    <StackPane.margin>
+                        <Insets left="250.0" top="400.0" />
+                    </StackPane.margin>
+                </Hyperlink>
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Não tem conta? Registe-se">
+                    <font>
+                        <Font size="18.0" />
+                    </font>
+                    <StackPane.margin>
+                        <Insets top="400.0" />
+                    </StackPane.margin>
+                </Text>
+                <Button fx:id="loginBTN" defaultButton="true" mnemonicParsing="false" onAction="#login" prefHeight="35.0" prefWidth="120.0" styleClass="btn" stylesheets="@styles/auth.css" text="Login" textFill="WHITE">
+                    <padding>
+                        <Insets bottom="5.0" top="5.0" />
+                    </padding>
+                    <font>
+                        <Font size="18.0" />
+                    </font>
+                    <StackPane.margin>
+                        <Insets top="60.0" />
+                    </StackPane.margin>
+                </Button>
+            </children>
+        </StackPane>
+    </center>
 </BorderPane>

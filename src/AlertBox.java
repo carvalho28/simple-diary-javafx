@@ -29,8 +29,7 @@ public class AlertBox {
         window.showAndWait();
     }
 
-    public static void displayTwoButtons(String title, String message)
-    {
+    public static void displayTwoButtons(String title, String message) {
         Stage window = new Stage();
 
         window.initModality(Modality.APPLICATION_MODAL);
@@ -42,7 +41,9 @@ public class AlertBox {
         label.setText(message);
         Button naoGravarButton = new Button("Não gravar");
         Button gravarButton = new Button("Gravar");
-        gravarButton.setOnAction(e -> { window.close();});
+        gravarButton.setOnAction(e -> {
+            window.close();
+        });
         naoGravarButton.setOnAction(e -> window.close());
 
         VBox layout = new VBox(10);

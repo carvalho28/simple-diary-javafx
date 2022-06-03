@@ -13,15 +13,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Auth.fxml")));
-
         Scene scene = new Scene(root);
-        scene.setOnKeyPressed(e -> {
-        if (e.getCode() == KeyCode.ENTER) {
-            Button btn = (Button) scene.lookup("#loginBTN");
-            btn.fire();
-        }
-    }
-        );
         stage.setTitle("Diário");
         stage.setScene(scene);
         stage.show();

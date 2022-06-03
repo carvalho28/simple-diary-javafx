@@ -1,7 +1,8 @@
-.styled-text-area{
+
+.styled-text-area {
     -fx-font-family: Monaco;
     -fx-font-size: 15px;
-    -fx-display-caret:true;
+    -fx-display-caret: true;
     -fx-text-fill: #000000;
 }
 
@@ -20,7 +21,7 @@
     -fx-font-size: 15px;
 }
 
-.menu .label{
+.menu .label {
     -fx-font-size: 15px;
 }
 
@@ -35,11 +36,12 @@
 
 .tab-pane *.tab-header-area *.tab-header-background {
     -fx-background-color: whitesmoke;
-    -fx-tab-min-width:120px;
-    -fx-tab-max-width:120px;
-    -fx-tab-min-height:50px;
-    -fx-tab-max-height:50px;
+    -fx-tab-min-width: 120px;
+    -fx-tab-max-width: 120px;
+    -fx-tab-min-height: 50px;
+    -fx-tab-max-height: 50px;
 }
+
 .tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
     -fx-border-color: transparent;
 }
@@ -60,7 +62,6 @@
 
 .tab:selected {
     -fx-background-color: #4592af;
-    /*-fx-text-fill: black;*/
 }
 
 .menu-bar {
@@ -68,18 +69,19 @@
     -fx-border-width: 0 0 1px 0;
     -fx-border-color: black;
 }
+
 .menu-bar .label {
-    -fx-font-size: 14.0 pt;
+    -fx-font-size: 15px;
     -fx-font-family: "Arial";
     -fx-text-fill: white;
 }
 
 .menu:hover {
-    -fx-text-fill: black ;
+    -fx-text-fill: black;
 }
 
-.menu-bar:hover{
-    -fx-text-fill: black ;
+.menu-bar:hover {
+    -fx-text-fill: black;
 }
 
 .menu-bar .menu-button:hover, .menu-bar .menu-button:focused, .menu-bar .menu-button:showing {
@@ -91,12 +93,14 @@
     -fx-text-fill: black;
     -fx-background: #4592af;
 }
-.menu-item .label{
-    -fx-font-size: 14.0 pt;
+
+.menu-item .label {
+    -fx-font-size: 14.0pt;
     -fx-text-fill: black;
 }
-.menu-item .label:hover{
-    -fx-font-size: 14.0 pt;
+
+.menu-item .label:hover {
+    -fx-font-size: 14.0pt;
     -fx-background: #b4d2e7;
     -fx-text-fill: white;
 }
@@ -109,6 +113,7 @@
 .list-cell:even {
     -fx-background-color: rgba(198, 213, 227, 0.5);
 }
+
 .list-cell:odd {
     -fx-background-color: white;
 }
@@ -148,6 +153,11 @@
     -fx-background-color: whitesmoke;
     -fx-border-color: black;
     -fx-border-radius: 5px;
+    -fx-font-size: 14px;
+}
+
+.choice-box .label {
+    -fx-font-size: 14px;
 }
 
 .date-picker {
@@ -162,9 +172,18 @@
     -fx-border-radius: 5px;
 }
 
-.html-editor
-{
+.html-editor {
     -fx-font: 12 Arial;
     /*-fx-border-color: blue;*/
+}
+
+/*.tabInicio{*/
+/*    -fx-border-color: 1px;*/
+/*    -fx-border-width: 1px 0px 0px 0px;*/
+/*}*/
+
+.html-editor .combo-box .cell:selected {
+    -fx-background-color: none;
+    -fx-text-fill: #343333;
 }
 

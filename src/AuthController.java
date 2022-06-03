@@ -9,6 +9,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -21,6 +23,8 @@ import java.util.ResourceBundle;
 
 public class AuthController implements Initializable {
 
+    public static String keyUser = "";
+    public static String userName = "";
     @FXML
     TextField usernameTF;
     @FXML
@@ -34,31 +38,28 @@ public class AuthController implements Initializable {
     @FXML
     Label loginMessageLB;
 
-    public static String keyUser = "";
-    public static String userName = "";
-
     @FXML
     private void login(ActionEvent e) throws Exception {
         keyUser = "";
-        if (!usernameTF.getText().isBlank() && !passwordTF.getText().isBlank()){
+        if (!usernameTF.getText().isBlank() && !passwordTF.getText().isBlank()) {
             validateLogin();
-            if (loginMessageLB.getText().equals("Login successful")){
+            if (loginMessageLB.getText().equals("Login efetuado com sucesso!")) {
                 userName = usernameTF.getText();
                 Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("DiarioController.fxml")));
                 Scene scene = new Scene(parent);
+//                scene.getStylesheets().remove("/styles/auth.css");
                 scene.getStylesheets().add("/styles/diario.css");
                 Stage appStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
                 appStage.setScene(scene);
                 appStage.show();
             }
-        }
-        else {
-            loginMessageLB.setText("Please enter username and password");
+        } else {
+            loginMessageLB.setText("Por favor, insira um username e respetiva password.");
         }
     }
 
     @FXML
-    private void cancel(ActionEvent e){
+    private void cancel(ActionEvent e) {
         Stage stage = (Stage) cancelBTN.getScene().getWindow();
         stage.close();
     }
@@ -68,6 +69,7 @@ public class AuthController implements Initializable {
         Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Register.fxml")));
         Scene scene = new Scene(parent);
         Stage appStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+        scene.getStylesheets().add("/styles/auth.css");
         appStage.setScene(scene);
         appStage.show();
     }
@@ -86,8 +88,8 @@ public class AuthController implements Initializable {
             ResultSet resultSet = statement.executeQuery(verifyUser);
 
             while (resultSet.next()) {
-                if(resultSet.getInt(1) == 1) {
-                    loginMessageLB.setText("Login successful");
+                if (resultSet.getInt(1) == 1) {
+                    loginMessageLB.setText("Login efetuado com sucesso!");
                     //get key from sdatabase and store in keyUser
                     String getKey = "SELECT keyUser FROM userAccounts WHERE username = '" + usernameTF.getText() + "'";
                     Statement statement1 = connection.createStatement();
@@ -96,7 +98,7 @@ public class AuthController implements Initializable {
                         keyUser = resultSet1.getString(1);
                     }
                 } else {
-                    loginMessageLB.setText("Login failed");
+                    loginMessageLB.setText("Credenciais inválidas!");
                     usernameTF.clear();
                     passwordTF.clear();
                 }

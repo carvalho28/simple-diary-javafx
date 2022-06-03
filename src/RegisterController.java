@@ -6,6 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
 import javax.crypto.Cipher;
@@ -36,6 +37,9 @@ public class RegisterController implements Initializable {
     @FXML
     private TextField usernameTF;
 
+    @FXML
+    private Hyperlink loginHyper;
+
     // fucntion to encrypt
     public static String encrypt(String text, String key) throws Exception {
         Cipher cipher = Cipher.getInstance("AES");
@@ -48,9 +52,9 @@ public class RegisterController implements Initializable {
 
     @FXML
     private void registo(ActionEvent e) throws Exception {
-        if(usernameTF.getText().isEmpty() || passwordTF.getText().isEmpty()){
+        if (usernameTF.getText().isEmpty() || passwordTF.getText().isEmpty()) {
             registerMessageLB.setText("Preencha todos os campos");
-        }else{
+        } else {
             validarRegisto();
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Registo");
@@ -73,6 +77,7 @@ public class RegisterController implements Initializable {
             appStage.show();
         }
     }
+
     public void validarRegisto() throws Exception {
         DatabaseConnection db = new DatabaseConnection();
         Connection connection = db.getConnection();
@@ -87,7 +92,7 @@ public class RegisterController implements Initializable {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(query1);
             while (resultSet.next()) {
-                if(resultSet.getInt(1) == 1) {
+                if (resultSet.getInt(1) == 1) {
                     registerMessageLB.setText("Utilizador já existente");
                     usernameTF.clear();
                     passwordTF.clear();
@@ -104,10 +109,10 @@ public class RegisterController implements Initializable {
 
                     String query = "INSERT INTO userAccounts (username, password, keyUser) VALUES ('" + username + "', '" + password + "', '" + key + "')";
 
-                    try{
+                    try {
                         Statement st = connection.createStatement();
                         st.executeUpdate(query);
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -116,6 +121,16 @@ public class RegisterController implements Initializable {
             e.printStackTrace();
         }
 
+    }
+
+    @FXML
+    private void voltarLogin(ActionEvent e) throws Exception {
+        Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Auth.fxml")));
+        Scene scene = new Scene(parent);
+        Stage appStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+        scene.getStylesheets().add("/styles/auth.css");
+        appStage.setScene(scene);
+        appStage.show();
     }
 
     @Override
