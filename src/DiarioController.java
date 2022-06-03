@@ -66,6 +66,8 @@ public class DiarioController implements Initializable {
     FontAwesomeIconView calendarIcon;
     @FXML
     Rectangle calendarBack;
+    @FXML
+    FontAwesomeIconView signOut;
     /* AUTENTICAÇÃO */
     String chave = AuthController.keyUser;
     String nomeUtilizador = AuthController.userName;
@@ -98,6 +100,8 @@ public class DiarioController implements Initializable {
     Tab firstTab;
     ArrayList<String> tituloTabs = new ArrayList<>();
     int tamFonte = 15;
+    @FXML
+    private Button logoutBTN;
     @FXML
     private TextField txfProcura;
     @FXML
@@ -981,6 +985,33 @@ public class DiarioController implements Initializable {
         dateSelectionType.setVisible(true);
         datePick.setVisible(true);
         datePick2.setVisible(false);
+    }
+
+    private void saveAllFiles() throws IOException, CryptoException {
+        // open each tab and save it
+        for (int i = 0; i < tabPane.getTabs().size(); i++) {
+            if (i != 0) {
+                tabPane.getSelectionModel().select(i);
+                String file = tabPane.getSelectionModel().getSelectedItem().getText();
+                pathFile = "src/files/" + nomeUtilizador + "/" + file;
+                lstFiles.getSelectionModel().select(file + ".html");
+                saveFuntion();
+            }
+        }
+    }
+
+    @FXML
+    private void signOutIconFunction(MouseEvent e) throws IOException, CryptoException {
+        // save all files
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Sair");
+        alert.setHeaderText("Deseja salvar todos os ficheiros antes de sair?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            saveAllFiles();
+        }
+        logoutBTN.fire();
     }
 
     /* Entrada Hoje pelo hyperlink */

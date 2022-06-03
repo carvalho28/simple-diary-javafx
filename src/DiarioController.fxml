@@ -90,6 +90,11 @@
                                 <Font size="15.0" />
                             </font>
                         </Text>
+                  <FontAwesomeIconView fx:id="signOut" glyphName="SIGN_OUT" layoutX="225.0" layoutY="66.0" onMouseClicked="#signOutIconFunction" size="20">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </FontAwesomeIconView>
                     </children>
                 </AnchorPane>
                 <AnchorPane fx:id="anchoPaneText" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="anchorBaixo" stylesheets="@styles/diario.css" VBox.vgrow="ALWAYS">
@@ -113,7 +118,7 @@
                                         <Font size="16.0" />
                                     </font>
                                 </Hyperlink>
-                                <Button layoutX="14.0" layoutY="193.0" mnemonicParsing="false" onAction="#logoutHandle" style="-fx-background-color: #b4d2e7; -fx-border-color: black; -fx-border-radius: 5;" text="Logout">
+                                <Button fx:id="logoutBTN" layoutX="14.0" layoutY="193.0" mnemonicParsing="false" onAction="#logoutHandle" style="-fx-background-color: #b4d2e7; -fx-border-color: black; -fx-border-radius: 5;" text="Logout">
                                     <font>
                                         <Font size="15.0" />
                                     </font>
