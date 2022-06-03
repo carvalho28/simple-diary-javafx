@@ -108,9 +108,9 @@
                         <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="anchorTab" stylesheets="@styles/diario.css">
                             <children>
                                 <StyleClassedTextArea fx:id="txaFicheiro" editable="false" layoutX="1.0" layoutY="-1.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="618.0" prefWidth="739.0" stylesheets="@styles/diario.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-2.0" />
-                                <Hyperlink layoutX="14.0" layoutY="91.0" onAction="#entradaHoje" text="Nota de Hoje">
+                                <Hyperlink layoutX="259.0" layoutY="107.0" onAction="#entradaHoje" text="Nota de Hoje">
                                     <font>
-                                        <Font size="15.0" />
+                                        <Font size="16.0" />
                                     </font>
                                 </Hyperlink>
                                 <Button layoutX="14.0" layoutY="193.0" mnemonicParsing="false" onAction="#logoutHandle" style="-fx-background-color: #b4d2e7; -fx-border-color: black; -fx-border-radius: 5;" text="Logout">

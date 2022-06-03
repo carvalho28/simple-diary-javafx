@@ -1,7 +1,10 @@
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import io.grpc.internal.JsonUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -44,6 +47,15 @@ import java.util.stream.Collectors;
 
 public class DiarioController implements Initializable {
 
+    /* ENCRYTPION/ DECRYPTION */
+    private static final String ALGORITHM = "AES";
+    private static final String TRANSFORMATION = "AES";
+    /* SHORTCUTS */
+    private final KeyCombination saveCombo = new KeyCodeCombination(KeyCode.S, KeyCodeCombination.META_DOWN); //command Mac e Ctrl Windows
+    private final KeyCombination zoomInCombo = new KeyCodeCombination(KeyCode.EQUALS, KeyCodeCombination.META_DOWN);
+    private final KeyCombination zoomOutCombo = new KeyCodeCombination(KeyCode.MINUS, KeyCodeCombination.META_DOWN);
+    private final KeyCombination refreshCombo = new KeyCodeCombination(KeyCode.R, KeyCodeCombination.META_DOWN);
+    private final String[] dateSelectionOptions = {"Dia", "Intervalo de Datas", "Todas as Datas"};
     /* ICONS */
     @FXML
     FontAwesomeIconView fileIcon;
@@ -57,21 +69,9 @@ public class DiarioController implements Initializable {
     FontAwesomeIconView calendarIcon;
     @FXML
     Rectangle calendarBack;
-
-    /* ENCRYTPION/ DECRYPTION */
-    private static final String ALGORITHM = "AES";
-    private static final String TRANSFORMATION = "AES";
-
-    /* SHORTCUTS */
-    private final KeyCombination saveCombo = new KeyCodeCombination(KeyCode.S, KeyCodeCombination.META_DOWN); //command Mac e Ctrl Windows
-    private final KeyCombination zoomInCombo = new KeyCodeCombination(KeyCode.EQUALS, KeyCodeCombination.META_DOWN);
-    private final KeyCombination zoomOutCombo = new KeyCodeCombination(KeyCode.MINUS, KeyCodeCombination.META_DOWN);
-    private final KeyCombination refreshCombo = new KeyCodeCombination(KeyCode.R, KeyCodeCombination.META_DOWN);
-
     /* AUTENTICAÇÃO */
     String chave = AuthController.keyUser;
     String nomeUtilizador = AuthController.userName;
-
     /* ITEMS GERAIS */
     @FXML
     AnchorPane anchoPaneText;
@@ -115,21 +115,19 @@ public class DiarioController implements Initializable {
     private ChoiceBox<String> dateSelectionType;
     @FXML
     private Text txtWords;
-
     /* Outras variáveis */
     private String pathFile = "";
     private String fileName = "";
     private LocalDate fileDate = null;
     private boolean autoSaveToggle = false;
     private boolean newFile = false;
-    private final String[] dateSelectionOptions = {"Dia", "Intervalo de Datas", "Todas as Datas"};
     private int dateSelectionIndex = 0; // 0 -> "Dia", 1 -> "Intervalo de Datas", 2 -> "Todas as Datas"
     private LocalDate dataInicio;
     private String file1 = "";
     private LocalDate dataFim;
     private String file2 = "";
 
-    private final boolean savedFile = true;
+    private boolean savedFile = true;
 
     /* Função geral de encriptação */
     private static void doCrypto(int cipherMode, String key, File inputFile, File outputFile) throws CryptoException {
@@ -193,7 +191,6 @@ public class DiarioController implements Initializable {
     /* Zoom In */
     @FXML
     private void zoomIn(ActionEvent e) {
-//        StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
         HTMLEditor textArea = (HTMLEditor) tabPane.getSelectionModel().getSelectedItem().getContent();
         tamFonte += 1;
         textArea.setStyle("-fx-font-size: " + (tamFonte + 1) + "px;");
@@ -202,7 +199,6 @@ public class DiarioController implements Initializable {
     /* Zoom Out */
     @FXML
     private void zoomOut(ActionEvent e) {
-//        StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
         HTMLEditor textArea = (HTMLEditor) tabPane.getSelectionModel().getSelectedItem().getContent();
         tamFonte -= 1;
         textArea.setStyle("-fx-font-size: " + (tamFonte - 1) + "px;");
@@ -274,7 +270,6 @@ public class DiarioController implements Initializable {
 //                StyleClassedTextArea textArea1 = new StyleClassedTextArea();
                 HTMLEditor textArea1 = new HTMLEditor();
                 textArea1.getStyleClass().add("anchorTab");
-//                textArea1.setWrapText(true);
                 textArea1.setPadding(new Insets(10, 10, 10, 10));
                 if (fileDate == null) {
                     if (newFile) {
@@ -293,22 +288,37 @@ public class DiarioController implements Initializable {
                 tabPane.getTabs().add(t1);
                 tabPane.getSelectionModel().select(t1);
                 tituloTabs.add(t1.getText());
-//                textArea1.setOnKeyTyped(event -> {
-//                    try {
-//                        keyPressedAutoSave(event);
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                });
                 tabPane.setOnKeyPressed(event -> {
                     try {
                         textAreaShortcuts(event);
                         keyPressedAutoSave(event);
+                        savedFile = false;
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 });
-                t1.setOnClosed(event -> tituloTabs.remove(t1.getText()));
+
+                t1.setOnCloseRequest(event -> {
+                    if (!savedFile && !pathFile.equals("")) {
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.setTitle("Aviso!");
+                        alert.setHeaderText("Deseja guardar as alterações?");
+                        alert.setContentText("");
+
+                        ButtonType b = alert.showAndWait().get();
+
+                        if (b == ButtonType.OK) {
+                            try {
+                                saveFuntion();
+                            } catch (IOException | CryptoException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    tituloTabs.remove(t1.getText());
+                    lstFiles.getSelectionModel().clearSelection();
+                });
+
                 try {
                     File f = new File("src/files/" + nomeUtilizador + "/" + fileName);
                     decrypt(chave, f, f);
@@ -321,13 +331,6 @@ public class DiarioController implements Initializable {
                         textArea1.setHtmlText(textArea1.getHtmlText() + current);
                         data = inputStreamReader.read();
                     }
-//                    while (data != -1) {
-//                        char aChar = (char) data;
-////                        textArea1.appendText(String.valueOf(aChar));
-//                        textArea1.setHtmlText(String.valueOf(aChar));
-//                        data = inputStreamReader.read();
-//
-//                    }
                     inputstream.close();
                     encrypt(chave, f, f);
                 } catch (CryptoException e) {
@@ -373,10 +376,7 @@ public class DiarioController implements Initializable {
                 int index = tituloTabs.indexOf(t1.getText());
                 tabPane.getSelectionModel().select(index);
             } else {
-//                StyleClassedTextArea textArea1 = new StyleClassedTextArea();
                 HTMLEditor textArea1 = new HTMLEditor();
-//                textArea1.setEditable(false);
-//                textArea1.setWrapText(true);
                 textArea1.setPadding(new Insets(10, 10, 10, 10));
                 t1.setContent(textArea1);
                 tabPane.getTabs().add(t1);
@@ -452,10 +452,8 @@ public class DiarioController implements Initializable {
                 int index = tituloTabs.indexOf(t1.getText());
                 tabPane.getSelectionModel().select(index);
             } else {
-//                StyleClassedTextArea textArea1 = new StyleClassedTextArea();
                 HTMLEditor textArea1 = new HTMLEditor();
                 textArea1.setDisable(true);
-//                textArea1.setWrapText(true);
                 textArea1.setPadding(new Insets(10, 10, 10, 10));
                 t1.setContent(textArea1);
                 tabPane.getTabs().add(t1);
@@ -525,21 +523,14 @@ public class DiarioController implements Initializable {
         }
 
         if (tabPane.getSelectionModel().getSelectedItem().getText().length() == 10) {
-//            StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
             HTMLEditor textArea = (HTMLEditor) tabPane.getSelectionModel().getSelectedItem().getContent();
-//            LiveList<Paragraph<Collection<String>, String, Collection<String>>> paragraph = textArea.getParagraphs();
-//            Iterator<Paragraph<Collection<String>, String, Collection<String>>> iter = paragraph.iterator();
             BufferedWriter bf = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pathFile + ".html"), StandardCharsets.UTF_8));
             bf.write(textArea.getHtmlText());
-//            while (iter.hasNext()) {
-//                Paragraph<Collection<String>, String, Collection<String>> seq = iter.next();
-//                bf.append(seq.getText());
-//                bf.newLine();
-//            }
             bf.flush();
             bf.close();
             File f = new File(pathFile + ".html");
             encrypt(chave, f, f);
+            savedFile = true;
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Erro");
@@ -557,21 +548,21 @@ public class DiarioController implements Initializable {
     /* Abrir on click */
     @FXML
     private void btnOpen(MouseEvent e) throws IOException, CryptoException {
-        if (!savedFile && !pathFile.equals("")) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Aviso!");
-            alert.setHeaderText("Deseja guardar as alterações?");
-            alert.setContentText("");
-
-            ButtonType b = alert.showAndWait().get();
-
-            if (b == ButtonType.OK) {
-                saveFuntion();
-            }
-            if (b == ButtonType.CANCEL) {
-                lstFiles.getSelectionModel().selectPrevious();
-            }
-        }
+//        if (!savedFile && !pathFile.equals("")) {
+//            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+//            alert.setTitle("Aviso!");
+//            alert.setHeaderText("Deseja guardar as alterações?");
+//            alert.setContentText("");
+//
+//            ButtonType b = alert.showAndWait().get();
+//
+//            if (b == ButtonType.OK) {
+//                saveFuntion();
+//            }
+//            if (b == ButtonType.CANCEL) {
+//                lstFiles.getSelectionModel().selectPrevious();
+//            }
+//        }
         fileName = lstFiles.getSelectionModel().getSelectedItem();
         if (fileName != null) {
             pathFile = "src/files/" + nomeUtilizador + "/" + fileName.substring(0, (fileName).length() - 5);
@@ -1033,18 +1024,18 @@ public class DiarioController implements Initializable {
         datePick2.setVisible(false);
 
         txfProcura.textProperty().addListener((observable, oldValue, newValue) -> {
-        try {
-            if (newValue.length() > 0) {
-                ArrayList<String> files = checkAllFilesInFolder(newValue);
-                ObservableList<String> items2 = FXCollections.observableArrayList();
-                items2.addAll(files);
-                lstFiles.setItems(items2);
-            } else {
-                lstFiles.setItems(items);
+            try {
+                if (newValue.length() > 0) {
+                    ArrayList<String> files = checkAllFilesInFolder(newValue);
+                    ObservableList<String> items2 = FXCollections.observableArrayList();
+                    items2.addAll(files);
+                    lstFiles.setItems(items2);
+                } else {
+                    lstFiles.setItems(items);
+                }
+            } catch (CryptoException | IOException e) {
+                e.printStackTrace();
             }
-        } catch (CryptoException | IOException e) {
-            e.printStackTrace();
-        }
         });
         txfProcura.setVisible(false);
         datePick.setVisible(false);

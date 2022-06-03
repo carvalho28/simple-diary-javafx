@@ -22,7 +22,11 @@
 }
 
 .menu .label {
-    -fx-font-size: 15px;
+    -fx-font-size: 14px;
+}
+
+.menu-item .label {
+    -fx-font-size: 14px;
 }
 
 .tab .tab-label {
