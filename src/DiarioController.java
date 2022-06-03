@@ -71,6 +71,8 @@ public class DiarioController implements Initializable {
     Rectangle calendarBack;
     @FXML
     FontAwesomeIconView signOut;
+    @FXML
+    FontAwesomeIconView saveIcon;
     /* AUTENTICAÇÃO */
     String chave = AuthController.keyUser;
     String nomeUtilizador = AuthController.userName;
@@ -1101,6 +1103,7 @@ public class DiarioController implements Initializable {
         datePick.setVisible(false);
         datePick2.setVisible(false);
         dateSelectionType.setVisible(false);
+        saveIcon.setVisible(false);
 
         txaFicheiro.setPadding(new Insets(10, 10, 10, 10));
         String dataHoje = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
