@@ -95,6 +95,11 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </FontAwesomeIconView>
+                  <FontAwesomeIconView fx:id="saveIcon" glyphName="SAVE" layoutX="123.0" layoutY="221.0" onMouseClicked="#fileIconFunction" size="20">
+                     <cursor>
+                        <Cursor fx:constant="WAIT" />
+                     </cursor>
+                  </FontAwesomeIconView>
                     </children>
                 </AnchorPane>
                 <AnchorPane fx:id="anchoPaneText" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="anchorBaixo" stylesheets="@styles/diario.css" VBox.vgrow="ALWAYS">

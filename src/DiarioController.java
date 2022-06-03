@@ -1,6 +1,8 @@
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -40,6 +42,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class DiarioController implements Initializable {
@@ -256,7 +259,7 @@ public class DiarioController implements Initializable {
 
     /* Shortcut functions */
     @FXML
-    private void textAreaShortcuts(KeyEvent e) throws IOException, CryptoException {
+    private void textAreaShortcuts(KeyEvent e) throws IOException, CryptoException, InterruptedException {
         if (saveCombo.match(e)) {
             btnClick(new ActionEvent());
         }
@@ -332,7 +335,7 @@ public class DiarioController implements Initializable {
                         if (b == ButtonType.OK) {
                             try {
                                 saveFuntion();
-                            } catch (IOException | CryptoException e) {
+                            } catch (IOException | CryptoException | InterruptedException e) {
                                 e.printStackTrace();
                             }
                         }
@@ -534,8 +537,20 @@ public class DiarioController implements Initializable {
         }
     }
 
+    public static void delay(long millis, Runnable continuation) {
+        Task<Void> sleeper = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                try { Thread.sleep(millis); }
+                catch (InterruptedException e) { }
+                return null;
+            }
+        };
+        sleeper.setOnSucceeded(event -> continuation.run());
+        new Thread(sleeper).start();
+    }
 
-    private void saveFuntion() throws IOException, CryptoException {
+    private void saveFuntion() throws IOException, CryptoException, InterruptedException {
         if (lstFiles.getSelectionModel().getSelectedItem() == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Erro");
@@ -552,6 +567,8 @@ public class DiarioController implements Initializable {
             bf.close();
             File f = new File(pathFile + ".html");
             encrypt(chave, f, f);
+            saveIcon.setVisible(true);
+            delay(2000, () -> saveIcon.setVisible(false));
             savedFile = true;
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -563,7 +580,7 @@ public class DiarioController implements Initializable {
 
     /* Guardar on click */
     @FXML
-    private void btnClick(ActionEvent e) throws IOException, CryptoException {
+    private void btnClick(ActionEvent e) throws IOException, CryptoException, InterruptedException {
         saveFuntion();
     }
 
@@ -987,7 +1004,7 @@ public class DiarioController implements Initializable {
         datePick2.setVisible(false);
     }
 
-    private void saveAllFiles() throws IOException, CryptoException {
+    private void saveAllFiles() throws IOException, CryptoException, InterruptedException {
         // open each tab and save it
         for (int i = 0; i < tabPane.getTabs().size(); i++) {
             if (i != 0) {
@@ -1001,7 +1018,7 @@ public class DiarioController implements Initializable {
     }
 
     @FXML
-    private void signOutIconFunction(MouseEvent e) throws IOException, CryptoException {
+    private void signOutIconFunction(MouseEvent e) throws IOException, CryptoException, InterruptedException {
         // save all files
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Sair");
@@ -1089,6 +1106,7 @@ public class DiarioController implements Initializable {
         String dataHoje = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
         txaFicheiro.appendText("Bem-vindo/a ao seu Diário, " + nomeUtilizador + "!\n");
         txaFicheiro.appendText("Hoje é " + dataHoje + ".\n\n\n\n");
+        // get current time
         txaFicheiro.appendText("Para ir para a nota de hoje");
 
     }
