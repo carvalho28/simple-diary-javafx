@@ -1,10 +1,7 @@
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
-import io.grpc.internal.JsonUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -188,6 +185,27 @@ public class DiarioController implements Initializable {
         alert.showAndWait();
     }
 
+    /* Adicionar buttons ao HTML editor */
+//    private HTMLEditor addButtonsHTML(HTMLEditor htmlEditor) {
+//
+//            // get toolbar from html editor
+//            ToolBar toolBar = (ToolBar) htmlEditor.lookup("ToolBar");
+//
+//
+//            Node[] nodes = htmlEditor.lookupAll(".tool-bar").toArray(new Node[0]);
+//            ToolBar toolBar = (ToolBar) nodes[0];
+//            int numItems = toolBar.getItems().size();
+//            System.out.println(numItems);
+//            toolBar.getItems().add(new Separator());
+//            Button buttonLogout = new Button("Logout");
+//            buttonLogout.setOnAction(event -> {
+//                try {
+//                    logoutHandle(event);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            });
+
     /* Zoom In */
     @FXML
     private void zoomIn(ActionEvent e) {
@@ -267,10 +285,10 @@ public class DiarioController implements Initializable {
                 int index = tituloTabs.indexOf(t1.getText());
                 tabPane.getSelectionModel().select(index);
             } else {
-//                StyleClassedTextArea textArea1 = new StyleClassedTextArea();
                 HTMLEditor textArea1 = new HTMLEditor();
                 textArea1.getStyleClass().add("anchorTab");
                 textArea1.setPadding(new Insets(10, 10, 10, 10));
+
                 if (fileDate == null) {
                     if (newFile) {
                         fileDate = LocalDate.now();
@@ -986,12 +1004,6 @@ public class DiarioController implements Initializable {
     public void logoutHandle(ActionEvent e) throws IOException {
         Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Auth.fxml")));
         Scene scene = new Scene(parent);
-        scene.setOnKeyPressed(e2 -> {
-            if (e2.getCode() == KeyCode.ENTER) {
-                Button btn = (Button) scene.lookup("#loginBTN");
-                btn.fire();
-            }
-        });
         Stage appStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
         appStage.setScene(scene);
         appStage.show();

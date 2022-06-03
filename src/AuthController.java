@@ -47,7 +47,6 @@ public class AuthController implements Initializable {
                 userName = usernameTF.getText();
                 Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("DiarioController.fxml")));
                 Scene scene = new Scene(parent);
-//                scene.getStylesheets().remove("/styles/auth.css");
                 scene.getStylesheets().add("/styles/diario.css");
                 Stage appStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
                 appStage.setScene(scene);
@@ -77,7 +76,6 @@ public class AuthController implements Initializable {
     public void validateLogin() throws Exception {
         DatabaseConnection db = new DatabaseConnection();
         Connection connection = db.getConnection();
-
 
         String password = RegisterController.encrypt(passwordTF.getText(), "chavesecreta1234");
 
