@@ -186,3 +186,7 @@
     -fx-text-fill: #343333;
 }
 
+.button {
+    -fx-background-color: white;
+    -fx-border-color: black;
+}

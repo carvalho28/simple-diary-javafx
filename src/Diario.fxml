@@ -7,12 +7,10 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 <?import org.fxmisc.richtext.StyleClassedTextArea?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="borderPane" maxHeight="1.7976931348623157E308"
-            maxWidth="1.7976931348623157E308"
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="borderPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
             minWidth="1000.0" stylesheets="@styles/diario.css" xmlns="http://javafx.com/javafx/18"
             fx:controller="DiarioController">
     <left>
@@ -80,45 +78,51 @@
                         <DatePicker fx:id="datePick2" layoutX="39.0" layoutY="201.0" maxHeight="1.7976931348623157E308"
                                     maxWidth="1.7976931348623157E308" onAction="#pickDate2" promptText="Selecione data"
                                     AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0"/>
-                        <Rectangle fx:id="fileBack" arcHeight="5.0" arcWidth="5.0" fill="#b4d2e7" height="40.0"
-                                   layoutX="55.0" layoutY="51.0" onMouseClicked="#fileIconFunction" stroke="BLACK"
-                                   strokeType="INSIDE" width="40.0">
-                            <cursor>
-                                <Cursor fx:constant="HAND"/>
-                            </cursor>
-                        </Rectangle>
-                        <Rectangle fx:id="searchBack" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="40.0"
-                                   layoutX="103.0" layoutY="51.0" onMouseClicked="#searchIconFunction" stroke="BLACK"
-                                   strokeType="INSIDE" width="40.0">
-                            <cursor>
-                                <Cursor fx:constant="HAND"/>
-                            </cursor>
-                        </Rectangle>
-                        <Rectangle fx:id="calendarBack" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="40.0"
-                                   layoutX="150.0" layoutY="51.0" onMouseClicked="#calendarIconFunction" stroke="BLACK"
-                                   strokeType="INSIDE" width="40.0">
-                            <cursor>
-                                <Cursor fx:constant="HAND"/>
-                            </cursor>
-                        </Rectangle>
-                        <FontAwesomeIconView fx:id="fileIcon" glyphName="FILE" layoutX="66.0" layoutY="78.0"
-                                             onMouseClicked="#fileIconFunction" size="20">
-                            <cursor>
-                                <Cursor fx:constant="HAND"/>
-                            </cursor>
-                        </FontAwesomeIconView>
-                        <FontAwesomeIconView fx:id="searchIcon" glyphName="SEARCH" layoutX="114.0" layoutY="78.0"
-                                             onMouseClicked="#searchIconFunction" size="20">
-                            <cursor>
-                                <Cursor fx:constant="HAND"/>
-                            </cursor>
-                        </FontAwesomeIconView>
-                        <FontAwesomeIconView fx:id="calendarIcon" glyphName="CALENDAR" layoutX="161.0" layoutY="78.0"
-                                             onMouseClicked="#calendarIconFunction" size="20">
-                            <cursor>
-                                <Cursor fx:constant="HAND"/>
-                            </cursor>
-                        </FontAwesomeIconView>
+                        <Button fx:id="fileBack" layoutX="55.0" layoutY="51.0" mnemonicParsing="false"
+                                onAction="#fileIconFunction" prefHeight="40.0" prefWidth="40.0"
+                                style="-fx-background-color: #b4d2e7#b4d2e7; -fx-border-color: black;"
+                                stylesheets="@styles/diario.css">
+                            <graphic>
+                                <FontAwesomeIconView fx:id="fileIcon" glyphName="FILE" size="20">
+                                    <cursor>
+                                        <Cursor fx:constant="HAND"/>
+                                    </cursor>
+                                </FontAwesomeIconView>
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Todos os Ficheiros"/>
+                            </tooltip>
+                        </Button>
+                        <Button fx:id="searchBack" layoutX="103.0" layoutY="51.0" mnemonicParsing="false"
+                                onAction="#searchIconFunction" prefHeight="40.0" prefWidth="40.0"
+                                style="-fx-background-color: white; -fx-border-color: black;"
+                                stylesheets="@styles/diario.css">
+                            <graphic>
+                                <FontAwesomeIconView fx:id="searchIcon" glyphName="SEARCH" size="20">
+                                    <cursor>
+                                        <Cursor fx:constant="HAND"/>
+                                    </cursor>
+                                </FontAwesomeIconView>
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Pesquisa"/>
+                            </tooltip>
+                        </Button>
+                        <Button fx:id="calendarBack" layoutX="150.0" layoutY="51.0" mnemonicParsing="false"
+                                onAction="#calendarIconFunction" prefHeight="40.0" prefWidth="40.0"
+                                style="-fx-background-color: white; -fx-border-color: black;"
+                                stylesheets="@styles/diario.css">
+                            <graphic>
+                                <FontAwesomeIconView fx:id="calendarIcon" glyphName="CALENDAR" size="20">
+                                    <cursor>
+                                        <Cursor fx:constant="HAND"/>
+                                    </cursor>
+                                </FontAwesomeIconView>
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Procura por Datas"/>
+                            </tooltip>
+                        </Button>
                         <Text fx:id="txtWords" layoutX="57.0" layoutY="209.0" strokeType="OUTSIDE" strokeWidth="0.0"
                               text="Nº de Entradas: 3" textAlignment="CENTER" wrappingWidth="154.0"
                               AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="57.0" AnchorPane.rightAnchor="51.0"

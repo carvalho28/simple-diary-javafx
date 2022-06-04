@@ -18,7 +18,6 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebView;
@@ -62,15 +61,9 @@ public class DiarioController implements Initializable {
     @FXML
     FontAwesomeIconView fileIcon;
     @FXML
-    Rectangle fileBack;
-    @FXML
     FontAwesomeIconView searchIcon;
     @FXML
-    Rectangle searchBack;
-    @FXML
     FontAwesomeIconView calendarIcon;
-    @FXML
-    Rectangle calendarBack;
     @FXML
     FontAwesomeIconView signOut;
     @FXML
@@ -115,6 +108,12 @@ public class DiarioController implements Initializable {
     ImageView imagemDiario;
     ArrayList<String> tituloTabs = new ArrayList<>();
     int tamFonte = 15;
+    @FXML
+    private Button fileBack;
+    @FXML
+    private Button searchBack;
+    @FXML
+    private Button calendarBack;
     @FXML
     private Button logoutBTN;
     @FXML
@@ -200,7 +199,7 @@ public class DiarioController implements Initializable {
     @FXML
     private void aboutProgram(ActionEvent e) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("About");
+        alert.setTitle("Sobre");
         alert.setHeaderText("Sobre o programa");
         alert.setContentText("""
                 Este programa foi desenvolvido por:
@@ -746,20 +745,18 @@ public class DiarioController implements Initializable {
     @FXML
     private void verificarOrtografia(ActionEvent e) throws IOException {
         HTMLEditor textArea = (HTMLEditor) tabPane.getSelectionModel().getSelectedItem().getContent();
-        String text = textArea.getHtmlText();
-        text = text.replaceAll("</p>", "\n");
-        String allText = text;
-        // html tags menos as newlines
-        text = text.replaceAll("<[^>]*>", "");
-        // non-alphanumeric characters
+        String allText = textArea.getHtmlText();
+        String text = Jsoup.parse(textArea.getHtmlText()).text();
         JLanguageTool langTool = new JLanguageTool(new PortugalPortuguese());
         List<RuleMatch> matches = langTool.check(text);
         ArrayList<String> palavrasErradas = new ArrayList<>();
         ArrayList<String> correcoes = new ArrayList<>();
 
         for (RuleMatch match : matches) {
-            palavrasErradas.add(text.substring(match.getFromPos(), match.getToPos()));
-            correcoes.add(match.getSuggestedReplacements().get(0));
+            if (match.getMessage().equals("Possível erro ortográfico")) {
+                palavrasErradas.add(text.substring(match.getFromPos(), match.getToPos()));
+                correcoes.add(match.getSuggestedReplacements().get(0));
+            }
         }
         int i = 0;
         StringBuilder mostraErros = new StringBuilder();
@@ -777,8 +774,10 @@ public class DiarioController implements Initializable {
             alert.showAndWait();
             if (alert.getResult() == btnCorrigir) {
                 for (int j = 0; j < palavrasErradas.size(); j++) {
-                    allText = allText.replace(palavrasErradas.get(j), correcoes.get(j));
-                    textArea.setHtmlText(allText);
+                    if (!palavrasErradas.get(j).equals(correcoes.get(j))) {
+                        allText = allText.replace(palavrasErradas.get(j), correcoes.get(j));
+                        textArea.setHtmlText(allText);
+                    }
                 }
             }
         } else {
@@ -807,15 +806,15 @@ public class DiarioController implements Initializable {
             textArea.print(job);
             job.endJob();
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Impressão");
-            alert.setHeaderText("Impressão concluída");
-            alert.setContentText("Impressão concluída com sucesso");
+            alert.setTitle("Impressão/Exportação");
+            alert.setHeaderText("Impressão/exportação concluída");
+            alert.setContentText("Impressão/exportação concluída com sucesso");
             alert.showAndWait();
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Erro");
-            alert.setHeaderText("Impossível imprimir");
-            alert.setContentText("Não foi possível imprimir");
+            alert.setHeaderText("Impossível imprimir/exportar");
+            alert.setContentText("Não foi possível imprimir/exportar");
             alert.showAndWait();
         }
     }
@@ -880,26 +879,26 @@ public class DiarioController implements Initializable {
     }
 
     @FXML
-    private void fileIconFunction(MouseEvent e) {
+    private void fileIconFunction(ActionEvent e) {
         txtWords.setVisible(true);
         imagemDiario.setVisible(true);
-        fileBack.setStyle("-fx-fill: #b4d2e7;");
-        calendarBack.setStyle("-fx-fill: whitesmoke;");
-        searchBack.setStyle("-fx-fill: whitesmoke;");
+        fileBack.setStyle("-fx-background-color: #b4d2e7;");
+        calendarBack.setStyle("-fx-background-color: white;");
+        searchBack.setStyle("-fx-background-color: white;");
         txfProcura.setVisible(false);
         dateSelectionType.setVisible(false);
         datePick.setVisible(false);
         datePick2.setVisible(false);
-        searchBack.setStyle("-fx-fill: whitesmoke;");
+        searchBack.setStyle("-fx-fill: white;");
     }
 
     @FXML
-    private void searchIconFunction(MouseEvent e) {
+    private void searchIconFunction(ActionEvent e) {
         txtWords.setVisible(false);
         imagemDiario.setVisible(false);
-        fileBack.setStyle("-fx-fill: whitesmoke;");
-        calendarBack.setStyle("-fx-fill: whitesmoke;");
-        searchBack.setStyle("-fx-fill: #b4d2e7;");
+        fileBack.setStyle("-fx-background-color: white;");
+        calendarBack.setStyle("-fx-background-color: white;");
+        searchBack.setStyle("-fx-background-color: #b4d2e7;");
         txfProcura.setVisible(true);
         dateSelectionType.setVisible(false);
         datePick.setVisible(false);
@@ -907,12 +906,12 @@ public class DiarioController implements Initializable {
     }
 
     @FXML
-    private void calendarIconFunction(MouseEvent e) {
+    private void calendarIconFunction(ActionEvent e) {
         txtWords.setVisible(false);
         imagemDiario.setVisible(false);
-        fileBack.setStyle("-fx-fill: whitesmoke;");
-        searchBack.setStyle("-fx-fill: whitesmoke;");
-        calendarBack.setStyle("-fx-fill: #b4d2e7;");
+        fileBack.setStyle("-fx-background-color: white;");
+        searchBack.setStyle("-fx-background-color: white;");
+        calendarBack.setStyle("-fx-background-color: #b4d2e7;");
         txfProcura.setVisible(false);
         dateSelectionType.setVisible(true);
         datePick.setVisible(true);
@@ -939,7 +938,7 @@ public class DiarioController implements Initializable {
         // save all files
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Sair");
-        alert.setHeaderText("Deseja salvar todos os ficheiros antes de sair?");
+        alert.setHeaderText("Deseja guardar todos os ficheiros antes de sair?");
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {

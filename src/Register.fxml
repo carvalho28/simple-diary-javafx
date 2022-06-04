@@ -21,7 +21,7 @@
                         <Insets bottom="-100.0"/>
                     </StackPane.margin>
                 </Button>
-                <Label text="Username">
+                <Label text="Utilizador">
                     <font>
                         <Font size="18.0"/>
                     </font>
