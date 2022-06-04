@@ -77,6 +77,7 @@ public class RegisterController implements Initializable {
         }
     }
 
+    /* Valida o registo do utilizador */
     public void validarRegisto() throws Exception {
         DatabaseConnection db = new DatabaseConnection();
         Connection connection = db.getConnection();

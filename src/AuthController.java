@@ -33,7 +33,7 @@ public class AuthController implements Initializable {
     @FXML
     Label loginMessageLB;
 
-    //
+    /* Faz o login do utilizador */
     @FXML
     private void login(ActionEvent e) throws Exception {
         keyUser = "";
@@ -66,6 +66,7 @@ public class AuthController implements Initializable {
         stage.close();
     }
 
+    /* Regista o utilizador, levando-o para a página do registo */
     @FXML
     private void registo(ActionEvent e) throws IOException {
         Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Register.fxml")));
@@ -76,6 +77,7 @@ public class AuthController implements Initializable {
         appStage.show();
     }
 
+    /* Valida o login do utilizador */
     public void validateLogin() throws Exception {
         DatabaseConnection db = new DatabaseConnection();
         Connection connection = db.getConnection();
