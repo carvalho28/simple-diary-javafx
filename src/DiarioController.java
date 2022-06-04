@@ -113,9 +113,13 @@ public class DiarioController implements Initializable {
     @FXML
     MenuItem imprimir;
     @FXML
+    MenuItem menuIHC;
+    @FXML
     TabPane tabPane;
     @FXML
     Tab firstTab;
+    @FXML
+    ImageView imagemDiario;
     ArrayList<String> tituloTabs = new ArrayList<>();
     int tamFonte = 15;
     @FXML
@@ -325,7 +329,16 @@ public class DiarioController implements Initializable {
             } else {
                 HTMLEditor textArea1 = new HTMLEditor();
                 textArea1.getStyleClass().add("anchorTab");
-                textArea1.setPadding(new Insets(10, 10, 10, 10));
+                textArea1.setPadding(new Insets(10, 0, 10, 10));
+
+                // make htmleditor full height
+                textArea1.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+                WebView webview = (WebView) textArea1.lookup("WebView");
+                GridPane gridpane = (GridPane) textArea1.lookup("GridPane");
+                gridpane.setHgrow(webview, Priority.ALWAYS);
+                gridpane.setVgrow(webview, Priority.ALWAYS);
+
+                // margin from bar to htmleditor
 
                 if (fileDate == null) {
                     if (newFile) {
@@ -414,7 +427,14 @@ public class DiarioController implements Initializable {
                 tabPane.getSelectionModel().select(index);
             } else {
                 HTMLEditor textArea1 = new HTMLEditor();
-                textArea1.setPadding(new Insets(10, 10, 10, 10));
+                textArea1.setPadding(new Insets(10, 0, 10, 10));
+
+                textArea1.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+                WebView webview = (WebView) textArea1.lookup("WebView");
+                GridPane gridpane = (GridPane) textArea1.lookup("GridPane");
+                gridpane.setHgrow(webview, Priority.ALWAYS);
+                gridpane.setVgrow(webview, Priority.ALWAYS);
+
                 t1.setContent(textArea1);
                 tabPane.getTabs().add(t1);
                 tabPane.getSelectionModel().select(t1);
@@ -427,6 +447,8 @@ public class DiarioController implements Initializable {
                     }
                 });
                 t1.setOnClosed(event -> tituloTabs.remove(t1.getText()));
+
+                textArea1.setHtmlText("<html><body style='padding-right: 25px'>");
 
                 if (dataInicio.isAfter(dataFim)) {
                     LocalDate aux = dataInicio;
@@ -491,7 +513,14 @@ public class DiarioController implements Initializable {
             } else {
                 HTMLEditor textArea1 = new HTMLEditor();
                 textArea1.setDisable(true);
-                textArea1.setPadding(new Insets(10, 10, 10, 10));
+                textArea1.setPadding(new Insets(10, 0, 10, 10));
+
+                textArea1.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+                WebView webview = (WebView) textArea1.lookup("WebView");
+                GridPane gridpane = (GridPane) textArea1.lookup("GridPane");
+                gridpane.setHgrow(webview, Priority.ALWAYS);
+                gridpane.setVgrow(webview, Priority.ALWAYS);
+
                 t1.setContent(textArea1);
                 tabPane.getTabs().add(t1);
                 tabPane.getSelectionModel().select(t1);
@@ -504,6 +533,8 @@ public class DiarioController implements Initializable {
                     }
                 });
                 t1.setOnClosed(event -> tituloTabs.remove(t1.getText()));
+
+                textArea1.setHtmlText("<html><body style='padding-right: 25px'>");
 
                 File folder = new File("src/files/" + nomeUtilizador + "/");
                 File[] listOfFiles = folder.listFiles((dir, name) -> name.endsWith(".html"));
@@ -1020,6 +1051,7 @@ public class DiarioController implements Initializable {
             fileName = name + ".html";
             openFileFunction(0);
         }
+        lstFiles.getSelectionModel().select(name + ".html");
     }
 
     /* Logout */
@@ -1098,8 +1130,3 @@ public class DiarioController implements Initializable {
         );
     }
 }
-
-/**
- * Duvidas:
- * PDF e impressao, podem ser na mesmo icone?
- */
