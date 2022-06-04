@@ -6,8 +6,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -50,7 +48,7 @@ public class AuthController implements Initializable {
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                     alert.setTitle("Fechar programa");
                     alert.setHeaderText("Podem haver alterações não gravadas.\nPretende sair?");
-                    alert.showAndWait().filter(r -> r != ButtonType.OK).ifPresent(r->evt.consume());
+                    alert.showAndWait().filter(r -> r != ButtonType.OK).ifPresent(r -> evt.consume());
                 });
                 appStage.setScene(scene);
                 appStage.show();
