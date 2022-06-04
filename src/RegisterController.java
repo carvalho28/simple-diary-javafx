@@ -39,7 +39,7 @@ public class RegisterController implements Initializable {
     @FXML
     private Hyperlink loginHyper;
 
-    // fucntion to encrypt
+    /* Encriptação da key do user */
     public static String encrypt(String text, String key) throws Exception {
         Cipher cipher = Cipher.getInstance("AES");
         Key secretKey = new SecretKeySpec(key.getBytes(), "AES");
@@ -48,7 +48,7 @@ public class RegisterController implements Initializable {
         return Base64.getEncoder().encodeToString(encrypted);
     }
 
-
+    /* Efetuar registo */
     @FXML
     private void registo(ActionEvent e) throws Exception {
         if (usernameTF.getText().isEmpty() || passwordTF.getText().isEmpty()) {
@@ -119,9 +119,9 @@ public class RegisterController implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
+    /* Voltar à cena do login */
     @FXML
     private void voltarLogin(ActionEvent e) throws Exception {
         Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Auth.fxml")));
@@ -134,6 +134,5 @@ public class RegisterController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
     }
 }

@@ -1,10 +1,13 @@
-# Título Incrível
+# O Meu Diário
 
 ### Trabalho Prático - Unidade Curricular Interação Humana com o Computador
 
 #### Conteúdo
 
-- onde estão as coisas...
+- Main -> execução do ficheiro;
+- Auth -> autenticação;
+- Register -> registo do utlizador;
+- Diario.
 
 #### Realizado por:
 

@@ -1032,13 +1032,12 @@ public class DiarioController implements Initializable {
         txaFicheiro.appendText("Para ir para a nota de hoje");
 
         tabPane.getSelectionModel().selectedItemProperty().addListener((ov, t, t1) -> {
-                if (tabPane.getSelectionModel().getSelectedItem().getText().length() != 10)
-                {
-                    lstFiles.getSelectionModel().clearSelection();
-                } else {
-                    lstFiles.getSelectionModel().select(tabPane.getSelectionModel().getSelectedItem().getText() + ".html");
+                    if (tabPane.getSelectionModel().getSelectedItem().getText().length() != 10) {
+                        lstFiles.getSelectionModel().clearSelection();
+                    } else {
+                        lstFiles.getSelectionModel().select(tabPane.getSelectionModel().getSelectedItem().getText() + ".html");
+                    }
                 }
-            }
         );
     }
 }

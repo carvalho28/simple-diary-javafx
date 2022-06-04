@@ -41,7 +41,7 @@ public class AuthController implements Initializable {
             validateLogin();
             if (loginMessageLB.getText().equals("Login efetuado com sucesso!")) {
                 userName = usernameTF.getText();
-                Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("DiarioController.fxml")));
+                Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Diario.fxml")));
                 Scene scene = new Scene(parent);
                 scene.getStylesheets().add("/styles/diario.css");
                 Stage appStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
@@ -59,6 +59,7 @@ public class AuthController implements Initializable {
         }
     }
 
+    /* Fecha app caso cancele */
     @FXML
     private void cancel(ActionEvent e) {
         Stage stage = (Stage) cancelBTN.getScene().getWindow();
@@ -109,22 +110,7 @@ public class AuthController implements Initializable {
         }
     }
 
-//    private void loginOnEnterPress(ActionEvent e) {
-//        Scene scene = loginBTN.getScene();
-//        scene.setOnKeyPressed(e -> {
-//            if (e.getCode() == KeyCode.ENTER) {
-//                    loginBTN.fire();
-//
-//            }
-//        });
-//    }
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-//        scene.setOnKeyPressed(e -> {
-//            if (e.getCode() == KeyCode.ENTER) {
-//                loginBTN.fire();
-//            }
-//        });
     }
 }

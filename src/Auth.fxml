@@ -108,7 +108,7 @@
                 </PasswordField>
                 <Button fx:id="cancelBTN" cancelButton="true" mnemonicParsing="false" onAction="#cancel"
                         prefHeight="35.0" prefWidth="120.0" styleClass="btn" stylesheets="@styles/auth.css"
-                        text="Cancel" textFill="WHITE">
+                        text="Cancelar" textFill="WHITE">
                     <StackPane.margin>
                         <Insets top="160.0"/>
                     </StackPane.margin>
