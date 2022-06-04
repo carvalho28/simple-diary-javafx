@@ -33,6 +33,7 @@ public class AuthController implements Initializable {
     @FXML
     Label loginMessageLB;
 
+    //
     @FXML
     private void login(ActionEvent e) throws Exception {
         keyUser = "";

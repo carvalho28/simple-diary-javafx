@@ -104,8 +104,6 @@ public class DiarioController implements Initializable {
     @FXML
     MenuItem autoSave;
     @FXML
-    MenuItem toPDF;
-    @FXML
     MenuItem imprimir;
     @FXML
     MenuItem menuIHC;
@@ -176,7 +174,7 @@ public class DiarioController implements Initializable {
         doCrypto(Cipher.ENCRYPT_MODE, key, inputFile, outputFile);
     }
 
-    /* Desemcriptação */
+    /* Desencriptação */
     public static void decrypt(String key, File inputFile, File outputFile) throws CryptoException {
         doCrypto(Cipher.DECRYPT_MODE, key, inputFile, outputFile);
     }
