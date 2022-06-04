@@ -14,6 +14,8 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
@@ -22,7 +24,7 @@
 <?import javafx.scene.text.Text?>
 <?import org.fxmisc.richtext.StyleClassedTextArea?>
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="1000.0" stylesheets="@styles/diario.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="DiarioController">
+<BorderPane fx:id="borderPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="1000.0" stylesheets="@styles/diario.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="DiarioController">
     <left>
         <VBox fx:id="vBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-border-color: black;">
             <children>
@@ -51,7 +53,9 @@
                                 </Menu>
                                 <Menu mnemonicParsing="false" text="Ajuda">
                                     <items>
-                                        <MenuItem fx:id="menuSobre" mnemonicParsing="false" onAction="#aboutProgram" text="Sobre" />
+                              <MenuItem fx:id="menuIHC" mnemonicParsing="false" onAction="#getIHChelp" text="Sobre a IHC" />
+                              <MenuItem fx:id="menuHTML" mnemonicParsing="false" onAction="#getHTMLhelpOnW3Schools" text="Formatação HTML" />
+                                        <MenuItem fx:id="menuSobre" mnemonicParsing="false" onAction="#aboutProgram" text="Sobre o Programa" />
                                     </items>
                                 </Menu>
                             </menus>
@@ -61,45 +65,56 @@
                         </MenuBar>
                         <ChoiceBox fx:id="dateSelectionType" layoutX="90.0" layoutY="120.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" stylesheets="@styles/diario.css" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" />
                         <DatePicker fx:id="datePick2" layoutX="39.0" layoutY="201.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#pickDate2" promptText="Selecione data" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" />
-                        <Rectangle fx:id="fileBack" arcHeight="5.0" arcWidth="5.0" fill="#b4d2e7" height="40.0" layoutX="54.0" layoutY="39.0" onMouseClicked="#fileIconFunction" stroke="BLACK" strokeType="INSIDE" width="40.0">
+                        <Rectangle fx:id="fileBack" arcHeight="5.0" arcWidth="5.0" fill="#b4d2e7" height="40.0" layoutX="55.0" layoutY="51.0" onMouseClicked="#fileIconFunction" stroke="BLACK" strokeType="INSIDE" width="40.0">
                             <cursor>
                                 <Cursor fx:constant="HAND" />
-                            </cursor></Rectangle>
-                        <Rectangle fx:id="searchBack" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="40.0" layoutX="102.0" layoutY="39.0" onMouseClicked="#searchIconFunction" stroke="BLACK" strokeType="INSIDE" width="40.0">
+                            </cursor>
+                  </Rectangle>
+                        <Rectangle fx:id="searchBack" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="40.0" layoutX="103.0" layoutY="51.0" onMouseClicked="#searchIconFunction" stroke="BLACK" strokeType="INSIDE" width="40.0">
                             <cursor>
                                 <Cursor fx:constant="HAND" />
-                            </cursor></Rectangle>
-                        <Rectangle fx:id="calendarBack" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="40.0" layoutX="149.0" layoutY="39.0" onMouseClicked="#calendarIconFunction" stroke="BLACK" strokeType="INSIDE" width="40.0">
+                            </cursor>
+                  </Rectangle>
+                        <Rectangle fx:id="calendarBack" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="40.0" layoutX="150.0" layoutY="51.0" onMouseClicked="#calendarIconFunction" stroke="BLACK" strokeType="INSIDE" width="40.0">
                             <cursor>
                                 <Cursor fx:constant="HAND" />
-                            </cursor></Rectangle>
-                        <FontAwesomeIconView fx:id="fileIcon" glyphName="FILE" layoutX="65.0" layoutY="66.0" onMouseClicked="#fileIconFunction" size="20">
+                            </cursor>
+                  </Rectangle>
+                        <FontAwesomeIconView fx:id="fileIcon" glyphName="FILE" layoutX="66.0" layoutY="78.0" onMouseClicked="#fileIconFunction" size="20">
                             <cursor>
                                 <Cursor fx:constant="HAND" />
-                            </cursor></FontAwesomeIconView>
-                        <FontAwesomeIconView fx:id="searchIcon" glyphName="SEARCH" layoutX="113.0" layoutY="66.0" onMouseClicked="#searchIconFunction" size="20">
+                            </cursor>
+                  </FontAwesomeIconView>
+                        <FontAwesomeIconView fx:id="searchIcon" glyphName="SEARCH" layoutX="114.0" layoutY="78.0" onMouseClicked="#searchIconFunction" size="20">
                             <cursor>
                                 <Cursor fx:constant="HAND" />
-                            </cursor></FontAwesomeIconView>
-                        <FontAwesomeIconView fx:id="calendarIcon" glyphName="CALENDAR" layoutX="160.0" layoutY="66.0" onMouseClicked="#calendarIconFunction" size="20">
+                            </cursor>
+                  </FontAwesomeIconView>
+                        <FontAwesomeIconView fx:id="calendarIcon" glyphName="CALENDAR" layoutX="161.0" layoutY="78.0" onMouseClicked="#calendarIconFunction" size="20">
                             <cursor>
                                 <Cursor fx:constant="HAND" />
-                            </cursor></FontAwesomeIconView>
-                        <Text fx:id="txtWords" layoutX="45.0" layoutY="139.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nº de Entradas: 3" textAlignment="CENTER" wrappingWidth="154.0">
+                            </cursor>
+                  </FontAwesomeIconView>
+                        <Text fx:id="txtWords" layoutX="57.0" layoutY="209.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nº de Entradas: 3" textAlignment="CENTER" wrappingWidth="154.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="57.0" AnchorPane.rightAnchor="51.0" AnchorPane.topAnchor="194.0">
                             <font>
                                 <Font size="15.0" />
                             </font>
                         </Text>
-                  <FontAwesomeIconView fx:id="signOut" glyphName="SIGN_OUT" layoutX="225.0" layoutY="66.0" onMouseClicked="#signOutIconFunction" size="20">
+                  <FontAwesomeIconView fx:id="signOut" glyphName="SIGN_OUT" layoutX="216.0" layoutY="78.0" onMouseClicked="#signOutIconFunction" size="20">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </FontAwesomeIconView>
-                  <FontAwesomeIconView fx:id="saveIcon" glyphName="SAVE" layoutX="123.0" layoutY="221.0" onMouseClicked="#fileIconFunction" size="20">
+                  <FontAwesomeIconView fx:id="saveIcon" glyphName="SAVE" layoutX="235.0" layoutY="218.0" onMouseClicked="#fileIconFunction" size="20">
                      <cursor>
                         <Cursor fx:constant="WAIT" />
                      </cursor>
                   </FontAwesomeIconView>
+                  <ImageView fx:id="imagemDiario" fitHeight="65.0" fitWidth="86.0" layoutX="102.0" layoutY="118.0" opacity="0.4" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="102.0" AnchorPane.rightAnchor="94.0" AnchorPane.topAnchor="118.0">
+                     <image>
+                        <Image url="@images/book.png" />
+                     </image>
+                  </ImageView>
                     </children>
                 </AnchorPane>
                 <AnchorPane fx:id="anchoPaneText" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="anchorBaixo" stylesheets="@styles/diario.css" VBox.vgrow="ALWAYS">
@@ -115,10 +130,10 @@
             <tabs>
                 <Tab fx:id="firstTab" text="Tab Inicial">
                     <content>
-                        <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="anchorTab" stylesheets="@styles/diario.css">
+                        <AnchorPane fx:id="anchorPane2" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="anchorTab" stylesheets="@styles/diario.css">
                             <children>
-                                <StyleClassedTextArea fx:id="txaFicheiro" editable="false" layoutX="1.0" layoutY="-1.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="618.0" prefWidth="739.0" stylesheets="@styles/diario.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-2.0" />
-                                <Hyperlink layoutX="259.0" layoutY="107.0" onAction="#entradaHoje" text="Nota de Hoje">
+                                <StyleClassedTextArea fx:id="txaFicheiro" editable="false" layoutX="1.0" layoutY="-7.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="625.0" prefWidth="739.0" stylesheets="@styles/diario.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-2.0" />
+                                <Hyperlink layoutX="259.0" layoutY="107.0" onAction="#entradaHoje" text="clique aqui.">
                                     <font>
                                         <Font size="16.0" />
                                     </font>

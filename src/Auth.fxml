@@ -116,7 +116,7 @@
                         <Font size="18.0" />
                     </font>
                 </Button>
-                <Label fx:id="loginMessageLB" alignment="CENTER" prefHeight="18.0" prefWidth="263.0" textFill="RED">
+                <Label fx:id="loginMessageLB" alignment="CENTER" prefHeight="23.0" prefWidth="476.0" textAlignment="CENTER" textFill="RED" wrapText="true">
                     <StackPane.margin>
                         <Insets bottom="300.0" />
                     </StackPane.margin>

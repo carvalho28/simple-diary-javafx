@@ -5,10 +5,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
@@ -49,6 +46,12 @@ public class AuthController implements Initializable {
                 Scene scene = new Scene(parent);
                 scene.getStylesheets().add("/styles/diario.css");
                 Stage appStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+                appStage.setOnCloseRequest(evt -> {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Fechar programa");
+                    alert.setHeaderText("Podem haver alterações não gravadas.\nPretende sair?");
+                    alert.showAndWait().filter(r -> r != ButtonType.OK).ifPresent(r->evt.consume());
+                });
                 appStage.setScene(scene);
                 appStage.show();
             }
@@ -99,6 +102,7 @@ public class AuthController implements Initializable {
                     loginMessageLB.setText("Credenciais inválidas!");
                     usernameTF.clear();
                     passwordTF.clear();
+                    usernameTF.requestFocus();
                 }
             }
         } catch (Exception e) {

@@ -1,4 +1,3 @@
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -8,17 +7,23 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.print.PrinterJob;
+import javafx.print.*;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Scale;
 import javafx.scene.web.HTMLEditor;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -34,7 +39,9 @@ import org.languagetool.rules.RuleMatch;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+import java.awt.*;
 import java.io.*;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -42,7 +49,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class DiarioController implements Initializable {
@@ -78,7 +85,11 @@ public class DiarioController implements Initializable {
     String nomeUtilizador = AuthController.userName;
     /* ITEMS GERAIS */
     @FXML
+    BorderPane borderPane;
+    @FXML
     AnchorPane anchoPaneText;
+    @FXML
+    AnchorPane anchorPane2;
     @FXML
     VBox vBox;
     @FXML
@@ -89,6 +100,8 @@ public class DiarioController implements Initializable {
     MenuItem menuGuardar;
     @FXML
     MenuItem menuSobre;
+    @FXML
+    MenuItem menuHTML;
     @FXML
     MenuItem zoomIn;
     @FXML
@@ -194,6 +207,24 @@ public class DiarioController implements Initializable {
         alert.showAndWait();
     }
 
+    @FXML
+    private void getHTMLhelpOnW3Schools(ActionEvent e) {
+        try {
+            Desktop.getDesktop().browse(new URI("https://www.w3schools.com/html/"));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void getIHChelp(ActionEvent e) {
+        try {
+            Desktop.getDesktop().browse(new URI("https://www.di.ubi.pt/~jpaulo/ensino/IHC/"));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     /* Adicionar buttons ao HTML editor */
 //    private HTMLEditor addButtonsHTML(HTMLEditor htmlEditor) {
 //
@@ -287,8 +318,6 @@ public class DiarioController implements Initializable {
     private void openFileFunction(int openType) {
         if (openType == 0) {
             Tab t1 = new Tab(fileName.substring(0, fileName.length() - 5));
-//            add class to t1
-//            t1.getStyleClass().add("anchorTab");
 
             if (isTabOpen(t1.getText())) {
                 int index = tituloTabs.indexOf(t1.getText());
@@ -306,7 +335,6 @@ public class DiarioController implements Initializable {
                     }
                 }
                 newFile = false;
-//                textArea1.setEditable(fileDate.equals(LocalDate.now()));
                 if (fileDate.equals(LocalDate.now())) {
                     textArea1.setDisable(true);
                 }
@@ -346,6 +374,8 @@ public class DiarioController implements Initializable {
                     lstFiles.getSelectionModel().clearSelection();
                 });
 
+                textArea1.setHtmlText("<html><body style='padding-right: 25px'>");
+
                 try {
                     File f = new File("src/files/" + nomeUtilizador + "/" + fileName);
                     decrypt(chave, f, f);
@@ -360,6 +390,7 @@ public class DiarioController implements Initializable {
                     }
                     inputstream.close();
                     encrypt(chave, f, f);
+                    textArea1.setHtmlText(textArea1.getHtmlText() + "</body></html>");
                 } catch (CryptoException e) {
                     e.printStackTrace();
                     Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -372,27 +403,6 @@ public class DiarioController implements Initializable {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-                // text formatter for not being able to edit first line
-
-                //CARRET ATTEMP TO MAKE FIRST 2 LINES UMNEDITABLE
-//                String dataDia = (new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
-//                String conteudoImo = dataDia + "\n------------\n";
-//                // textarea cursor listener
-//
-//                textArea1.caretPositionProperty().addListener((ChangeListener<Number>) (observable, oldValue, newValue) -> {
-//                    int caretPosition = textArea1.getCaretPosition();
-//
-//                    if (caretPosition >= 0 && caretPosition < 24) {
-////                    textArea1.displaceCaret(25);
-//                        String remaining = "";
-//                        char[] remainigChars = conteudoImo.toCharArray();
-//                        for (int i = caretPosition; i < 24; i++) {
-//                            remaining += remainigChars[i];
-//                        }
-//                        textArea1.replaceText(caretPosition, 23, remaining);
-//                    }
-//                });
 
             }
         }
@@ -589,21 +599,6 @@ public class DiarioController implements Initializable {
     /* Abrir on click */
     @FXML
     private void btnOpen(MouseEvent e) throws IOException, CryptoException {
-//        if (!savedFile && !pathFile.equals("")) {
-//            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-//            alert.setTitle("Aviso!");
-//            alert.setHeaderText("Deseja guardar as alterações?");
-//            alert.setContentText("");
-//
-//            ButtonType b = alert.showAndWait().get();
-//
-//            if (b == ButtonType.OK) {
-//                saveFuntion();
-//            }
-//            if (b == ButtonType.CANCEL) {
-//                lstFiles.getSelectionModel().selectPrevious();
-//            }
-//        }
         fileName = lstFiles.getSelectionModel().getSelectedItem();
         if (fileName != null) {
             pathFile = "src/files/" + nomeUtilizador + "/" + fileName.substring(0, (fileName).length() - 5);
@@ -717,6 +712,7 @@ public class DiarioController implements Initializable {
                     alert.setContentText("");
                     alert.showAndWait().get();
                 }
+                tabPane.requestFocus();
             }
             datePick.getEditor().clear();
             datePick.setValue(null);
@@ -760,41 +756,42 @@ public class DiarioController implements Initializable {
     //DEIXAR ESTAR, COLOCAR DUVIDA
     @FXML
     private void toPDF(ActionEvent e) {
-        try {
-//            StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
-            HTMLEditor textArea = (HTMLEditor) tabPane.getSelectionModel().getSelectedItem().getContent();
-            String diaryEntry = textArea.getHtmlText();
-            String name = lstFiles.getSelectionModel().getSelectedItem();
-            PDDocument doc = new PDDocument();
-            PDPage page = new PDPage();
-            PDPageContentStream content = new PDPageContentStream(doc, page);
-            content.beginText();
-            content.newLineAtOffset(25, 750);
-            content.setFont(PDType1Font.HELVETICA_BOLD, 12);
-            StringBuilder b = new StringBuilder();
-            content.setLeading(14.5f);
-            for (int i = 0; i < diaryEntry.length(); i++) {
-                if (WinAnsiEncoding.INSTANCE.contains(diaryEntry.charAt(i))) {
-                    b.append(diaryEntry.charAt(i));
-                } else {
-                    content.showText(b.toString());
-                    b = new StringBuilder();
-                    content.newLine();
-                }
-            }
-            content.endText();
-            content.close();
-            doc.addPage(page);
-            doc.save("src/files/" + nomeUtilizador + "/" + name + ".pdf");
-            doc.close();
-        } catch (Exception ex) {
-//            ex.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erro!");
-            alert.setHeaderText("Erro ao criar o PDF!");
-            alert.setContentText("");
-            alert.showAndWait().get();
-        }
+//        try {
+////            StyleClassedTextArea textArea = (StyleClassedTextArea) tabPane.getSelectionModel().getSelectedItem().getContent();
+//            HTMLEditor textArea = (HTMLEditor) tabPane.getSelectionModel().getSelectedItem().getContent();
+//            String diaryEntry = textArea.getHtmlText();
+//            String name = lstFiles.getSelectionModel().getSelectedItem();
+//            PDDocument doc = new PDDocument();
+//            PDPage page = new PDPage();
+//            PDPageContentStream content = new PDPageContentStream(doc, page);
+//            content.beginText();
+//            content.newLineAtOffset(25, 750);
+//            content.setFont(PDType1Font.HELVETICA_BOLD, 12);
+//            StringBuilder b = new StringBuilder();
+//            content.setLeading(14.5f);
+//            for (int i = 0; i < diaryEntry.length(); i++) {
+//                if (WinAnsiEncoding.INSTANCE.contains(diaryEntry.charAt(i))) {
+//                    b.append(diaryEntry.charAt(i));
+//                } else {
+//                    content.showText(b.toString());
+//                    b = new StringBuilder();
+//                    content.newLine();
+//                }
+//            }
+//            content.endText();
+//            content.close();
+//            doc.addPage(page);
+//            doc.save("src/files/" + nomeUtilizador + "/" + name + ".pdf");
+//            doc.close();
+//        } catch (Exception ex) {
+////            ex.printStackTrace();
+//            Alert alert = new Alert(Alert.AlertType.ERROR);
+//            alert.setTitle("Erro!");
+//            alert.setHeaderText("Erro ao criar o PDF!");
+//            alert.setContentText("");
+//            alert.showAndWait().get();
+//        }
+        // html to pdf
     }
 
     /* ORTOGRAFIA */
@@ -863,18 +860,14 @@ public class DiarioController implements Initializable {
         }
         HTMLEditor textArea = (HTMLEditor) tabPane.getSelectionModel().getSelectedItem().getContent();
         PrinterJob job = PrinterJob.createPrinterJob();
-        textArea.print(job);
-
-        if (job != null && job.showPrintDialog(textArea.getScene().getWindow())) {
-            boolean success = job.printPage(textArea);
-            if (success) {
-                job.endJob();
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        if (job != null && job.showPrintDialog(null)) {
+            textArea.print(job);
+            job.endJob();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Impressão");
                 alert.setHeaderText("Impressão concluída");
                 alert.setContentText("Impressão concluída com sucesso");
                 alert.showAndWait();
-            }
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Erro");
@@ -882,29 +875,6 @@ public class DiarioController implements Initializable {
             alert.setContentText("Não foi possível imprimir");
             alert.showAndWait();
         }
-
-//
-//        PrinterJob printerJob = PrinterJob.createPrinterJob();
-//
-//        if (printerJob != null && printerJob.showPrintDialog(textArea.getScene().getWindow())) {
-//            PageLayout pageLayout = printerJob.getJobSettings().getPageLayout();
-//            printArea.setMaxWidth(pageLayout.getPrintableWidth());
-//            if (printerJob.printPage(printArea)) {
-//                printerJob.endJob();
-//            } else {
-//                Alert alert = new Alert(Alert.AlertType.ERROR);
-//                alert.setTitle("Erro");
-//                alert.setHeaderText("A impressão falhou!");
-//                alert.setContentText("Não existem textos para imprimir");
-//                alert.showAndWait();
-//            }
-//        } else {
-//            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//            alert.setTitle("Impressão cancelada");
-//            alert.setHeaderText("Impressão cancelada");
-//            alert.showAndWait();
-//
-//        }
     }
 
     /* Verifica se dada string existe nos ficheiros do utilizador */
@@ -972,6 +942,7 @@ public class DiarioController implements Initializable {
     @FXML
     private void fileIconFunction(MouseEvent e) {
         txtWords.setVisible(true);
+        imagemDiario.setVisible(true);
         fileBack.setStyle("-fx-fill: #b4d2e7;");
         calendarBack.setStyle("-fx-fill: whitesmoke;");
         searchBack.setStyle("-fx-fill: whitesmoke;");
@@ -985,6 +956,7 @@ public class DiarioController implements Initializable {
     @FXML
     private void searchIconFunction(MouseEvent e) {
         txtWords.setVisible(false);
+        imagemDiario.setVisible(false);
         fileBack.setStyle("-fx-fill: whitesmoke;");
         calendarBack.setStyle("-fx-fill: whitesmoke;");
         searchBack.setStyle("-fx-fill: #b4d2e7;");
@@ -997,6 +969,7 @@ public class DiarioController implements Initializable {
     @FXML
     private void calendarIconFunction(MouseEvent e) {
         txtWords.setVisible(false);
+        imagemDiario.setVisible(false);
         fileBack.setStyle("-fx-fill: whitesmoke;");
         searchBack.setStyle("-fx-fill: whitesmoke;");
         calendarBack.setStyle("-fx-fill: #b4d2e7;");
@@ -1073,6 +1046,7 @@ public class DiarioController implements Initializable {
             }
         }
         txtWords.setText("Nº de Entradas: " + items.size());
+        imagemDiario.setVisible(true);
         txaFicheiro.getStyleClass().add("anchorTab");
         txaFicheiro.setPadding(new Insets(10, 10, 10, 10));
 
@@ -1112,6 +1086,16 @@ public class DiarioController implements Initializable {
         // get current time
         txaFicheiro.appendText("Para ir para a nota de hoje");
 
+
+        tabPane.getSelectionModel().selectedItemProperty().addListener(
+                (ov, t, t1) -> {
+                    if (tabPane.getSelectionModel().getSelectedItem().getText().length() != 10){
+                        lstFiles.getSelectionModel().clearSelection();
+                    } else {
+                        lstFiles.getSelectionModel().select(tabPane.getSelectionModel().getSelectedItem().getText() + ".html");
+                    }
+                }
+        );
     }
 }
 

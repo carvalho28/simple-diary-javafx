@@ -80,11 +80,11 @@
     -fx-text-fill: white;
 }
 
-.menu:hover {
+.menu-bar .menu:hover .label {
     -fx-text-fill: black;
 }
 
-.menu-bar:hover {
+.menu:hover {
     -fx-text-fill: black;
 }
 
@@ -106,7 +106,7 @@
 .menu-item .label:hover {
     -fx-font-size: 14.0pt;
     -fx-background: #b4d2e7;
-    -fx-text-fill: white;
+    -fx-text-fill: black;
 }
 
 .list-cell:filled:selected:focused, .list-cell:filled:selected {
@@ -180,11 +180,6 @@
     -fx-font: 12 Arial;
     /*-fx-border-color: blue;*/
 }
-
-/*.tabInicio{*/
-/*    -fx-border-color: 1px;*/
-/*    -fx-border-width: 1px 0px 0px 0px;*/
-/*}*/
 
 .html-editor .combo-box .cell:selected {
     -fx-background-color: none;
