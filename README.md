@@ -1,15 +1,9 @@
-# O Meu Diário
+# My Diary
 
-### Trabalho Prático - Unidade Curricular Interação Humana com o Computador
+Simple JavaFX app for the course "Human Computer Interaction".
 
-#### Conteúdo
+#### Content
 
-- Main -> execução do ficheiro;
-- Auth -> autenticação;
-- Register -> registo do utlizador;
-- Diario.
-
-#### Realizado por:
-
-- Diogo Carvalho, 45716
-- João Marques, 45722
+- Main -> file execution;
+- Auth -> authentication;
+- Register -> user registration;
